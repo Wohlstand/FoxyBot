@@ -1,0 +1,8 @@
+{
+    "token" : "<your bot's token here!>",
+    "smtp" : {
+        "login" : "smtps://mybotmailbox%40server.ru:superpassword@mailserver.ru",
+        "from" : "\"FoxyBot on Discord\" <mybotmailbox@server.ru>",
+        "to" : "theadmin@server.ru"
+    }
+}
