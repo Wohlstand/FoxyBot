@@ -5,6 +5,7 @@ FoxyBoyJr Discord bot by Wohlstand
 REQUIRED:
 + https://github.com/hydrabolt/discord.js
 + http://nodemailer.com/
++ npm install yandex.translate
 
 
 Authorize bot:
@@ -384,4 +385,3 @@ mybot.on("message", function(message)
 });
 
 botCommands.loginBot(mybot, botCommands.botConfig.token);
-

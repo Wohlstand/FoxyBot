@@ -4,5 +4,6 @@
         "login" : "smtps://mybotmailbox%40server.ru:superpassword@mailserver.ru",
         "from" : "\"FoxyBot on Discord\" <mybotmailbox@server.ru>",
         "to" : "theadmin@server.ru"
-    }
+    },
+    "trkey" : "<API key for Yandex Translator, get it here: https://tech.yandex.ru/translate/ >"
 }

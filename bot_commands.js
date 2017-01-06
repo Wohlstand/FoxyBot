@@ -6,7 +6,9 @@ var Datastore = require('nedb');
 var fs    = require('fs');
 var nodemailer = require('nodemailer');
 
-var foxyBotVer = "FoxyBot v1.2.0";
+var YandexTranslator = require('yandex.translate');
+
+var foxyBotVer = "FoxyBot v1.3.0";
 
 //! List of available bot commands
 var Cmds      = [];
@@ -23,6 +25,8 @@ var botConfig = require("./setup.json");
 var smtpMailLoginInfo = botConfig.smtp.login;
 var smtpMailFrom      = botConfig.smtp.from;
 var smtpMailTo        = botConfig.smtp.to;
+
+var translator = new YandexTranslator(botConfig.trkey);
 
 /* ******************Internal black/white lists ********************************/
 
@@ -351,7 +355,7 @@ var say = function(bot, message, args)
 {
     var chan = message.channel;
     var attachments = message.attachments.array();
-    var authorname = message.author.username;
+    var authorname  = message.author.username;
 
     if(attachments.length==0)
     {
@@ -508,6 +512,76 @@ var voting = function(bot, message, args)
             message.reply("Unknown command! Accepted commands are **start**, **stats**, **stop**, or integer of the variant!", msgSendError);
         }
     }
+}
+
+function cutWord(str)
+{
+    str.orig = str.orig.trim();
+    var space = str.orig.indexOf(' ');
+    if(space == -1)
+        return "";
+    var word = str.orig.substr(0, space);
+    str.res = str.orig.substr(space).trim();
+    console.log("-> Cuted first word \"" + word + "\"");
+    return word;
+}
+
+//var langReg = new RegExp("/^\[([a-z]){2}\&]/ig", "ig");
+function isLanguage(word)
+{
+    return /^\[([a-z]){2}\]$/ig.test(word.trim());
+}
+
+var langChannels =
+{
+    "263203404954730498": "ru",
+    "263203433706684416": "ja",
+    "263203445035499520": "es",
+    "263392784117923841": "pt"
+}
+
+var translate = function(bot, message, args)
+{
+    var phraze = { orig: args, res: "..."};
+    var arg1 = cutWord(phraze);
+    if(!isLanguage(arg1))
+    {
+        //Detect channel specific language
+        var chID = message.channel.id;
+        if(langChannels[chID] != undefined)
+            arg1 = langChannels[chID];
+        else
+            arg1 = 'en';
+        phraze.res = phraze.orig;
+        console.log("-> Using channel language...");
+    }
+    else
+    {
+        arg1 = arg1.substr(1, 2);
+    }
+
+    if(phraze.res == "")
+    {
+        message.reply("Can't translate nothing!");
+        return;
+    }
+
+    console.log("-> Translate into " + arg1 + " the phraze " + phraze.res);
+    translator.translate(phraze.res, arg1)
+    .then(function(translation)
+    {
+        console.log(translation);
+        if(message.editable)
+        {
+            message.edit(translation);
+        } else {
+            say(bot, message,  "<@!" + message.author.id + ">: " + translation);
+        }
+    },
+    function(fail)
+    {
+        message.reply("Can't translate: " + fail, msgSendError);
+    }).catch(msgSendError);
 }
 
 function getMsFromMsg(bot, message, args)
@@ -1050,6 +1124,15 @@ var registerCommands = function()
                                           " **/foxy vote __<variant ID>__**\n__Do Vote for any variant you are prefer (from 1 to N)__\n\n" +
                                           " **/foxy voting stats**\n__Print a result without aborting of the voting__\n\n" +
                                           " **/foxy voting stop**\n **/foxy voting end**\n__Stop voting and print a result__\n", [], true]);
+    addCMD(["tr",       translate,        "Хочешь говорить на другом языке?\n"+
+                                          "I'll translate your phraze into any language you want\n\n"+
+                                          "__*Syntax:*__:\n\n"+
+                                          " **/foxy tr [de] __Please, help me find my street!__**\n" +
+                                          "__Translate phaze to any language you want. In this example translate phraze into German__\n\n" +
+                                          " **/foxy tr __Я говорю по-немецки!__**\n" +
+                                          "__Automatically detect language of channel and translate to that language__\n\n" +
+                                          "Language of source phraze will be detected automatically.", [], true]);
+
     addSynonimOf("voting", "vote");
     addSynonimOf("voting", "votes");
     addSynonimOf("voting", "votings");
