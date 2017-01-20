@@ -1125,13 +1125,13 @@ var registerCommands = function()
                                           " **/foxy voting stats**\n__Print a result without aborting of the voting__\n\n" +
                                           " **/foxy voting stop**\n **/foxy voting end**\n__Stop voting and print a result__\n", [], true]);
     addCMD(["tr",       translate,        "Хочешь говорить на другом языке?\n"+
-                                          "I'll translate your phraze into any language you want\n\n"+
+                                          "I'll translate your phrase into any language you want\n\n"+
                                           "__*Syntax:*__:\n\n"+
                                           " **/foxy tr [de] __Please, help me find my street!__**\n" +
-                                          "__Translate phaze to any language you want. In this example translate phraze into German__\n\n" +
+                                          "__Translate phrase to any language you want. In this example translate phrase into German__\n\n" +
                                           " **/foxy tr __Я говорю по-немецки!__**\n" +
                                           "__Automatically detect language of channel and translate to that language__\n\n" +
-                                          "Language of source phraze will be detected automatically.", [], true]);
+                                          "Language of source phrase will be detected automatically.", [], true]);
 
     addSynonimOf("voting", "vote");
     addSynonimOf("voting", "votes");
