@@ -3,12 +3,13 @@ var http  = require("http");
 var https = require("https");
 var Datastore = require('nedb');
 
-var fs    = require('fs');
-var nodemailer = require('nodemailer');
+var fs          = require('fs');
 
+var nodemailer  = require('nodemailer');
 var YandexTranslator = require('yandex.translate');
+var mysql       = require('mysql');
 
-var foxyBotVer = "FoxyBot v1.3.0";
+var foxyBotVer  = "FoxyBot v1.4.0";
 
 //! List of available bot commands
 var Cmds      = [];
@@ -27,6 +28,16 @@ var smtpMailFrom      = botConfig.smtp.from;
 var smtpMailTo        = botConfig.smtp.to;
 
 var translator = new YandexTranslator(botConfig.trkey);
+
+var mydb = mysql.createConnection({
+      host     : botConfig.mysql.host,
+      user     : botConfig.mysql.user,
+      password : botConfig.mysql.password,
+      database : botConfig.mysql.db,
+      charset  : 'UTF8MB4_UNICODE_CI'
+});
+
+mydb.connect();
 
 /* ******************Internal black/white lists ********************************/
 
@@ -628,6 +639,65 @@ function getMsFromMsg(bot, message, args)
     return timeInt;
 }
 
+var initRemindWatcher = function(bot)
+{
+    BotPtr = bot;
+    //Check for remind every minute
+    setInterval(function()
+    {
+        try
+        {
+            mydb.query('SELECT * FROM foxy_reminds WHERE dest_date <= NOW();',
+            function (error, results, fields)
+            {
+                try
+                {
+                    if(error)
+                    {
+                        console.log("Error happen! " + error);
+                        return;
+                    }
+
+                    //console.log('The solution is: ', results[0].solution);
+                    for(var i = 0; i < results.length; i++)
+                    {
+                        var guild = BotPtr.guilds.get(results[i].guild_id);
+                        if(guild == undefined)
+                        {
+                            console.log("Error happen! No guild with ID " + results[i].guild_id + "!");
+                        } else {
+                            var channel = guild.channels.get(results[i].channel_id);
+                            if(channel == undefined)
+                                console.log("Error happen! No channel with ID " + results[i].channel_id + "!");
+                            else
+                                channel.sendMessage(results[i].message, msgSendError);
+                        }
+                    }
+
+                    mydb.query("DELETE FROM foxy_reminds WHERE dest_date <= NOW();",
+                    function (error, results, fields)
+                    {
+                        if(error)
+                        {
+                            console.log("Error happen! " + error);
+                            return;
+                        }
+                    });
+                }
+                catch(e)
+                {
+                    sendErrorMsg(bot, message.channel, e);
+                }
+            });
+        }
+        catch(e)
+        {
+            console.log("Error happen! " + e.name + ":" + e.message);
+        }
+
+    }, 10000);
+}
+
 var sayDelayd = function(bot, message, args)
 {
     var index = args.lastIndexOf("after ");
@@ -643,10 +713,30 @@ var sayDelayd = function(bot, message, args)
         return;
 
     var some = args.slice(0, index).trim();
-    setTimeout(function()
+    var guild_id = message.channel.guild.id;
+    var chan_id = message.channel.id;
+    var waitTime = mydb.escape(timeInt/1000);
+    //console.log("Remind: Wait " + (timeInt/1000) + " vs " +  waitTime + " seconds!");
+    var insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
+                        "values ((NOW() + INTERVAL " + waitTime + " SECOND), " +
+                        mydb.escape(some.toString()) + ", " +
+                        mydb.escape(guild_id) + ", " +
+                        mydb.escape(chan_id) + ");";
+    //console.log(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
+    mydb.query(insertQuery,
+    function (error, results, fields)
     {
-        message.channel.sendMessage(some, msgSendError);
-    }, timeInt);
+        if(error)
+        {
+            console.log("Error happen! " + error);
+            return;
+        }
+    });
+    //
+    // setTimeout(function()
+    // {
+    //     message.channel.sendMessage(some, msgSendError);
+    // }, timeInt);
     message.reply("I will say after " + args.slice(index+6) + "!", msgSendError);
 }
 
@@ -664,11 +754,29 @@ var sayDelaydME = function(bot, message, args)
     if(timeInt==-1)
         return;
 
-    var some = args.slice(0, index).trim();
-    setTimeout(function()
+    var some = "<@" + message.author.id + ">, " + args.slice(0, index).trim();
+    var guild_id = message.channel.guild.id;
+    var chan_id = message.channel.id;
+    var waitTime = mydb.escape(timeInt/1000);
+    var insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
+                        "values ((NOW() + INTERVAL " + waitTime + " SECOND), " +
+                        mydb.escape(some.toString()) + ", " +
+                        mydb.escape(guild_id) + ", " +
+                        mydb.escape(chan_id) + ");";
+    //console.log(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
+    mydb.query(insertQuery,
+    function (error, results, fields)
     {
-        message.reply(some, msgSendError);
-    }, timeInt);
+        if(error)
+        {
+            console.log("Error happen! " + error);
+            return;
+        }
+    });
+    // setTimeout(function()
+    // {
+    //     message.reply(some, msgSendError);
+    // }, timeInt);
     message.reply( "I will remind you after " + args.slice(index+6) + "!", msgSendError);
 }
 
@@ -1232,6 +1340,7 @@ module.exports =
     loginBot:         loginBot,
     inListFile:       inListFile,
     sendEmail:        sendEmailF,
+    initRemindWatcher:initRemindWatcher,
     msgSendError:     msgSendError,
     sendErrorMsg:     sendErrorMsg,
     botConfig:        botConfig

@@ -3,9 +3,14 @@
 FoxyBoyJr Discord bot by Wohlstand
 
 REQUIRED:
-+ https://github.com/hydrabolt/discord.js
-+ http://nodemailer.com/
+https://github.com/hydrabolt/discord.js
++ (no voice) npm install discord.js --save
++ (with voice) npm install discord.js opusscript --save
++ (optional) npm install bufferutil --save
+http://nodemailer.com/
++ npm install nodemailer --save
 + npm install yandex.translate
++ npm install mysql
 
 
 Authorize bot:
@@ -94,9 +99,11 @@ mybot.on("ready", () =>
         console.log('set status...');
         //mybot.setStatusOnline();
         mybot.user.setStatus("online");
-        mybot.user.setGame("Working");
+        mybot.user.setGame("/foxy cmd");
         //console.log('set nick...');
         //mybot.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
+        //Start Remind watcher!
+        botCommands.initRemindWatcher(mybot);
         console.log('DONE!\n==========================================================\n\n');
     }
 );
