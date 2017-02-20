@@ -11,7 +11,7 @@ http://nodemailer.com/
 + npm install nodemailer --save
 + npm install yandex.translate
 + npm install mysql
-
++ npm install winston
 
 Authorize bot:
 
@@ -50,7 +50,7 @@ function statusError(error)
 {
     if(error)
     {
-        console.log('There was an error seting status: ' + error);
+        botCommands.foxylogInfo('There was an error seting status: ' + error);
     }
 }
 
@@ -58,45 +58,48 @@ function nickError(error)
 {
     if(error)
     {
-        console.log('There was an error seting nick: ' + error);
+        botCommands.foxylogInfo('There was an error seting nick: ' + error);
     }
 }
 
-function sleep(milliseconds) {
+function sleep(milliseconds)
+{
   var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
+  for (var i = 0; i < 1e7; i++)
+  {
+    if ((new Date().getTime() - start) > milliseconds)
+    {
+        break;
     }
   }
 }
 
 process.on('SIGINT', function()
 {
-    console.log("\n\nCaught interrupt signal\n");
+    botCommands.foxylogInfo("\n\nCaught interrupt signal\n");
     mybot.user.setStatus("idle");
     mybot.user.setGame("Interrupted");
     //mybot.setPlayingGame("Interrupted", statusError);
-    console.log("Sent \"Away\" status!");
+    botCommands.foxylogInfo("Sent \"Away\" status!");
     sleep(1000);
     process.exit();
 });
 
 process.on('SIGHUP', function()
 {
-    console.log("\n\nCaught SIGHUP signal\n");
+    botCommands.foxylogInfo("\n\nCaught SIGHUP signal\n");
     mybot.user.setStatus("dnd");
     mybot.user.setGame("Screen killed");
     //mybot.setStatusIdle();
     //mybot.setPlayingGame("Screen killed", statusError);
-    console.log("Sent \"Away\" status!");
+    botCommands.foxylogInfo("Sent \"Away\" status!");
     sleep(1000);
     process.exit();
 });
 
 mybot.on("ready", () =>
     {
-        console.log('set status...');
+        botCommands.foxylogInfo('set status...');
         //mybot.setStatusOnline();
         mybot.user.setStatus("online");
         mybot.user.setGame("/foxy cmd");
@@ -108,8 +111,9 @@ mybot.on("ready", () =>
     }
 );
 
-mybot.on('reconnecting', () => {
-        console.log('Connection lost, trying to reconnect...');
+mybot.on('reconnecting', () =>
+{
+        botCommands.foxylogInfo('Connection lost, trying to reconnect...');
 });
 
 mybot.on("presenceUpdate", (oldUser, newUser) =>
@@ -182,6 +186,31 @@ function hasStr(msg, word)
     return msg.indexOf(word) != -1;
 }
 
+function getAuthorStr(message)
+{
+    return "[" +  (message.author.bot ? "bot" : "user") + "] "
+    + message.author.username + " : "
+    + message.channel.name + '@' + message.guild.name;
+}
+
+mybot.on("messageDelete", function(message)
+{
+    //Ignore messages sent by myself
+    if( message.author.id == 216943869424566273 )
+        return;
+    botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + message.content);
+});
+
+mybot.on("messageUpdate", function(messageOld, messageNew)
+{
+    //Ignore messages sent by myself
+    if( messageOld.author.id == 216943869424566273 )
+        return;
+    botCommands.foxylogInfo("*E* "+ getAuthorStr(messageOld) + ":"
+                            + "\n OLD: " + messageOld.content
+                            + "\n NEW: " + messageNew.content + "\n");
+});
+
 mybot.on("message", function(message)
 {
     //Ignore messages sent by myself
@@ -194,7 +223,7 @@ mybot.on("message", function(message)
     var msgLow = message.content.toLowerCase();
     var msgLowTrimmed = msgLow.trim();
 
-    console.log("***" + message.author.username + ": " + message.content );
+    botCommands.foxylogInfo("*** " + getAuthorStr(message) + ": " + message.content );
 
     /* *********Standard command processor********* */
     if((msgLowTrimmed == "/foxy") && (allowWrite))
@@ -219,7 +248,7 @@ mybot.on("message", function(message)
     if(allowWrite && msgLowTrimmed.startsWith("/foxy "))
     {
         var botCmd = msgTrimmed.slice(6).trim();
-        console.log("Cmd received: "+botCmd);
+        botCommands.foxylogInfo("Cmd received: "+botCmd);
 
         var firstSpace = botCmd.indexOf(' ');
         if(firstSpace==-1)
@@ -230,8 +259,8 @@ mybot.on("message", function(message)
         {
             botCommand = botCmd.slice(0, firstSpace).trim();
             botArgs = botCmd.slice(firstSpace+1).trim();
-            console.log("->>Cmd: "+botCommand);
-            console.log("->>Arg: "+botArgs);
+            botCommands.foxylogInfo("->>Cmd: " + botCommand);
+            botCommands.foxylogInfo("->>Arg: " + botArgs);
         }
         else
             botCommand = botCmd.trim();
@@ -262,9 +291,9 @@ mybot.on("message", function(message)
         var messageForMe = false;
         var mentions = message.mentions.users.array();
 
-        for(var i=0; i<mentions.length; i++)
+        for(var i=0; i < mentions.length; i++)
         {
-            console.log( "--->" + mentions[i].username );
+            botCommands.foxylogInfo( "--->" + mentions[i].username );
             wasAsked = mentions[i].id == 216943869424566273;
             messageForMe = (mentions[i].id == 182039820879659008) && (message.author.id != 216943869424566273);
         }

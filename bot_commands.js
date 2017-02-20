@@ -9,7 +9,26 @@ var nodemailer  = require('nodemailer');
 var YandexTranslator = require('yandex.translate');
 var mysql       = require('mysql');
 
-var foxyBotVer  = "FoxyBot v1.4.0";
+var foxyBotVer  = "FoxyBot v1.4.1";
+
+var winston = require('winston');
+
+var logger = new (winston.Logger)({
+  transports: [
+    new (winston.transports.Console)({ json: false, timestamp: true }),
+    new winston.transports.File({ filename: __dirname + '/foxybot-debug.log', json: false })
+  ],
+  exceptionHandlers: [
+    new (winston.transports.Console)({ json: false, timestamp: true }),
+    new winston.transports.File({ filename: __dirname + '/foxybot-errors.log', json: false })
+  ],
+  exitOnError: false
+});
+
+function foxylogInfo(outmsg)
+{
+    logger.info(outmsg);
+}
 
 //! List of available bot commands
 var Cmds      = [];
@@ -91,12 +110,12 @@ function msgSendError(error, message)
     if (error)
     {
         var ErrorText = "Can't send message because: " + error;
-        console.log(ErrorText);
+        foxylogInfo(ErrorText);
         if(++msgFailedAttempts > 2)
         {
             BotPtr.logout(function()
             {
-                console.log("Trying to relogin...");
+                foxylogInfo("Trying to relogin...");
                 loginBot(BotPtr, authToken);
                 //setTimeout(function() { BotPtr.sendMessage(message.channel, ErrorText); }, 3000 );
             });
@@ -110,13 +129,13 @@ function msgSendError(error, message)
 
 function getJSON(options, onResult)
 {
-    //console.log("rest::getJSON");
+    //foxylogInfo("rest::getJSON");
     var prot = options.port == 443 ? https : http;
     var req = prot.request(options,
     function(res)
     {
         var output = '';
-        //console.log(options.host + ':' + res.statusCode);
+        //foxylogInfo(options.host + ':' + res.statusCode);
         res.setEncoding('utf8');
 
         res.on('data', function (chunk) {
@@ -268,6 +287,13 @@ var lego = function(bot, message, args)
 
 var fart = function(bot, message, args)
 {
+    /* Inside moderator channel, take log file */
+    if((message.channel.id == "215662579161235456") && (args == "debuglog"))
+    {
+        message.channel.sendFile("./foxybot-debug.log", "foxybot-debug.log").catch(msgSendError);
+        return;
+    }
+
     getRandFile(bot, message, "randomfart.php");
 }
 
@@ -373,7 +399,7 @@ var say = function(bot, message, args)
         chan.sendMessage(args).catch(msgSendError);
     }
     else
-    for(var i=0; i<attachments.length; i++)
+    for(var i=0; i < attachments.length; i++)
     {
         var attachm = attachments[i];
         chan.sendMessage(args).catch(msgSendError);
@@ -445,11 +471,11 @@ var voting = function(bot, message, args)
         votingVotings[chid] = new Array();
         votingVotings[chid].votingInProcess = false;
     }
-    console.log("====Voting mechanism====");
+    foxylogInfo("====Voting mechanism====");
     //on "start <variants>" begin vote counts
     if(args.indexOf("start ") != -1)
     {
-        console.log("--start--");
+        foxylogInfo("--start--");
         if(votingVotings[chid].votingInProcess)
         {
             message.reply("Another voting in process! Finish this voting and then you will be able to start new one!", msgSendError);
@@ -477,7 +503,7 @@ var voting = function(bot, message, args)
     else
     if(args.indexOf("stats") != -1)
     {
-        console.log("--stats--");
+        foxylogInfo("--stats--");
         if(!votingVotings[chid].votingInProcess)
         {
             message.channel.sendMessage("No votings in this channel! Type **/foxy help voting** to learn how to work with voting.", msgSendError);
@@ -490,7 +516,7 @@ var voting = function(bot, message, args)
     else
     if((args.indexOf("stop") != -1) || (args.indexOf("end") != -1))
     {
-        console.log("--stop--");
+        foxylogInfo("--stop--");
         if(!votingVotings[chid].votingInProcess)
         {
             message.reply("No voting in this channel to stop!", msgSendError);
@@ -501,25 +527,25 @@ var voting = function(bot, message, args)
         message.channel.sendMessage("**Voting stopped!**\n" + votingResultMsg, msgSendError);
     } else {
     //on "<number of variant>" add voter
-        console.log("--vote--");
+        foxylogInfo("--vote--");
         if(!votingVotings[chid].votingInProcess)
         {
             message.reply("No votings to vote! Type **/foxy help voting** to learn how to work with voting.", msgSendError);
             return;
         }
-        console.log("Got vote: " + args.trim() );
+        foxylogInfo("Got vote: " + args.trim() );
         var vote = parseInt(args.trim(), 10);
         if( (vote != NaN) )
         {
             if( (vote > 0) && (vote <= votingVotings[chid].votingVariants.length) )
             {
-                console.log("Vote remembered: " + vote);
+                foxylogInfo("Vote remembered: " + vote);
                 votingVotings[chid].voters[message.author.id] = (vote-1);
             } else {
                 message.reply("Out of range!, Vote variant from 1 to " + (votingVotings[chid].votingVariants.length), msgSendError);
             }
         } else {
-            //console.log("Vote invalid: " + vote);
+            //foxylogInfo("Vote invalid: " + vote);
             message.reply("Unknown command! Accepted commands are **start**, **stats**, **stop**, or integer of the variant!", msgSendError);
         }
     }
@@ -533,7 +559,7 @@ function cutWord(str)
         return "";
     var word = str.orig.substr(0, space);
     str.res = str.orig.substr(space).trim();
-    console.log("-> Cuted first word \"" + word + "\"");
+    foxylogInfo("-> Cuted first word \"" + word + "\"");
     return word;
 }
 
@@ -564,7 +590,7 @@ var translate = function(bot, message, args)
         else
             arg1 = 'en';
         phraze.res = phraze.orig;
-        console.log("-> Using channel language...");
+        foxylogInfo("-> Using channel language...");
     }
     else
     {
@@ -577,11 +603,11 @@ var translate = function(bot, message, args)
         return;
     }
 
-    console.log("-> Translate into " + arg1 + " the phraze " + phraze.res);
+    foxylogInfo("-> Translate into " + arg1 + " the phraze " + phraze.res);
     translator.translate(phraze.res, arg1)
     .then(function(translation)
     {
-        console.log(translation);
+        foxylogInfo(translation);
         if(message.editable)
         {
             message.edit(translation);
@@ -654,23 +680,26 @@ var initRemindWatcher = function(bot)
                 {
                     if(error)
                     {
-                        console.log("Error happen! " + error);
+                        foxylogInfo("Error happen! " + error);
                         return;
                     }
 
-                    //console.log('The solution is: ', results[0].solution);
+                    //foxylogInfo('The solution is: ', results[0].solution);
                     for(var i = 0; i < results.length; i++)
                     {
                         var guild = BotPtr.guilds.get(results[i].guild_id);
                         if(guild == undefined)
                         {
-                            console.log("Error happen! No guild with ID " + results[i].guild_id + "!");
+                            foxylogInfo("Error happen! No guild with ID " + results[i].guild_id + "!");
                         } else {
                             var channel = guild.channels.get(results[i].channel_id);
                             if(channel == undefined)
-                                console.log("Error happen! No channel with ID " + results[i].channel_id + "!");
+                                foxylogInfo("Error happen! No channel with ID " + results[i].channel_id + "!");
                             else
+                            {
+                                foxylogInfo("Foxy's remind: " + results[i].message);
                                 channel.sendMessage(results[i].message, msgSendError);
+                            }
                         }
                     }
 
@@ -679,7 +708,7 @@ var initRemindWatcher = function(bot)
                     {
                         if(error)
                         {
-                            console.log("Error happen! " + error);
+                            foxylogInfo("Error happen! " + error);
                             return;
                         }
                     });
@@ -692,7 +721,7 @@ var initRemindWatcher = function(bot)
         }
         catch(e)
         {
-            console.log("Error happen! " + e.name + ":" + e.message);
+            foxylogInfo("Error happen! " + e.name + ":" + e.message);
         }
 
     }, 10000);
@@ -716,19 +745,19 @@ var sayDelayd = function(bot, message, args)
     var guild_id = message.channel.guild.id;
     var chan_id = message.channel.id;
     var waitTime = mydb.escape(timeInt/1000);
-    //console.log("Remind: Wait " + (timeInt/1000) + " vs " +  waitTime + " seconds!");
+    //foxylogInfo("Remind: Wait " + (timeInt/1000) + " vs " +  waitTime + " seconds!");
     var insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
                         "values ((NOW() + INTERVAL " + waitTime + " SECOND), " +
                         mydb.escape(some.toString()) + ", " +
                         mydb.escape(guild_id) + ", " +
                         mydb.escape(chan_id) + ");";
-    //console.log(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
+    //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
     mydb.query(insertQuery,
     function (error, results, fields)
     {
         if(error)
         {
-            console.log("Error happen! " + error);
+            foxylogInfo("Error happen! " + error);
             return;
         }
     });
@@ -763,13 +792,13 @@ var sayDelaydME = function(bot, message, args)
                         mydb.escape(some.toString()) + ", " +
                         mydb.escape(guild_id) + ", " +
                         mydb.escape(chan_id) + ");";
-    //console.log(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
+    //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
     mydb.query(insertQuery,
     function (error, results, fields)
     {
         if(error)
         {
-            console.log("Error happen! " + error);
+            foxylogInfo("Error happen! " + error);
             return;
         }
     });
@@ -795,7 +824,7 @@ var setPlayingGame = function(bot, message, args)
         if(err)
         {
             var msg = "Error of setting game: " + err;
-            console.log(msg);
+            foxylogInfo(msg);
             bot.sendMessage(chan, msg, msgSendError);
         }
     });*/
@@ -1281,7 +1310,7 @@ var registerCommands = function()
     addCMD(["mailwohlstand", sendEmail,   "Send email to my creator while he is offline. (Attachments are supported!) \n" +
                                           "__*Syntax:*__ mailwohlstand <any your text>", [], true]);
 
-    console.log( Cmds.length + " command has been registered!");
+    foxylogInfo( Cmds.length + " command has been registered!");
 }
 
 var callCommand = function(bot, message, command, args)
@@ -1317,12 +1346,12 @@ function output(error, token)
 {
     if (error)
     {
-        console.log('There was an error logging in: ' + error);
+        foxylogInfo('There was an error logging in: ' + error);
         return;
     }
     else
     {
-        console.log('Logged in. Token: ' + token);
+        foxylogInfo('Logged in. Token: ' + token);
     }
 }
 
@@ -1343,5 +1372,6 @@ module.exports =
     initRemindWatcher:initRemindWatcher,
     msgSendError:     msgSendError,
     sendErrorMsg:     sendErrorMsg,
-    botConfig:        botConfig
+    botConfig:        botConfig,
+    foxylogInfo:      foxylogInfo
 };

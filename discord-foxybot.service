@@ -1,17 +1,23 @@
 [Unit]
 Description=FoxyBot for Discord.JS
-# Requires=After=redis.service # Redis wasn't used yet
+
+# Requires the dependent services to run first
+# Requires=After=redis.service
 
 [Service]
-ExecStart=/home/vitaly/_Bots/FoxyBotJrDiscord/server.sh
+ExecStart=/path/to/foxybot/server.sh
 Restart=always
-RestartSec=10                       # Restart service after 10 seconds if node service crashes
-StandardOutput=syslog               # Output to syslog
-StandardError=syslog                # Output to syslog
-SyslogIdentifier=haste-server
+# Restart service after 10 seconds if node service crashes
+RestartSec=10
+# Output to syslog
+StandardOutput=syslog
+# Output to syslog
+StandardError=syslog
+SyslogIdentifier=discord-foxybot
 User=vitaly
 Group=vitaly
 Environment=NODE_ENV=discordfoxybot
 
 [Install]
 WantedBy=multi-user.target
+
