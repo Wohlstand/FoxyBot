@@ -13,16 +13,17 @@ var foxyBotVer  = "FoxyBot v1.4.1";
 
 var winston = require('winston');
 
-var logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({ json: false, timestamp: true }),
-    new winston.transports.File({ filename: __dirname + '/foxybot-debug.log', json: false })
-  ],
-  exceptionHandlers: [
-    new (winston.transports.Console)({ json: false, timestamp: true }),
-    new winston.transports.File({ filename: __dirname + '/foxybot-errors.log', json: false })
-  ],
-  exitOnError: false
+var logger = new (winston.Logger)(
+{
+    transports: [
+        new (winston.transports.Console)({ json: false, timestamp: true }),
+        new winston.transports.File({ filename: __dirname + '/foxybot-debug.log', json: false })
+    ],
+    exceptionHandlers: [
+        new (winston.transports.Console)({ json: false, timestamp: true }),
+        new winston.transports.File({ filename: __dirname + '/foxybot-errors.log', json: false })
+    ],
+    exitOnError: false
 });
 
 function foxylogInfo(outmsg)
@@ -1052,7 +1053,8 @@ var sendEmailF = function(message, args, doReply)
 {
     var extraFiles = [];
     var attachments = message.attachments.array();
-    for(var i=0; i<attachments.length; i++)
+
+    for(var i = 0; i < attachments.length; i++)
     {
         var attachm = attachments[i];
         extraFiles[i] = {
@@ -1065,12 +1067,15 @@ var sendEmailF = function(message, args, doReply)
     var transporter = nodemailer.createTransport(smtpMailLoginInfo);
 
     // setup e-mail data with unicode symbols
-    var mailOptions = {
+    var mailOptions =
+    {
         from: smtpMailFrom, // sender address
         //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
         to: smtpMailTo, // list of receivers
-        subject: 'Message from ' + (message.author.bot ? "bot" : "user") + ' @' + message.author.username +
-                 ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
+        subject: 'Message from ' + (message.author.bot ? "bot" : "user")
+                  + " " + (message.member.nickname == null ? message.author.username : message.member.nickname)
+                  + ' (@' + message.author.username + "#" + message.author.discriminator + ")"
+                  +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
         text: args, //plaintext body
         //html: '<b>Hello world!</b>' // html body
         attachments: extraFiles

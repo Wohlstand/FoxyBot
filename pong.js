@@ -116,6 +116,28 @@ mybot.on('reconnecting', () =>
         botCommands.foxylogInfo('Connection lost, trying to reconnect...');
 });
 
+mybot.on("guildMemberUpdate", (oldUser, newUser) =>
+{
+    if(newUser.user.username == null)
+        return;
+    if(oldUser.user.username == null)
+        return;
+
+    //Log nick changes
+    if(oldUser.nickname != newUser.nickname)
+    {
+        botCommands.foxylogInfo(
+          "--- "
+          + oldUser.user.username + "#" + oldUser.user.discriminator + " changed nick: "
+          + (oldUser.user.bot ? "bot" : "user")
+          + " \"" + (oldUser.nickname == null ? oldUser.user.username : oldUser.nickname) + "\""
+          + " now known as "
+          + "\"" + (newUser.nickname == null ? newUser.user.username : newUser.nickname) + "\" on "
+          + newUser.guild.name + "!"
+        );
+    }
+});
+
 mybot.on("presenceUpdate", (oldUser, newUser) =>
 {
     if(newUser.nickname == null)
@@ -188,9 +210,15 @@ function hasStr(msg, word)
 
 function getAuthorStr(message)
 {
-    return "[" +  (message.author.bot ? "bot" : "user") + "] "
-    + message.author.username + " : "
-    + message.channel.name + '@' + message.guild.name;
+    var z  = message.author;
+    var ch = message.channel;
+    var gu = message.guild;
+
+    return "[" +  (z.bot ? "bot" : "user") + "] "
+            + (message.member.nickname == null ? z.username : message.member.nickname)
+            + " <@" + z.username + "#" + z.discriminator + ", "
+            + ( (ch.type == 'dm') ? "PM" : (ch.name + '@' + gu.name) )
+            + ">";
 }
 
 mybot.on("messageDelete", function(message)
@@ -291,10 +319,10 @@ mybot.on("message", function(message)
         var messageForMe = false;
         var mentions = message.mentions.users.array();
 
-        for(var i=0; i < mentions.length; i++)
+        for(var i = 0; i < mentions.length; i++)
         {
-            botCommands.foxylogInfo( "--->" + mentions[i].username );
-            wasAsked = mentions[i].id == 216943869424566273;
+            botCommands.foxylogInfo( "---> " + mentions[i].username + "#" + mentions[i].discriminator);
+            wasAsked = (mentions[i].id == 216943869424566273);
             messageForMe = (mentions[i].id == 182039820879659008) && (message.author.id != 216943869424566273);
         }
 
@@ -399,7 +427,7 @@ mybot.on("message", function(message)
             {
                 if(message.channel.id == 216229325484064768)//"beep-boop", "fun" 218194030662647809
                 {
-                    if(message.author.id==216688100032643072)//Horikawa Botane
+                    if(message.author.id == 216688100032643072)//Horikawa Botane
                     {
                         if(msgLowTrimmed.indexOf("is it porn?") != -1)
                         {
