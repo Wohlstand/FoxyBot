@@ -9,7 +9,7 @@ var nodemailer  = require('nodemailer');
 var YandexTranslator = require('yandex.translate');
 var mysql       = require('mysql');
 
-var foxyBotVer  = "FoxyBot v1.4.1";
+var foxyBotVer  = "FoxyBot v1.4.2";
 
 var winston = require('winston');
 
@@ -404,6 +404,32 @@ var say = function(bot, message, args)
     {
         var attachm = attachments[i];
         chan.sendMessage(args).catch(msgSendError);
+        chan.sendFile(attachm.url, attachm.filename).catch(msgSendError);
+    }
+
+    if(attachments.length==0)
+        message.delete();
+
+    sayLogArr.push([authorname, args]);
+    if(sayLogArr.length > 5)
+        sayLogArr.shift();
+}
+
+var sayTTS = function(bot, message, args)
+{
+    var chan = message.channel;
+    var attachments = message.attachments.array();
+    var authorname  = message.author.username;
+
+    if(attachments.length == 0)
+    {
+        chan.sendMessage(args, {"tts" : true}).catch(msgSendError);
+    }
+    else
+    for(var i=0; i < attachments.length; i++)
+    {
+        var attachm = attachments[i];
+        chan.sendMessage(args, {"tts" : true}).catch(msgSendError);
         chan.sendFile(attachm.url, attachm.filename).catch(msgSendError);
     }
 
@@ -1255,6 +1281,7 @@ var registerCommands = function()
     addSynonimOf("makeme", "give");
 
     addCMD(["say",      say,              "I'll say some instead you! (attachments also supported!)\n__*Syntax:*__ say <any your text>"]);
+    addCMD(["saytts",   sayTTS,           "I'll help to pronuncate you some!\n__*Syntax:*__ saytts <any your text>"]);
     addCMD(["whosaid",  sayLog,           ":spy: Shsh! I'll leak you secret - who asked me to say (5 last messages)\n"]);
     addCMD(["setgame",  setPlayingGame,   "I'll play any game you suggesting me!\n__*Syntax:*__ setgame <any your text>\n\n**NOTE:** Only permited users can use this command!"]);
     addCMD(["remind",   sayDelayd,        ":information_desk_person: I'll remeber a thing you request me!\n__*Syntax:*__ remind <any your text> after <time> <seconds, minutes, hours>\n", [], true]);
