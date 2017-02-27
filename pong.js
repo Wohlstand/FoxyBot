@@ -215,7 +215,10 @@ function getAuthorStr(message)
     var gu = message.guild;
 
     return "[" +  (z.bot ? "bot" : "user") + "] "
-            + (message.member.nickname == null ? z.username : message.member.nickname)
+            + ( (ch.type == 'dm') ?
+                       z.username
+                    : (message.member.nickname == null ? z.username : message.member.nickname)
+              )
             + " <@" + z.username + "#" + z.discriminator + ", "
             + ( (ch.type == 'dm') ? "PM" : (ch.name + '@' + gu.name) )
             + ">";

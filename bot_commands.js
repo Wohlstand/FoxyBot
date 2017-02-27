@@ -714,12 +714,14 @@ var initRemindWatcher = function(bot)
                     //foxylogInfo('The solution is: ', results[0].solution);
                     for(var i = 0; i < results.length; i++)
                     {
+                        /*
                         var guild = BotPtr.guilds.get(results[i].guild_id);
                         if(guild == undefined)
                         {
                             foxylogInfo("Error happen! No guild with ID " + results[i].guild_id + "!");
-                        } else {
-                            var channel = guild.channels.get(results[i].channel_id);
+                        } else { */
+                            //var channel = guild.channels.get(results[i].channel_id);
+                            var channel = BotPtr.channels.get(results[i].channel_id);
                             if(channel == undefined)
                                 foxylogInfo("Error happen! No channel with ID " + results[i].channel_id + "!");
                             else
@@ -727,7 +729,7 @@ var initRemindWatcher = function(bot)
                                 foxylogInfo("Foxy's remind: " + results[i].message);
                                 channel.sendMessage(results[i].message, msgSendError);
                             }
-                        }
+                        /*}*/
                     }
 
                     mydb.query("DELETE FROM foxy_reminds WHERE dest_date <= NOW();",
@@ -769,8 +771,8 @@ var sayDelayd = function(bot, message, args)
         return;
 
     var some = args.slice(0, index).trim();
-    var guild_id = message.channel.guild.id;
-    var chan_id = message.channel.id;
+    var guild_id = (message.channel.type == 'dm') ? 0 : message.channel.guild.id;
+    var chan_id  = message.channel.id;
     var waitTime = mydb.escape(timeInt/1000);
     //foxylogInfo("Remind: Wait " + (timeInt/1000) + " vs " +  waitTime + " seconds!");
     var insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
@@ -811,9 +813,9 @@ var sayDelaydME = function(bot, message, args)
         return;
 
     var some = "<@" + message.author.id + ">, " + args.slice(0, index).trim();
-    var guild_id = message.channel.guild.id;
-    var chan_id = message.channel.id;
-    var waitTime = mydb.escape(timeInt/1000);
+    var guild_id    = (message.channel.type == 'dm') ? 0 : message.channel.guild.id;
+    var chan_id     = message.channel.id;
+    var waitTime    = mydb.escape(timeInt/1000);
     var insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
                         "values ((NOW() + INTERVAL " + waitTime + " SECOND), " +
                         mydb.escape(some.toString()) + ", " +
