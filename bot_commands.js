@@ -9,7 +9,9 @@ var nodemailer  = require('nodemailer');
 var YandexTranslator = require('yandex.translate');
 var mysql       = require('mysql');
 
-var foxyBotVer  = "FoxyBot v1.4.3";
+var foxyBotPackage = require("./package.json");
+
+var foxyBotVer  = foxyBotPackage.name + " v" + foxyBotPackage.version;
 
 var winston = require('winston');
 
@@ -1097,14 +1099,14 @@ var upTimeBot = function(bot, message, args)
 
 var aboutBot = function(bot, message, args)
 {
-    var stats1 = fs.statSync("pong.js");
+    var stats1 = fs.statSync("foxy.js");
     var stats2 = fs.statSync("bot_commands.js");
 
-    var msgtext = "**"+foxyBotVer+"**\nCreated by <@182039820879659008>, built on the Node.JS\n";
+    var msgtext = "**" + foxyBotVer + "**\nCreated by <@182039820879659008>, built on the Node.JS\n";
     msgtext += getBotUptime() + "\n";
     msgtext += getLocalTime() + "\n";
     msgtext += "\n";
-    msgtext += "**Kernel** __*(pong.js)*__ - updated " + stats1["mtime"] + "\n";
+    msgtext += "**Kernel** __*(foxy.js)*__ - updated " + stats1["mtime"] + "\n";
     msgtext += "**Functions** __*(bot_commands.js)*__ - updated " + stats2["mtime"] + "\n";
     msgtext += "Totally I know **" + Cmds.length + "** commands.\n"
     msgtext += "Unique are **" + CmdsREAL.length + "** commands.\n"
