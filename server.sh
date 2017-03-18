@@ -5,6 +5,7 @@ whoami
 BAK=$PWD
 cd /home/vitaly/_Bots/FoxyBotJrDiscord
 
-/usr/bin/node ./pong.js
+/usr/bin/node ./foxy.js
 
 cd $BAK
+

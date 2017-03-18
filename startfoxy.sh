@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $(screen -ls|grep foxybot) == "" ]]
 then
-    screen -L -dmS foxybot node pong.js
+    screen -L -dmS foxybot node foxy.js
     echo "Bot has been started!"
 else
     echo "Bot already running!"
