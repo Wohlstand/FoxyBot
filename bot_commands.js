@@ -9,7 +9,7 @@ var nodemailer  = require('nodemailer');
 var YandexTranslator = require('yandex.translate');
 var mysql       = require('mysql');
 
-var foxyBotVer  = "FoxyBot v1.4.2";
+var foxyBotVer  = "FoxyBot v1.4.3";
 
 var winston = require('winston');
 
@@ -153,12 +153,8 @@ function getJSON(options, onResult)
     req.end();
 };
 
-var botStartedAt = new Date().getTime();
-function getBotUptime()
+function secondsToTimeDate(time)
 {
-    var end = new Date().getTime();
-    var time = (end - botStartedAt)/1000;
-
     var days    = parseInt( time/86400, 10);
     var hours   = parseInt((time/3600)%24, 10);
     var minutes = parseInt((time/60)%60, 10);
@@ -166,10 +162,20 @@ function getBotUptime()
 
     minutes = minutes < 10 ? "0" + minutes : minutes;
     seconds = seconds < 10 ? "0" + seconds : seconds;
-    return "**I'm working**: " +
-               (days != 0 ? days + " days, " : "" ) +
-               (hours != 0 ? hours + " hours, " : "" ) +
-               (minutes != "00" ? minutes + " minutes and " : "" ) + seconds + " seconds!";
+    return  (days != 0 ? days + " days, " : "" ) +
+            (hours != 0 ? hours + " hours, " : "" ) +
+            (minutes != "00" ? minutes + " minutes and " : "" ) +
+            (seconds != "00" ? seconds + " seconds!" : "");
+}
+
+
+var botStartedAt = new Date().getTime();
+function getBotUptime()
+{
+    var end = new Date().getTime();
+    var time = (end - botStartedAt)/1000;
+
+    return "**I'm working**: " + secondsToTimeDate(time);
 }
 
 function getLocalTime()
@@ -218,7 +224,7 @@ function getRandFile(bot, message, fromURL)
     var options = {
         host: 'wohlsoft.ru',
         port: 80,
-        path: '/images/foxybot/'+fromURL,
+        path: '/images/foxybot/' + fromURL,
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -651,41 +657,58 @@ var translate = function(bot, message, args)
 function getMsFromMsg(bot, message, args)
 {
     var time = args;
-    var timeInt;
-    var tsec = time.indexOf(" second");
-    var tmin = time.indexOf(" minute");
-    var thrs = time.indexOf(" hour");
-    if( tsec != -1 )
+    var timeInt = 0;
+    var begin = 0;
+    var reg_sec = /([0-9]+)\s*(?:sec(?:ond)?[s]?)/gi;
+    var reg_min = /([0-9]+)\s*(?:min(?:ute)?[s]?)/gi;
+    var reg_hrs = /([0-9]+)\s*(?:hour[s]?)/gi;
+    var reg_day = /([0-9]*)\s*day[s]?/gi;
+    var reg_week = /([0-9]*)\s*week[s]?/gi;
+
+    var match = reg_sec.exec(time);
+    while(match != null)
     {
-        timeInt = parseInt(time.slice(0, tsec));
-        if(timeInt==NaN)
-        {
-            message.reply("Realy? Tell me time again please!", msgSendError);
-            return -1;
-        }
-        timeInt *= 1000;
+        timeInt += parseInt(match[0]) * 1000;
+        match = reg_sec.exec(time);
     }
-    else
-    if( tmin != -1 )
+
+    match = reg_min.exec(time);
+    while(match != null)
     {
-        timeInt = parseInt(time.slice(0, tmin));
-        if(timeInt==NaN)
-        {
-            message.reply("Realy? Tell me time again please!", msgSendError);
-            return -1;
-        }
-        timeInt *= 1000*60;
-    } else
-    if( thrs != -1 )
+        timeInt += parseInt(match[0]) * 1000 * 60;
+        match = reg_min.exec(time);
+    }
+
+    match = reg_hrs.exec(time);
+    while(match != null)
     {
-        timeInt = parseInt(time.slice(0, thrs));
-        if(timeInt==NaN)
-        {
-            message.reply("Realy? Tell me time again please!", msgSendError);
-            return -1;
-        }
-        timeInt *= 1000*60*60;
-    } else {
+        timeInt += parseInt(match[0]) * 1000 * 60 * 60;
+        match = reg_hrs.exec(time);
+    }
+
+    match = reg_day.exec(time);
+    while(match != null)
+    {
+        timeInt += parseInt(match[0]) * 1000 * 60 * 60 * 24;
+        match = reg_day.exec(time);
+    }
+
+    match = reg_week.exec(time);
+    while(match != null)
+    {
+        timeInt += parseInt(match[0]) * 1000 * 60 * 60 * 24 * 7;
+        match = reg_week.exec(time);
+    }
+
+
+    if(timeInt==NaN)
+    {
+        message.reply("Realy? Tell me time again please!", msgSendError);
+        return -1;
+    }
+
+    if(timeInt == 0)
+    {
         message.reply("I don't know which time unit you meant?!", msgSendError);
         return -1;
     }
@@ -753,7 +776,7 @@ var initRemindWatcher = function(bot)
             foxylogInfo("Error happen! " + e.name + ":" + e.message);
         }
 
-    }, 10000);
+    }, 60000); //Check the database every minute
 }
 
 var sayDelayd = function(bot, message, args)
@@ -765,10 +788,16 @@ var sayDelayd = function(bot, message, args)
         return;
     }
 
-    var timeInt = getMsFromMsg(bot, message, args.slice(index+6));
+    var timeInt = getMsFromMsg(bot, message, args.slice(index + 6));
 
-    if(timeInt==-1)
+    if(timeInt == -1)
         return;
+
+    if(timeInt == NaN)
+    {
+        message.reply("You pissed me off! I'v got NaN...", msgSendError);
+        return;
+    }
 
     var some = args.slice(0, index).trim();
     var guild_id = (message.channel.type == 'dm') ? 0 : message.channel.guild.id;
@@ -795,7 +824,7 @@ var sayDelayd = function(bot, message, args)
     // {
     //     message.channel.sendMessage(some, msgSendError);
     // }, timeInt);
-    message.reply("I will say after " + args.slice(index+6) + "!", msgSendError);
+    message.reply("I will say after " + secondsToTimeDate(timeInt/1000) + "!", msgSendError);
 }
 
 var sayDelaydME = function(bot, message, args)
@@ -811,6 +840,12 @@ var sayDelaydME = function(bot, message, args)
 
     if(timeInt==-1)
         return;
+
+    if(timeInt == NaN)
+    {
+        message.reply("You pissed me off! I'v got NaN...", msgSendError);
+        return;
+    }
 
     var some = "<@" + message.author.id + ">, " + args.slice(0, index).trim();
     var guild_id    = (message.channel.type == 'dm') ? 0 : message.channel.guild.id;
@@ -835,7 +870,7 @@ var sayDelaydME = function(bot, message, args)
     // {
     //     message.reply(some, msgSendError);
     // }, timeInt);
-    message.reply( "I will remind you after " + args.slice(index+6) + "!", msgSendError);
+    message.reply( "I will remind you after " + secondsToTimeDate(timeInt/1000) + "!", msgSendError);
 }
 
 
