@@ -97,6 +97,8 @@ process.on('SIGHUP', function()
     process.exit();
 });
 
+var greetingSent = false;
+
 mybot.on("ready", () =>
     {
         botCommands.foxylogInfo('set status...');
@@ -107,6 +109,12 @@ mybot.on("ready", () =>
         //mybot.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
         //Start Remind watcher!
         botCommands.initRemindWatcher(mybot);
+        if(!greetingSent)
+        {
+            //Send greeting message once on startup
+            botCommands.postGreeting(mybot);
+            greetingSent = true;
+        }
         console.log('DONE!\n==========================================================\n\n');
     }
 );
@@ -145,7 +153,7 @@ mybot.on("presenceUpdate", (oldUser, newUser) =>
 
     var nickOfBot = newUser.nickname;
     var newStatus = newUser.presence.status;
-    var chan = mybot.channels.get("216229325484064768");//boopZone
+    var chan = mybot.channels.get(botCommands.botConfig.defaultChannel[0]);//boopZone
     //console.log('=> User ' + newUser.nickname + ' was changed to ' + newStatus + '\n');
 
     switch(newUser.id)
@@ -428,7 +436,7 @@ mybot.on("message", function(message)
 
             if(allowWrite)
             {
-                if(message.channel.id == 216229325484064768)//"beep-boop", "fun" 218194030662647809
+                if(botCommands.botConfig.defaultChannel.includes(message.channel.id))//"beep-boop", "fun" 218194030662647809
                 {
                     if(message.author.id == 216688100032643072)//Horikawa Botane
                     {

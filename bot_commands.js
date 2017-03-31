@@ -1,15 +1,13 @@
 
-var http  = require("http");
-var https = require("https");
-var Datastore = require('nedb');
-
-var fs          = require('fs');
-
-var nodemailer  = require('nodemailer');
+var http             = require("http");
+var https            = require("https");
+var fs               = require('fs');
+var nodemailer       = require('nodemailer');
 var YandexTranslator = require('yandex.translate');
-var mysql       = require('mysql');
+var mysql            = require('mysql');
 
-var foxyBotPackage = require("./package.json");
+var foxyBotPackage  = require("./package.json");
+var responses       = require("./responses.json");
 
 var foxyBotVer  = foxyBotPackage.name + " v" + foxyBotPackage.version;
 
@@ -245,6 +243,31 @@ function getRandFile(bot, message, fromURL)
     });
 }
 
+function getArrayRandom(array)
+{
+	if  (array == null)
+		return {index:null, value:null}
+	else
+	{
+		var id = Math.floor(Math.random() * (array.length));
+		var val = array[id];
+		return {index:id, value:val}
+	}
+}
+
+function getDefaultChannelForGuild(bot, message)
+{
+    var channel = message.channel;
+    botConfig.defaultChannel.forEach(function(chanID, i, arr)
+    {
+        foxylogInfo("Trying to look for channel " + chanID);
+        var chan = bot.channels.get(chanID);
+        if(chan.guild.id == message.guild.id)
+            channel = chan;
+    });
+    return channel;
+}
+
 /***********************************************************
 *                    API FUNCTIONS                         *
 ***********************************************************/
@@ -300,6 +323,14 @@ var fart = function(bot, message, args)
     if((message.channel.id == "215662579161235456") && (args == "debuglog"))
     {
         message.channel.sendFile("./foxybot-debug.log", "foxybot-debug.log").catch(msgSendError);
+        return;
+    }
+
+    var isMyBoss = (message.author.id == botConfig.myboss) || message.member.roles.has(modRoleId);
+    if(isMyBoss && (args.indexOf("viva-systemd") != -1))
+    {
+        message.reply("I'll be back!", msgSendError);
+        bot.setTimeout(function() { process.exit(1); }, 100);
         return;
     }
 
@@ -372,7 +403,7 @@ var makeMe = function(bot, message, args)
         (argsL.indexOf("pennis") != -1) ||
         (argsL.indexOf("cunt") != -1) ||
         (argsL.indexOf("porn") != -1))
-        message.reply("Never, you are stupid pervent! You are worst person I know here!", msgSendError);
+        message.reply("Never, you are stupid pervert! You are worst person I know here!", msgSendError);
 }
 
 var burns = function(bot, message, args)
@@ -395,6 +426,26 @@ var foxFace = function(bot, message, args)
     message.channel.sendMessage("http://wohlsoft.ru/images/foxybot/fox_face.png", msgSendError);
 }
 
+var postGreeting = function(bot)
+{
+    botConfig.defaultChannel.forEach(function(chanID, i, arr)
+    {
+        var chan = bot.channels.get(chanID);
+        chan.sendMessage(getArrayRandom(responses.enter).value, msgSendError);
+    });
+}
+
+var isBeepBoop = function(bot, message, args)
+{
+    var channel = getDefaultChannelForGuild(bot, message);
+    if(channel.id == message.channel.id)
+    {
+        message.reply("No, on this server is no beep-boop channel", msgSendError);
+    } else {
+        message.reply("Yes, on this server is a <#" + channel.id + "> channel", msgSendError);
+    }
+}
+
 
 var sayLogArr = [];
 var say = function(bot, message, args)
@@ -415,7 +466,7 @@ var say = function(bot, message, args)
         chan.sendFile(attachm.url, attachm.filename).catch(msgSendError);
     }
 
-    if(attachments.length==0)
+    if(attachments.length == 0)
         message.delete();
 
     sayLogArr.push([authorname, args]);
@@ -463,10 +514,6 @@ var sayLog = function(bot, message, args)
         message.channel.sendMessage("No sayd phrases :weary:", msgSendError);
     }
 }
-
-
-var votingDb = new Datastore({filename : 'votings', autoload: true});
-var votesDb  = new Datastore({filename : 'votes', autoload: true});
 
 var votingVotings = new Array();
 
@@ -982,7 +1029,6 @@ var imgSOS = function(bot, message, args)
     message.channel.sendFile(__dirname+"/images/SOS.gif").catch(msgSendError);
 }
 
-
 var callBastion = function(bot, message, args)
 {
     message.channel.sendMessage("Hey, bastion, tell something!").catch(msgSendError);
@@ -990,7 +1036,12 @@ var callBastion = function(bot, message, args)
 
 var callBotane = function(bot, message, args)
 {
-    var chan = bot.channels.get("216229325484064768");
+    var chan = getDefaultChannelForGuild(bot, message);
+    if(chan.id == message.channel.id)
+    {
+        message.reply("Don't play with Botane on this server!").catch(msgSendError);
+        return;
+    }
 
     //Check is botane offline
     var Botane = bot.users.get("216688100032643072");
@@ -1002,7 +1053,7 @@ var callBotane = function(bot, message, args)
 
     if(!inListFile("boop_zone.txt", message.channel.id))//"beep-boop"
     {
-        message.channel.sendMessage("Go to <#216229325484064768> to enjoy the show :wink: ").catch(msgSendError);
+        message.channel.sendMessage("Go to <#" + channel.id +"> to enjoy the show :wink: ").catch(msgSendError);
     }
     chan.sendMessage("What is Horikawa?").catch(msgSendError);
 }
@@ -1371,6 +1422,9 @@ var registerCommands = function()
 
     addCMD(["err",      wrongfunction,    "It hurts me..."]);
 
+    addCMD(["isbeepboop",isBeepBoop,      "Check is this server has a beep-boop channel"]);
+    addSynonimOf("isbeepboop","isfun",    "Check is this server has a beep-boop/fun channel");
+
     addCMD(["mytime",   myTime,           "Let's check our watches? :clock: :watch: :stopwatch: :clock1: "]);
     addCMD(["stats",    aboutBot,         "Just my health state"]);
     addSynonimOf("stats", "about",        "Wanna meet me?");
@@ -1441,6 +1495,7 @@ module.exports =
     inListFile:       inListFile,
     sendEmail:        sendEmailF,
     initRemindWatcher:initRemindWatcher,
+    postGreeting:     postGreeting,
     msgSendError:     msgSendError,
     sendErrorMsg:     sendErrorMsg,
     botConfig:        botConfig,
