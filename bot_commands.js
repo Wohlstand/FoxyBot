@@ -128,31 +128,6 @@ function msgSendError(error, message)
     }
 }
 
-function getJSON(options, onResult)
-{
-    //foxylogInfo("rest::getJSON");
-    var prot = options.port == 443 ? https : http;
-    var req = prot.request(options,
-    function(res)
-    {
-        var output = '';
-        //foxylogInfo(options.host + ':' + res.statusCode);
-        res.setEncoding('utf8');
-
-        res.on('data', function (chunk) {
-            output += chunk;
-        });
-
-        res.on('end', function() {
-            var obj = JSON.parse(output);
-            onResult(res.statusCode, obj);
-        });
-    }).on('error', (err)=> {
-        //res.send('error: ' + err.message);
-    });
-    req.end();
-};
-
 function secondsToTimeDate(time)
 {
     var days    = parseInt( time/86400, 10);
@@ -219,30 +194,6 @@ function inListFile(file, userID)
     return false;
 }
 
-function getRandFile(bot, message, fromURL)
-{
-    var options = {
-        host: 'wohlsoft.ru',
-        port: 80,
-        path: '/images/foxybot/' + fromURL,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-    getJSON(options,
-    function(statusCode, result)
-    {
-        try{
-            var randfox = eval(result);
-            message.channel.sendMessage(randfox.file, msgSendError);
-        }catch(e){
-            sendErrorMsg(bot, message.channel, e);
-            message.channel.sendMessage("```\nonResult: (" + statusCode + ")" + JSON.stringify(result) + "\n```", msgSendError);
-        }
-    });
-}
-
 function getArrayRandom(array)
 {
 	if  (array == null)
@@ -275,155 +226,6 @@ function getDefaultChannelForGuild(bot, message)
 var test = function(bot, message, args)
 {
     message.reply("Test works!");
-}
-
-var fox = function(bot, message, args)
-{
-    getRandFile(bot, message, "randomfox.php");
-}
-
-var boxy = function(bot, message, args)
-{
-    getRandFile(bot, message, "randombox.php");
-}
-
-var boat = function(bot, message, args)
-{
-    getRandFile(bot, message, "randomboat.php");
-}
-
-var ship = function(bot, message, args)
-{
-    getRandFile(bot, message, "randomship.php");
-}
-
-var flower = function(bot, message, args)
-{
-    getRandFile(bot, message, "randomflower.php");
-}
-
-var burn = function(bot, message, args)
-{
-    getRandFile(bot, message, "randomburn.php");
-}
-
-var money = function(bot, message, args)
-{
-    getRandFile(bot, message, "randomoney.php");
-}
-
-var lego = function(bot, message, args)
-{
-    getRandFile(bot, message, "randomlego.php");
-}
-
-var fart = function(bot, message, args)
-{
-    /* Inside moderator channel, take log file */
-    if((message.channel.id == "215662579161235456") && (args == "debuglog"))
-    {
-        message.channel.sendFile("./foxybot-debug.log", "foxybot-debug.log").catch(msgSendError);
-        return;
-    }
-
-    var isMyBoss = (message.author.id == botConfig.myboss) || message.member.roles.has(modRoleId);
-    if(isMyBoss && (args.indexOf("viva-systemd") != -1))
-    {
-        message.reply("I'll be back!", msgSendError);
-        bot.setTimeout(function() { process.exit(1); }, 100);
-        return;
-    }
-
-    getRandFile(bot, message, "randomfart.php");
-}
-
-var smile = function(bot, message, args)
-{
-    getRandFile(bot, message, "randomsmile.php");
-}
-
-var makeMe = function(bot, message, args)
-{
-    var argsL = args.toLowerCase();
-
-    if(args.trim() == "")
-        message.reply("Sorry, I can't: you wasn't told what I must do!", msgSendError);
-
-    if(argsL.indexOf("ship")!=-1)
-        ship(bot, message, args);
-
-    if(argsL.indexOf("boat")!=-1)
-        boat(bot, message, args);
-
-    if(argsL.indexOf("fire")!=-1)
-        burn(bot, message, args);
-
-    if(argsL.indexOf("fox")!=-1)
-        fox(bot, message, args);
-
-    if(argsL.indexOf("lego")!=-1)
-        lego(bot, message, args);
-
-    if(argsL.indexOf("box")!=-1)
-        boxy(bot, message, args);
-
-    if(argsL.indexOf("flower")!=-1)
-        flower(bot, message, args);
-
-    if((argsL.indexOf("money") != -1) || (argsL.indexOf("coin") != -1) || (argsL.indexOf("cash") != -1))
-        money(bot, message, args);
-
-    if(argsL.indexOf("elephant")!=-1)
-        message.channel.sendMessage(":elephant:", msgSendError);
-
-    if((argsL.indexOf("police") != -1) || (argsL.indexOf("cop") != -1))
-        message.channel.sendMessage(":cop:", msgSendError);
-
-    if((argsL.indexOf("butt") != -1) || (argsL.indexOf("ass") != -1))
-        message.channel.sendMessage("`(_|_)`", msgSendError);
-
-    if( (argsL.indexOf("fart") != -1) ||
-        (argsL.indexOf("gas") != -1)  ||
-        (argsL.indexOf("smoke") != -1) ||
-        (argsL.indexOf("stink") != -1) ||
-        (argsL.indexOf("smell") != -1) )
-        fart(bot, message, args);
-
-    if( (argsL.indexOf("crap") != -1) ||
-        (argsL.indexOf("dung") != -1) ||
-        (argsL.indexOf("shit") != -1) ||
-        (argsL.indexOf("poop") != -1) )
-        message.channel.sendMessage(":poop:", msgSendError);
-
-    if( (argsL.indexOf("sex") != -1) ||
-        (argsL.indexOf("fuck") != -1) ||
-        (argsL.indexOf("dick") != -1) ||
-        (argsL.indexOf("vagina") != -1) ||
-        (argsL.indexOf("penis") != -1) ||
-        (argsL.indexOf("pennis") != -1) ||
-        (argsL.indexOf("cunt") != -1) ||
-        (argsL.indexOf("porn") != -1))
-        message.reply("Never, you are stupid pervert! You are worst person I know here!", msgSendError);
-}
-
-var burns = function(bot, message, args)
-{
-    message.channel.sendMessage("https://www.youtube.com/watch?v=gSzgNRzpjo8", msgSendError);
-}
-
-var spit = function(bot, message, args)
-{
-    if(args.indexOf("hot fire")!=-1)
-    {
-        burn(bot, message, args);
-    } else {
-        message.channel.sendMessage("https://www.youtube.com/results?search_query=" + encodeURIComponent("Spit " + args), msgSendError);
-    }
-}
-
-var foxFace = function(bot, message, args)
-{
-    message.channel.sendMessage("http://wohlsoft.ru/images/foxybot/fox_face.png", msgSendError);
 }
 
 var postGreeting = function(bot)
@@ -1008,26 +810,10 @@ var woof = function(bot, message, args)
     message.channel.sendMessage(oneVideo).catch(msgSendError);
 }
 
-var butts = function(bot, message, args)
-{
-    message.delete();
-    message.channel.sendMessage("`(__|__)`").catch(msgSendError);
-}
 
-var dance = function(bot, message, args)
-{
-    message.channel.sendFile(__dirname+"/images/dance.gif").catch(msgSendError);
-}
 
-var drill = function(bot, message, args)
-{
-    message.channel.sendFile(__dirname+"/images/drill.gif").catch(msgSendError);
-}
 
-var imgSOS = function(bot, message, args)
-{
-    message.channel.sendFile(__dirname+"/images/SOS.gif").catch(msgSendError);
-}
+
 
 var callBastion = function(bot, message, args)
 {
@@ -1117,25 +903,6 @@ var trollTimer = function(bot, message, args)
     setTimeout(function unbusy(){ trollTimerIsBusy[message.author.id]=false; }, 120000);
 }
 
-var testUrl = function(bot, message, args)
-{
-    message.channel.sendMessage("http://wohlsoft.ru").catch(msgSendError);
-}
-
-var lab = function(bot, message, args)
-{
-    message.channel.sendMessage("http://wohlsoft.ru/docs/_laboratory/").catch(msgSendError);
-}
-
-var repo = function(bot, message, args)
-{
-    message.channel.sendMessage("https://github.com/WohlSoft/PGE-Project").catch(msgSendError);
-}
-
-var markup = function(bot, message, args)
-{
-    message.channel.sendMessage("https://support.discordapp.com/hc/en-us/articles/210298617").catch(msgSendError);
-}
 
 
 var myTime = function(bot, message, args)
@@ -1164,6 +931,59 @@ var aboutBot = function(bot, message, args)
     msgtext += "\n";
     message.channel.sendMessage(msgtext).catch(msgSendError);
 }
+
+var sendEmailFile = function(message, args, attachment, doReply)
+{
+    var extraFiles = [];
+    var attachments = message.attachments.array();
+
+    for(var i = 0; i < attachments.length; i++)
+    {
+        var attachm = attachments[i];
+        extraFiles[i] = {
+                           filename: attachm.filename,
+                           path: attachm.url
+                        };
+    }
+
+    extraFiles[i] = {
+                   filename: attachment.name,
+                   path: attachment.path
+                };
+
+    // create reusable transporter object using the default SMTP transport
+    var transporter = nodemailer.createTransport(smtpMailLoginInfo);
+
+    // setup e-mail data with unicode symbols
+    var mailOptions =
+    {
+        from: smtpMailFrom, // sender address
+        //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
+        to: smtpMailTo, // list of receivers
+        subject: 'Message from ' + (message.author.bot ? "bot" : "user")
+                  + " " + (message.member.nickname == null ? message.author.username : message.member.nickname)
+                  + ' (@' + message.author.username + "#" + message.author.discriminator + ")"
+                  +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
+        text: args, //plaintext body
+        //html: '<b>Hello world!</b>' // html body
+        attachments: extraFiles
+    };
+
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, function(error, info)
+    {
+        if(doReply)
+        {
+            if(error)
+            {
+                message.channel.sendMessage('Failed to send mail: ' + error).catch(msgSendError);
+                return;
+            }
+            message.channel.sendMessage('Message sent: ' + info.response).catch(msgSendError);
+        }
+    });
+}
+
 
 var sendEmailF = function(message, args, doReply)
 {
@@ -1230,25 +1050,50 @@ var sendEmail = function(bot, message, args)
     sendEmailF(message, args, true);
 }
 
+var commandAllowedOnServer = function(Cmd, gd_ext)
+{
+    if(typeof(Cmd[5]) !== 'undefined')
+    {
+        var found = false;
+        Cmd[5].forEach(function(gd)
+        {
+            console.log("Compare " + gd_ext + " and " + gd + "...");
+            if(gd_ext == gd)
+                found = true;
+        });
+        if(!found)
+            return false;
+    }
+    return true;
+}
+
+// Command structure: name[0], function(bot,msg,args)[1], help[2], synonims[3], isUseful[4], limitOnGuilds[5]
 var listCmds = function(bot, message, args)
 {
     var commands = "**Available commands:**\n";
-    for(var i=0; i<Cmds.length; i++)
+    var commandsCount = 0;
+    for(var i=0; i < Cmds.length; i++)
     {
-        if(i>0)
+        if(!commandAllowedOnServer(Cmds[i], message.guild.id))
+            continue;
+        if(i > 0)
             commands += ", ";
         commands += Cmds[i][0];
+        commandsCount++;
     }
     commands += "\n\nTotally I know **" + Cmds.length + "** commands."
     commands += "\nUnique are **" + CmdsREAL.length + "** commands."
+    commands += "\nAvailable on this chat server **" + commandsCount + "** commands."
     commands += "\n";
     var usefulCount = 0;
     var usefulCommands = "";
-    for( k in CmdsREAL)
+    for(k in CmdsREAL)
     {
-        if(typeof(CmdsREAL[k][4])!=='undefined')
+        if(!commandAllowedOnServer(CmdsREAL[k], message.guild.id))
+            continue;
+        if(typeof(CmdsREAL[k][4]) !== 'undefined')
         {
-            if(usefulCount>0)
+            if(usefulCount > 0)
                 usefulCommands += ", ";
             usefulCount++;
             usefulCommands += CmdsREAL[k][0];
@@ -1268,17 +1113,19 @@ var cmdHelp = function(bot, message, args)
         message.reply("Sorry, I can't describe you empty space! Please specify command you wanna learn!").catch(msgSendError);
         return;
     }
-    for(var i=0; i<Cmds.length; i++)
+    for(var i=0; i < Cmds.length; i++)
     {
-        if(Cmds[i][0]==args)
+        if(Cmds[i][0] == args)
         {
+            if(!commandAllowedOnServer(Cmds[i], message.guild.id))
+                continue;
             var helpCmd = "\n**" + Cmds[i][0] + "**\n" + Cmds[i][2] + "\n";
-            if(typeof(Cmds[i][3])!=='undefined')
+            if(typeof(Cmds[i][3]) !== 'undefined')
             {
                 helpCmd += "\n**Aliases**: "
                 for(var j=0; j<Cmds[i][3].length; j++)
                 {
-                    if(j>0) helpCmd += ", ";
+                    if(j > 0) helpCmd += ", ";
                     helpCmd += Cmds[i][3][j];
                 }
             }
@@ -1305,15 +1152,17 @@ function addSynonimOf(oldcmd, name, customHelp)
     if(typeof(customHelp)==='undefined')
         customHelp = "";
 
-    for(var i=0; i<CmdsREAL.length; i++)
+    for(var i=0; i < CmdsREAL.length; i++)
     {
         if(CmdsREAL[i][0]==oldcmd)
         {
             var newI = Cmds.length;
             Cmds[newI] = CmdsREAL[i].slice();
             Cmds[newI][0] = name;
-            if(customHelp!="")
+
+            if(customHelp != "")
                 Cmds[newI][2] = customHelp;
+
             if(typeof(CmdsREAL[i][3])==='undefined')
             {
                 CmdsREAL[i][3] = [];
@@ -1328,6 +1177,8 @@ function addSynonimOf(oldcmd, name, customHelp)
         }
     }
 }
+
+// Command structure: name[0], function(bot,msg,args)[1], help[2], synonims[3], isUseful[4], limitOnGuilds[5]
 
 var registerCommands = function()
 {
@@ -1344,31 +1195,6 @@ var registerCommands = function()
     addCMD(["search",   lunaSearch,       "Find something in the PGE-Wiki\n__*Syntax:*__ search <search query>", [], true]);
     addCMD(["find",     findInGoogle,     "Find something in Google\n__*Syntax:*__ find <your question>", [], true]);
     addCMD(["findwiki", findInWikipedia,  "Find something in Wikipedia\n__*Syntax:*__ findwiki <your question>", [], true]);
-
-    addCMD(["fox",      fox,              "Are you fan of the foxes :fox:? Just type \"/foxy fox\"!"]);
-    addSynonimOf("fox", "foxy");
-    addSynonimOf("fox", "🦊");
-    addCMD(["boxy",     boxy,             "I wish put something into it..."]);
-    addSynonimOf("boxy", "box");
-    addSynonimOf("boxy", "🗃");
-    addCMD(["burn",     burn,             "BURN!!!"]);
-    addCMD(["burns",    burns,            "BURN!!!"]);
-    addSynonimOf("burn", "🔥",             "IT'S HOT!!!");
-    addSynonimOf("burn", "fire",          "IT'S HOT!!!");
-    addCMD(["smile",    smile,            "Take a random smile of the PGE Forums"]);
-    addCMD(["boat",     boat,             "Wanna boat? I'll build it for you!"]);
-    addCMD(["flower",   flower,           "Do you like flowers? I'll give them for you and friends :sunflower:!"]);
-    addCMD(["ship",     ship,             "Seems you really with be a pirate, let's go, captain!"]);
-    addCMD(["makeme",   makeMe,           "What are you wish make? Ship? Boat? Box? Fire?\n\n"+
-                                          "__*Syntax:*__:\n\n"+
-                                          " **/foxy make <any phraze contains any key word(s)>**\n\n" +
-                                          "__*Full list things I can do (available key words):*__\n"+
-                                          "ship, boat, fire, fox, box, flower, money, coin, cash, lego, elephant, police, cop, butt, ass, fart, gas, smoke, stink, smell, crap, dung, shit, poop."]);
-    addSynonimOf("makeme", "make");
-    addSynonimOf("makeme", "create");
-    addSynonimOf("makeme", "build");
-    addSynonimOf("makeme", "produce");
-    addSynonimOf("makeme", "give");
 
     addCMD(["say",      say,              "I'll say some instead you! (attachments also supported!)\n__*Syntax:*__ say <any your text>"]);
     addCMD(["saytts",   sayTTS,           "I'll help to pronuncate you some!\n__*Syntax:*__ saytts <any your text>"]);
@@ -1396,17 +1222,6 @@ var registerCommands = function()
     addSynonimOf("voting", "votes");
     addSynonimOf("voting", "votings");
 
-    addCMD(["spit",     spit,             "I'll spit anything you request!\n__*Syntax:*__ spit <any your text>"]);
-    addCMD(["foxface",  foxFace,          "Wanna my face?"]);
-    addCMD(["dance",    dance,            "Let's dance!!!"]);
-    addCMD(["drill",    drill,            "Wanna drill hole?"]);
-    addCMD(["sos",      imgSOS,           "HELP ME!!!"]);
-
-    addCMD(["fart",     fart,             "Ow.... :poop:"]);
-    addSynonimOf("fart", "farts");
-    addCMD(["butt",     butts,            "You are pervent!"]);
-    addSynonimOf("butt", "butts");
-
     addCMD(["youtube",  youtube,          "Take random youtube video which I know"]);
     addCMD(["meow",     meow,             ":cat:"]);
     addCMD(["woof",     woof,             ":dog:"]);
@@ -1414,11 +1229,6 @@ var registerCommands = function()
     addCMD(["trollbasty", callBastion,    "I'll troll some dumb bot which can speak only idiotic sounds, for you!"]);
     addCMD(["trollbotane", callBotane,    "That bot is very trolling, I'll troll it until it will get offline!\n\n**NOTE:** Working only in the #beep-boop room!"]);
     addCMD(["trolltimer", trollTimer,     "Don't use this command until you inside beep-boop zone!"]);
-
-    addCMD(["testurl",  testUrl,          "Test of URL returning. Just return a WohlSoft site url!"]);
-    addCMD(["lab",      lab,              "Returns PGE Laboratory URL"]);
-    addCMD(["repo",     repo,             "Returns URL to PGE repository on GitHub"]);
-    addCMD(["markup",   markup,           "Returns URL for a Discord markdown guide"]);
 
     addCMD(["err",      wrongfunction,    "It hurts me..."]);
 
@@ -1446,10 +1256,12 @@ var callCommand = function(bot, message, command, args)
     }
 
     var found=false;
-    for(var i=0; i<Cmds.length; i++)
+    for(var i=0; i < Cmds.length; i++)
     {
-        if(Cmds[i][0]==command)
+        if(Cmds[i][0] == command)
         {
+            if(!commandAllowedOnServer(Cmds[i], message.guild.id))
+                continue;
             try{
                 found=true;
                 Cmds[i][1](bot, message, args);
@@ -1494,10 +1306,15 @@ module.exports =
     loginBot:         loginBot,
     inListFile:       inListFile,
     sendEmail:        sendEmailF,
+    sendEmailFile:    sendEmailFile,
     initRemindWatcher:initRemindWatcher,
     postGreeting:     postGreeting,
     msgSendError:     msgSendError,
     sendErrorMsg:     sendErrorMsg,
     botConfig:        botConfig,
-    foxylogInfo:      foxylogInfo
+    foxylogInfo:      foxylogInfo,
+    addCMD:           addCMD,
+    addSynonimOf:     addSynonimOf
 };
+
+

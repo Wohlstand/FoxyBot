@@ -44,7 +44,38 @@ console.log("==========================================================");
 console.log("           FoxyBotJr by Wohlstand          ");
 console.log("==========================================================");
 
+var foxyPlugins = [];
+
+var loadPlugins = function(dir)
+{
+    var filesystem = require("fs");
+    var results = [];
+
+    filesystem.readdirSync(dir).forEach(function(file)
+    {
+        file = dir + '/' + file;
+        var stat = filesystem.statSync(file);
+        if (stat && stat.isDirectory()) {}
+        else if(file.endsWith(".js"))
+        {
+            botCommands.foxylogInfo('Loading plugin: ' + file);
+            try
+            {
+                var plugin = require(file.substring(0, file.length-3));
+                plugin.registerCommands(botCommands);
+                foxyPlugins.push(plugin);
+            }
+            catch(e)
+            {
+                botCommands.foxylogInfo("Failed to load plugin " + file + " because of exception: " + e.name + ":\n\n" + e.message);
+            }
+        }
+    });
+    return results;
+};
+
 botCommands.registerCommands();
+loadPlugins("./plugins");
 
 function statusError(error)
 {
@@ -64,14 +95,14 @@ function nickError(error)
 
 function sleep(milliseconds)
 {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++)
-  {
-    if ((new Date().getTime() - start) > milliseconds)
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++)
     {
-        break;
+        if ((new Date().getTime() - start) > milliseconds)
+        {
+            break;
+        }
     }
-  }
 }
 
 process.on('SIGINT', function()
@@ -100,28 +131,36 @@ process.on('SIGHUP', function()
 var greetingSent = false;
 
 mybot.on("ready", () =>
+{
+    botCommands.foxylogInfo('set status...');
+    //mybot.setStatusOnline();
+    mybot.user.setStatus("online");
+    mybot.user.setGame("/foxy cmd");
+    //console.log('set nick...');
+    //mybot.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
+    //Start Remind watcher!
+    botCommands.initRemindWatcher(mybot);
+    if(!greetingSent)
     {
-        botCommands.foxylogInfo('set status...');
-        //mybot.setStatusOnline();
-        mybot.user.setStatus("online");
-        mybot.user.setGame("/foxy cmd");
-        //console.log('set nick...');
-        //mybot.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
-        //Start Remind watcher!
-        botCommands.initRemindWatcher(mybot);
-        if(!greetingSent)
-        {
-            //Send greeting message once on startup
-            botCommands.postGreeting(mybot);
-            greetingSent = true;
-        }
-        console.log('DONE!\n==========================================================\n\n');
+        //Send greeting message once on startup
+        botCommands.postGreeting(mybot);
+        greetingSent = true;
     }
-);
+    console.log('DONE!\n==========================================================\n\n');
+});
 
 mybot.on('reconnecting', () =>
 {
-        botCommands.foxylogInfo('Connection lost, trying to reconnect...');
+    botCommands.foxylogInfo('Connection lost, trying to reconnect...');
+});
+
+mybot.on("guildMemberAdd", (newUser) =>
+{
+    foxyPlugins.forEach(function(plugin)
+    {
+        if(typeof(plugin.guildMemberAdd) === "function")
+            plugin.guildMemberAdd(mybot, newUser);
+    });
 });
 
 mybot.on("guildMemberUpdate", (oldUser, newUser) =>
@@ -200,22 +239,6 @@ mybot.on("presenceUpdate", (oldUser, newUser) =>
     }
 });
 
-
-String.prototype.regexIndexOf = function(regex, startpos) {
-    var indexOf = this.substring(startpos || 0).search(regex);
-    return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
-}
-
-function hasReg(msg, word)
-{
-    return msg.regexIndexOf(word) != -1;
-}
-
-function hasStr(msg, word)
-{
-    return msg.indexOf(word) != -1;
-}
-
 function getAuthorStr(message)
 {
     var z  = message.author;
@@ -290,7 +313,7 @@ mybot.on("message", function(message)
         botCommands.foxylogInfo("Cmd received: "+botCmd);
 
         var firstSpace = botCmd.indexOf(' ');
-        if(firstSpace==-1)
+        if(firstSpace == -1)
             firstSpace = botCmd.indexOf('\n');
         var botCommand = "";
         var botArgs = "";
@@ -303,160 +326,16 @@ mybot.on("message", function(message)
         }
         else
             botCommand = botCmd.trim();
-
         botCommands.callCommand(mybot, message, botCommand.toLowerCase(), botArgs);
     }
     else
-    if((msgLowTrimmed == "!talk") && (allowWrite))
     {
-        try
+        foxyPlugins.forEach(function(plugin)
         {
-            var Egg = mybot.users.get("247080657182785546");
-            if(Egg.presence.status == "offline")
-            {
-                message.reply("Sorry, egg is offline... :cooking:", botCommands.msgSendError);
-            }
-        }
-        catch(e)
-        {
-            botCommands.sendErrorMsg(mybot, message.channel, e);
-        }
+            if(typeof(plugin.messageIn) === "function")
+                plugin.messageIn(mybot, message, allowWrite);
+        });
     }
-
-    /* *********Auto-replying for some conditions********* */
-    else
-    {
-        var wasAsked = false;
-        var messageForMe = false;
-        var mentions = message.mentions.users.array();
-
-        for(var i = 0; i < mentions.length; i++)
-        {
-            botCommands.foxylogInfo( "---> " + mentions[i].username + "#" + mentions[i].discriminator);
-            wasAsked = (mentions[i].id == 216943869424566273);
-            messageForMe = (mentions[i].id == 182039820879659008) && (message.author.id != 216943869424566273);
-        }
-
-        if(msgLowTrimmed.indexOf("pge") != -1)
-            messageForMe = true;
-        if(msgLowTrimmed.indexOf("wohlstand") != -1)
-            messageForMe = true;
-        if(msgLowTrimmed.indexOf("wholstand") != -1)
-            messageForMe = true;
-        if(msgLowTrimmed.indexOf("wohl") != -1)
-            messageForMe = true;
-
-        if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
-            messageForMe = false;
-
-        //Check is botane offline, and reply on attempt call her
-        var Botane = mybot.users.get("216688100032643072");
-        if(allowWrite && (Botane.presence.status == "offline"))
-        {
-            if(msgLowTrimmed == "what is horikawa?")
-            {
-                message.reply("Don't try call her, she is dead bot!");
-            }
-        }
-
-        if(allowWrite && (wasAsked || message.channel.isPrivate))
-        {
-            if(message.author.id == 216688100032643072)//Horikawa Botane
-            {
-                if(msgLow.indexOf("dorkatron")!=-1)
-                {
-                    message.reply("maybe you are a Dorkatron? I'm not!");
-                }
-            }
-            else//Any other
-            {
-                if(msgLow.indexOf("pets") != -1)
-                {
-                    setTimeout(function(){ message.reply("Do you really wanna pet the fox? :fox:"); }, 1000);
-                    setTimeout(function() { botCommands.callCommand(mybot, message, "fox", ""); }, 3500);
-                }
-                else
-                if(msgLow.indexOf("hi!") != -1)
-                {
-                    setTimeout(function(){ message.channel.sendFile(__dirname+"/images/hi.gif"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("hi") != -1)
-                {
-                    setTimeout(function(){ message.reply("Hi!"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("i like you") != -1)
-                {
-                    setTimeout(function(){ message.reply(":blush:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("i love you") != -1)
-                {
-                    setTimeout(function(){ message.reply(":blush:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("♥") != -1)
-                {
-                    setTimeout(function(){ message.reply(":blush:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("❤") != -1)
-                {
-                    setTimeout(function(){ message.reply(":blush:"); }, 1000);
-                }//♥ ❤ ღ ❦ ❥❣
-                else
-                if(msgLow.indexOf("🍺") != -1)
-                {
-                    setTimeout(function(){ message.reply(":beers:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("🍻") != -1)
-                {
-                    setTimeout(function(){ message.reply(":beers: :beer:"); }, 1000);
-                }
-                else
-                if(hasReg(msgLow, /((f[auo]([ck][ck]|[ck])|[cs][ck]rew)( ||\n)+(you|[yu]|yo|yu|yoo))/ig))
-                {
-                    setTimeout(function(){ message.reply("You so rude! :angry:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("🤘") != -1)
-                {
-                    setTimeout(function(){ message.reply("Сool, dude!"); }, 1000);
-                }
-            }
-        }
-        else
-        {
-            if(messageForMe)
-            {
-                botCommands.sendEmail(message, message.content, false);
-            }
-
-            if(allowWrite)
-            {
-                if(botCommands.botConfig.defaultChannel.includes(message.channel.id))//"beep-boop", "fun" 218194030662647809
-                {
-                    if(message.author.id == 216688100032643072)//Horikawa Botane
-                    {
-                        if(msgLowTrimmed.indexOf("is it porn?") != -1)
-                        {
-                            setTimeout(function(){message.channel.sendMessage("No, <@216688100032643072>!").catch(botCommands.msgSendError);}, 1000);
-                        }
-                        else
-                        if(msgLowTrimmed.indexOf("i don't believe you") != -1)
-                        {
-                            setTimeout(function(){message.channel.sendMessage("Let's play with Bastion!").catch(botCommands.msgSendError);}, 1000);
-                            setTimeout(function(){message.channel.sendMessage("Bastion Bastion Bastion Bastion!!!!").catch(botCommands.msgSendError);}, 2000);
-                            setTimeout(function(){message.channel.sendMessage("bastion bastion bastion bastion bastion").catch(botCommands.msgSendError);}, 3500);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 });
 
 botCommands.loginBot(mybot, botCommands.botConfig.token);
