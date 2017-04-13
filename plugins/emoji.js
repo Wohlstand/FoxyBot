@@ -4,22 +4,22 @@ var core = undefined;
 
 var dance = function(bot, message, args)
 {
-    message.channel.sendFile(__dirname + "/../images/dance.gif").catch(msgSendError);
+    message.channel.sendFile(__dirname + "/../images/dance.gif").catch(core.msgSendError);
 }
 
 var drill = function(bot, message, args)
 {
-    message.channel.sendFile(__dirname + "/../images/drill.gif").catch(msgSendError);
+    message.channel.sendFile(__dirname + "/../images/drill.gif").catch(core.msgSendError);
 }
 
 var imgSOS = function(bot, message, args)
 {
-    message.channel.sendFile(__dirname + "/../images/SOS.gif").catch(msgSendError);
+    message.channel.sendFile(__dirname + "/../images/SOS.gif").catch(core.msgSendError);
 }
 
 var foxFace = function(bot, message, args)
 {
-    message.channel.sendMessage("http://wohlsoft.ru/images/foxybot/fox_face.png", msgSendError);
+    message.channel.sendMessage("http://wohlsoft.ru/images/foxybot/fox_face.png", core.msgSendError);
 }
 
 
