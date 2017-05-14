@@ -213,6 +213,30 @@ var spit = function(bot, message, args)
     }
 }
 
+var randMsg_messages = [
+    "Hey, Knuxy, give to %u something, I forgot that at home...",
+    "Sorry, %u, I forgot that at home, ask Knux for that please!",
+    "/knux say /luna say %u, ping!"
+];
+
+var randMsg = function(bot, message, args)
+{
+    var msg = randMsg_messages[Math.floor(Math.random() * randMsg_messages.length)];
+    message.channel.sendMessage(msg.replace(/%u/g, "<@!" + message.author.id + ">")).catch(core.msgSendError);
+}
+
+var randomCommand_available = [
+    fox,    fennec,     boxy,       randMsg, burn,    burns,
+    smile,  boat,       flower,     randMsg, ship,    fart,
+    butts,  randMsg
+];
+
+var randomCommand = function(bot, message, args)
+{
+    var cmd = randomCommand_available[Math.floor(Math.random() * randomCommand_available.length)];
+    cmd(bot, message, args);
+}
+
 function registerCommands(foxyCore)
 {
     core = foxyCore;
@@ -253,6 +277,11 @@ function registerCommands(foxyCore)
     core.addSynonimOf("fart", "farts");
     core.addCMD(["butt",     butts,            "You are pervent!"]);
     core.addSynonimOf("butt", "butts");
+
+    core.addCMD(["surprise", randomCommand,    "Do you wanna surprise? I'll give you a random gift!"]);
+
+    core.addSynonimOf("surprise", "mischief");
+    core.addSynonimOf("surprise", "meepyglobix");
 }
 
 module.exports =

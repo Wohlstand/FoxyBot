@@ -1,5 +1,5 @@
 /*
-    Careful foxy watches all incoming messages: 
+    Careful foxy watches all incoming messages:
         catches mentions, or can play with other bots or users
 */
 
@@ -20,13 +20,16 @@ function hasStr(msg, word)
     return msg.indexOf(word) != -1;
 }
 
-var messageIn = function(mybot, message, allowWrite)
+var eggCommands = ["!color", "!commander", "!egg", "!hatch", "!ping", "!prefix", "!quote", "!role", "!spam", "!tag", "!talk", "!cmd", "!help"];
+
+// Check out is Yoshi021's Egg bot online, if not - notify user
+// that Egg is "eaten" :-P
+function lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite)
 {
-    var msgTrimmed      = message.content.trim();
-    var msgLow          = message.content.toLowerCase();
-    var msgLowTrimmed   = msgLow.trim();
-    
-    if((msgLowTrimmed == "!talk") && (allowWrite))
+    if(!allowWrite)
+        return false;
+
+    if(eggCommands.indexOf(msgLowTrimmed) != -1)
     {
         try
         {
@@ -40,10 +43,19 @@ var messageIn = function(mybot, message, allowWrite)
         {
             botCommands.sendErrorMsg(mybot, message.channel, e);
         }
+        return true;
     }
+    return false;
+}
 
+var messageIn = function(mybot, message, allowWrite)
+{
+    var msgTrimmed      = message.content.trim();
+    var msgLow          = message.content.toLowerCase();
+    var msgLowTrimmed   = msgLow.trim();
+
+    if(!lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite))
     /* *********Auto-replying for some conditions********* */
-    else
     {
         var wasAsked = false;
         var messageForMe = false;
@@ -64,6 +76,18 @@ var messageIn = function(mybot, message, allowWrite)
             messageForMe = true;
         if(msgLowTrimmed.indexOf("wohl") != -1)
             messageForMe = true;
+
+        if(hasReg(msgLowTrimmed, /don('|"|)t.*(@|ping|call).*(me|you|my)/ig))
+        {
+            if(hasReg(msgLowTrimmed, /fuck|shit|idiot|jerk/ig))
+                message.reply("Don't swear, and disable your notifications instead! :hear_no_evil:");
+            else if(hasReg(msgLowTrimmed, /evil/ig))
+                message.reply("I'm not evil, I just asking you disable your notificaations! :hear_no_evil:");
+            else if(hasReg(msgLowTrimmed, /cute/ig))
+                message.reply("O, thanks, but please disable your notifications to don't listen so annoying pings :hear_no_evil:");
+            else
+                message.reply("disable notifications please! :hear_no_evil:");
+        }
 
         if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
             messageForMe = false;
