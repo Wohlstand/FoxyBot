@@ -314,124 +314,6 @@ var sayLog = function(bot, message, args)
     }
 }
 
-var votingVotings = new Array();
-
-function countVotes(chid)
-{
-    var votingResult = [];
-    var votingResultMsg = "";
-    if(Object.size(votingVotings[chid].voters) == 0)
-    {
-        votingResultMsg = "No one voted :confused:";
-    } else {
-        var voters = votingVotings[chid].voters;
-        for(var i=0; i<votingVotings[chid].votingVariants.length; i++)
-        {
-            votingResult[i] = new Array();
-            votingResult[i].title = votingVotings[chid].votingVariants[i];
-            votingResult[i].votes = 0;
-        }
-        for(v in voters)
-        {
-            var voteTo = voters[v];
-            votingResult[voteTo].votes += 1;
-        }
-        for(i in votingResult)
-        {
-            votingResultMsg += (parseInt(i, 10)+1) + ") " + votingResult[i].title + " --> **" + votingResult[i].votes + "**\n";
-        }
-    }
-    return votingResultMsg;
-}
-
-var voting = function(bot, message, args)
-{
-    var chid = message.channel.id;
-    if(typeof(votingVotings[message.channel.id])==='undefined')
-    {
-        votingVotings[chid] = new Array();
-        votingVotings[chid].votingInProcess = false;
-    }
-    foxylogInfo("====Voting mechanism====");
-    //on "start <variants>" begin vote counts
-    if(args.indexOf("start ") != -1)
-    {
-        foxylogInfo("--start--");
-        if(votingVotings[chid].votingInProcess)
-        {
-            message.reply("Another voting in process! Finish this voting and then you will be able to start new one!", msgSendError);
-            return;
-        }
-        var variants = args.slice(6);
-        if(variants.trim()=="")
-        {
-            message.reply("Nothing to vote!", msgSendError);
-            return;
-        }
-        votingVotings[chid].voters = [];//If user is here - ignore next votes. Revoting is not allowed
-        votingVotings[chid].votingVariants = variants.split(";");
-        var voteMsg = "**Voting variants:**\n"
-        for(var i=0;i<votingVotings[chid].votingVariants.length; i++)
-        {
-            votingVotings[message.channel.id].votingVariants[i] = votingVotings[chid].votingVariants[i].trim();
-            voteMsg += " **" + (i+1) + ")** " + votingVotings[chid].votingVariants[i] + "\n";
-        }
-
-        votingVotings[chid].votingInProcess = true;
-        message.channel.sendMessage("Voting started!\n\n" + voteMsg, msgSendError);
-    }
-    //on "stats" show result
-    else
-    if(args.indexOf("stats") != -1)
-    {
-        foxylogInfo("--stats--");
-        if(!votingVotings[chid].votingInProcess)
-        {
-            message.channel.sendMessage("No votings in this channel! Type **/foxy help voting** to learn how to work with voting.", msgSendError);
-            return;
-        }
-        var votingResultMsg = countVotes(chid);
-        message.channel.sendMessage("**Current voting state**:\n" + votingResultMsg, msgSendError);
-    }
-    //on "stop" abort voting process and show result
-    else
-    if((args.indexOf("stop") != -1) || (args.indexOf("end") != -1))
-    {
-        foxylogInfo("--stop--");
-        if(!votingVotings[chid].votingInProcess)
-        {
-            message.reply("No voting in this channel to stop!", msgSendError);
-            return;
-        }
-        votingVotings[chid].votingInProcess = false;
-        var votingResultMsg = countVotes(chid);
-        message.channel.sendMessage("**Voting stopped!**\n" + votingResultMsg, msgSendError);
-    } else {
-    //on "<number of variant>" add voter
-        foxylogInfo("--vote--");
-        if(!votingVotings[chid].votingInProcess)
-        {
-            message.reply("No votings to vote! Type **/foxy help voting** to learn how to work with voting.", msgSendError);
-            return;
-        }
-        foxylogInfo("Got vote: " + args.trim() );
-        var vote = parseInt(args.trim(), 10);
-        if( (vote != NaN) )
-        {
-            if( (vote > 0) && (vote <= votingVotings[chid].votingVariants.length) )
-            {
-                foxylogInfo("Vote remembered: " + vote);
-                votingVotings[chid].voters[message.author.id] = (vote-1);
-            } else {
-                message.reply("Out of range!, Vote variant from 1 to " + (votingVotings[chid].votingVariants.length), msgSendError);
-            }
-        } else {
-            //foxylogInfo("Vote invalid: " + vote);
-            message.reply("Unknown command! Accepted commands are **start**, **stats**, **stop**, or integer of the variant!", msgSendError);
-        }
-    }
-}
-
 function cutWord(str)
 {
     str.orig = str.orig.trim();
@@ -1141,17 +1023,6 @@ var registerCommands = function()
     addCMD(["setgame",  setPlayingGame,   "I'll play any game you suggesting me!\n__*Syntax:*__ setgame <any your text>\n\n**NOTE:** Only permited users can use this command!"]);
     addCMD(["remind",   sayDelayd,        ":information_desk_person: I'll remeber a thing you request me!\n__*Syntax:*__ remind <any your text> after <time> <seconds, minutes, hours>\n", [], true]);
     addCMD(["remindme", sayDelaydME,      ":information_desk_person: I'll remeber you personally a thing you request me!\n__*Syntax:*__ remindMe <any your text> after <time> <seconds, minutes, hours>\n", [], true]);
-    addCMD(["voting",   voting,           "Wanna choice some? Let's vote!\n"+
-                                          "__*Syntax:*__:\n\n"+
-                                          " **/foxy voting start __Bonana; Sausidge; Apple; Chicken; Fried mice__**\n" +
-                                          "__Start a voting with a list of variants (there are must be splited with semicolons!)__\n\n" +
-                                          " **/foxy vote __<variant ID>__**\n__Do Vote for any variant you are prefer (from 1 to N)__\n\n" +
-                                          " **/foxy voting stats**\n__Print a result without aborting of the voting__\n\n" +
-                                          " **/foxy voting stop**\n **/foxy voting end**\n__Stop voting and print a result__\n", [], true]);
-
-    addSynonimOf("voting", "vote");
-    addSynonimOf("voting", "votes");
-    addSynonimOf("voting", "votings");
 
     addCMD(["youtube",  youtube,          "Take random youtube video which I know"]);
     addCMD(["meow",     meow,             ":cat:"]);
@@ -1250,5 +1121,3 @@ module.exports =
     addCMD:           addCMD,
     addSynonimOf:     addSynonimOf
 };
-
-
