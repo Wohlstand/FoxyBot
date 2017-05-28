@@ -1,3 +1,7 @@
-foxybot-debug.log
+foxybot-debug*.log
+foxybot-errors*.log
 setup.json
-
+/node_modules/*
+screenlog.*
+votes
+votings
