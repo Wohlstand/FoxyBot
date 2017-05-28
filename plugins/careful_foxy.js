@@ -20,7 +20,7 @@ function hasStr(msg, word)
     return msg.indexOf(word) != -1;
 }
 
-var eggCommands = ["!color", "!commander", "!egg", "!hatch", "!ping", "!prefix", "!quote", "!role", "!spam", "!tag", "!talk", "!cmd", "!help"];
+var eggCommands = ["!color", "!commander", "!egg", "!hatch", "!ping", "!prefix", "!quote", "!role", "!spam", "!tag", "!talk", "!cmd", "!help", "!rps"];
 
 // Check out is Yoshi021's Egg bot online, if not - notify user
 // that Egg is "eaten" :-P
