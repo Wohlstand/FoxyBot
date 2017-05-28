@@ -1,7 +1,8 @@
 #!/bin/bash
 while :
 do
-    node pong.js
+    node foxy.js
     echo Restarting Foxy...
     sleep 1
 done
+
