@@ -67,6 +67,8 @@ var voting = function(bot, message, args)
             voteMsg += " **" + (i+1) + ")** " + votingVotings[chid].votingVariants[i] + "\n";
         }
 
+        voteMsg += "\nTo vote type __/foxy vote **N**__. N is a number of variant. Re-voting is allowed."
+
         votingVotings[chid].votingInProcess = true;
         message.channel.sendMessage("Voting started!\n\n" + voteMsg, core.msgSendError);
     }
