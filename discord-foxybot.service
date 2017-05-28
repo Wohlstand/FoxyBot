@@ -1,11 +1,11 @@
 [Unit]
 Description=FoxyBot for Discord.JS
-
-# Requires the dependent services to run first
-# Requires=After=redis.service
+# Requires the mysql service to run first
+Requires=my-mariadb.service
+After=my-mariadb.service
 
 [Service]
-ExecStart=/path/to/foxybot/server.sh
+ExecStart=/home/vitaly/_Bots/FoxyBotJrDiscord/server.sh
 Restart=always
 # Restart service after 10 seconds if node service crashes
 RestartSec=10
@@ -20,4 +20,3 @@ Environment=NODE_ENV=discordfoxybot
 
 [Install]
 WantedBy=multi-user.target
-
