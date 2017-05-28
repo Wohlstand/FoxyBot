@@ -281,9 +281,9 @@ mybot.on("message", function(message)
 
     var allowWrite = !botCommands.inListFile("readonly_chans.txt", message.channel.id);
 
-    var msgTrimmed = message.content.trim();
-    var msgLow = message.content.toLowerCase();
-    var msgLowTrimmed = msgLow.trim();
+    var msgTrimmed      = message.cleanContent.trim();
+    var msgLow          = message.cleanContent.toLowerCase();
+    var msgLowTrimmed   = msgLow.trim();
 
     botCommands.foxylogInfo("*** " + getAuthorStr(message) + ": " + message.content );
 
