@@ -24,7 +24,12 @@ var knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     exec('tail', ["-n", "25", "knuxlog.log"], {cwd: echidnasDir}, function(err, data)
     {
         if(err == null)
-            message.reply("tail -n 25 knuxlog.log\n```\n" + data.toString() + "\n```\n");
+        {
+            var s = data.toString();
+            if(s.length > 1900)
+                s = s.substr(s.length - 1900);
+            message.reply("tail -n 25 knuxlog.log\n```\n" + s + "\n```\n");
+        }
         else
         {
             message.reply("ERROR of tail -n 25 knuxlog.log```\n" + err + "\n\n" + data.toString() + "\n```\n");
