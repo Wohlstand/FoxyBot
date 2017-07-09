@@ -227,11 +227,15 @@ var test = function(bot, message, args)
 
 var postGreeting = function(bot)
 {
+    /*
     botConfig.defaultChannel.forEach(function(chanID, i, arr)
     {
         var chan = bot.channels.get(chanID);
         chan.sendMessage(getArrayRandom(responses.enter).value, msgSendError);
     });
+    */
+    var chan = bot.channels.get(botConfig.defaultChannel[0]);
+    chan.sendMessage(getArrayRandom(responses.enter).value, msgSendError);
 }
 
 var isBeepBoop = function(bot, message, args)
