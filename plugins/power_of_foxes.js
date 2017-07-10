@@ -236,6 +236,9 @@ var randomCommand_available = [
 
 var randomCommand = function(bot, message, args)
 {
+    message.reply("This command is under construction, sorry!", core.msgSendError);
+    return;
+    //Under construction
     var cmd = randomCommand_available[Math.floor(Math.random() * randomCommand_available.length)];
     cmd(bot, message, args);
 }
