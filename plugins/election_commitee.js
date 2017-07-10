@@ -70,7 +70,7 @@ var voting = function(bot, message, args)
         voteMsg += "\nTo vote type __/foxy vote **N**__. N is a number of variant. Re-voting is allowed."
 
         votingVotings[chid].votingInProcess = true;
-        message.channel.sendMessage("Voting started!\n\n" + voteMsg, core.msgSendError);
+        message.channel.send("Voting started!\n\n" + voteMsg).catch(core.msgSendError);
     }
     //on "stats" show result
     else
@@ -79,11 +79,11 @@ var voting = function(bot, message, args)
         core.foxylogInfo("--stats--");
         if(!votingVotings[chid].votingInProcess)
         {
-            message.channel.sendMessage("No votings in this channel! Type **/foxy help voting** to learn how to work with voting.", core.msgSendError);
+            message.channel.send("No votings in this channel! Type **/foxy help voting** to learn how to work with voting.").catch(core.msgSendError);
             return;
         }
         var votingResultMsg = countVotes(chid);
-        message.channel.sendMessage("**Current voting state**:\n" + votingResultMsg, core.msgSendError);
+        message.channel.send("**Current voting state**:\n" + votingResultMsg).catch(core.msgSendError);
     }
     //on "stop" abort voting process and show result
     else
@@ -97,7 +97,7 @@ var voting = function(bot, message, args)
         }
         votingVotings[chid].votingInProcess = false;
         var votingResultMsg = countVotes(chid);
-        message.channel.sendMessage("**Voting stopped!**\n" + votingResultMsg, core.msgSendError);
+        message.channel.send("**Voting stopped!**\n" + votingResultMsg).catch(core.msgSendError);
     } else {
     //on "<number of variant>" add voter
         core.foxylogInfo("--vote--");

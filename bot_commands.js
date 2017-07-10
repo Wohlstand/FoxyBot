@@ -95,10 +95,10 @@ function getRandomInt(min, max)
 
 function sendErrorMsg(bot, channel, e)
 {
-    channel.sendMessage("**OUCH** :dizzy_face: \n```\n"+
-                        "Name:    " + e.name + "\n"+
-                        "Message: " + e.message + "\n\n"+
-                        e.stack + "```");
+    channel.send("**OUCH** :dizzy_face: \n```\n"+
+                 "Name:    " + e.name + "\n"+
+                 "Message: " + e.message + "\n\n"+
+                 e.stack + "```");
 }
 
 var msgFailedAttempts = 0;
@@ -115,7 +115,6 @@ function msgSendError(error, message)
             {
                 foxylogInfo("Trying to relogin...");
                 loginBot(BotPtr, authToken);
-                //setTimeout(function() { BotPtr.sendMessage(message.channel, ErrorText); }, 3000 );
             });
             msgFailedAttempts = 0;
         }
@@ -231,11 +230,11 @@ var postGreeting = function(bot)
     botConfig.defaultChannel.forEach(function(chanID, i, arr)
     {
         var chan = bot.channels.get(chanID);
-        chan.sendMessage(getArrayRandom(responses.enter).value, msgSendError);
+        chan.send(getArrayRandom(responses.enter).value).catch(msgSendError);
     });
     */
     var chan = bot.channels.get(botConfig.defaultChannel[0]);
-    chan.sendMessage(getArrayRandom(responses.enter).value, msgSendError);
+    chan.send(getArrayRandom(responses.enter).value).catch(msgSendError);
 }
 
 var isBeepBoop = function(bot, message, args)
@@ -259,13 +258,13 @@ var say = function(bot, message, args)
 
     if(attachments.length==0)
     {
-        chan.sendMessage(args).catch(msgSendError);
+        chan.send(args).catch(msgSendError);
     }
     else
     for(var i=0; i < attachments.length; i++)
     {
         var attachm = attachments[i];
-        chan.sendMessage(args).catch(msgSendError);
+        chan.send(args).catch(msgSendError);
         chan.sendFile(attachm.url, attachm.filename).catch(msgSendError);
     }
 
@@ -285,13 +284,13 @@ var sayTTS = function(bot, message, args)
 
     if(attachments.length == 0)
     {
-        chan.sendMessage(args, {"tts" : true}).catch(msgSendError);
+        chan.send(args, {"tts" : true}).catch(msgSendError);
     }
     else
     for(var i=0; i < attachments.length; i++)
     {
         var attachm = attachments[i];
-        chan.sendMessage(args, {"tts" : true}).catch(msgSendError);
+        chan.send(args, {"tts" : true}).catch(msgSendError);
         chan.sendFile(attachm.url, attachm.filename).catch(msgSendError);
     }
 
@@ -312,9 +311,9 @@ var sayLog = function(bot, message, args)
         {
             whoTold += sayLogArr[i][0] + " told \"" + sayLogArr[i][1] + "\"\n";
         }
-        message.channel.sendMessage(whoTold, msgSendError);
+        message.channel.send(whoTold).catch(msgSendError);
     } else {
-        message.channel.sendMessage("No sayd phrases :weary:", msgSendError);
+        message.channel.send("No sayd phrases :weary:").catch(msgSendError);
     }
 }
 
@@ -426,7 +425,7 @@ var initRemindWatcher = function(bot)
                             else
                             {
                                 foxylogInfo("Foxy's remind: " + results[i].message);
-                                channel.sendMessage(results[i].message, msgSendError);
+                                channel.send(results[i].message).catch(msgSendError);
                             }
                         /*}*/
                     }
@@ -498,7 +497,7 @@ var sayDelayd = function(bot, message, args)
     //
     // setTimeout(function()
     // {
-    //     message.channel.sendMessage(some, msgSendError);
+    //     message.channel.send(some).catch(msgSendError);
     // }, timeInt);
     message.reply("I will say after " + secondsToTimeDate(timeInt/1000) + "!", msgSendError);
 }
@@ -565,7 +564,7 @@ var setPlayingGame = function(bot, message, args)
         {
             var msg = "Error of setting game: " + err;
             foxylogInfo(msg);
-            bot.sendMessage(chan, msg, msgSendError);
+            message.channel.send(msg).catch(msgSendError);
         }
     });*/
 }
@@ -578,37 +577,37 @@ var choose = function(bot, message, args)
         message.reply("you sent me nothing! I can't choose! :confused:").catch(msgSendError);
         return;
     }
-    message.channel.sendMessage(vars[getRandomInt(0, vars.length-1)].trim()).catch(msgSendError);
+    message.channel.send(vars[getRandomInt(0, vars.length-1)].trim()).catch(msgSendError);
 }
 
 var myrand = function(bot, message, args)
 {
-    message.channel.sendMessage(getRandomInt(0, 100)).catch(msgSendError);
+    message.channel.send(getRandomInt(0, 100)).catch(msgSendError);
 }
 
 var myrandF = function(bot, message, args)
 {
-    message.channel.sendMessage(Math.random()).catch(msgSendError);
+    message.channel.send(Math.random()).catch(msgSendError);
 }
 
 var lunaDocs = function(bot, message, args)
 {
-    message.channel.sendMessage("http://wohlsoft.ru/pgewiki/" + encodeURIComponent(args)).catch(msgSendError);
+    message.channel.send("http://wohlsoft.ru/pgewiki/" + encodeURIComponent(args)).catch(msgSendError);
 }
 
 var lunaSearch = function(bot, message, args)
 {
-    message.channel.sendMessage("http://wohlsoft.ru/wiki/index.php?search=" + encodeURIComponent(args)).catch(msgSendError);
+    message.channel.send("http://wohlsoft.ru/wiki/index.php?search=" + encodeURIComponent(args)).catch(msgSendError);
 }
 
 var findInGoogle = function(bot, message, args)
 {
-    message.channel.sendMessage("http://lmgtfy.com/?q=" + encodeURIComponent(args)).catch(msgSendError);
+    message.channel.send("http://lmgtfy.com/?q=" + encodeURIComponent(args)).catch(msgSendError);
 }
 
 var findInWikipedia = function(bot, message, args)
 {
-    message.channel.sendMessage("http://wikipedia.lmgtfy.com/?q=" + encodeURIComponent(args)).catch(msgSendError);
+    message.channel.send("http://wikipedia.lmgtfy.com/?q=" + encodeURIComponent(args)).catch(msgSendError);
 }
 
 var youtube = function(bot, message, args)
@@ -616,7 +615,7 @@ var youtube = function(bot, message, args)
     var videoList = fs.readFileSync(__dirname+"/video_list.txt");
     var videoArr = videoList.toString().trim().split(/[\n\ ]/g);
     var oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
-    message.channel.sendMessage(oneVideo).catch(msgSendError);
+    message.channel.send(oneVideo).catch(msgSendError);
 }
 
 var meow = function(bot, message, args)
@@ -624,7 +623,7 @@ var meow = function(bot, message, args)
     var videoList = fs.readFileSync(__dirname+"/meow_list.txt");
     var videoArr = videoList.toString().trim().split(/[\n\ ]/g);
     var oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
-    message.channel.sendMessage(oneVideo).catch(msgSendError);
+    message.channel.send(oneVideo).catch(msgSendError);
 }
 
 var woof = function(bot, message, args)
@@ -632,7 +631,7 @@ var woof = function(bot, message, args)
     var videoList = fs.readFileSync(__dirname+"/woof_list.txt");
     var videoArr = videoList.toString().trim().split(/[\n\ ]/g);
     var oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
-    message.channel.sendMessage(oneVideo).catch(msgSendError);
+    message.channel.send(oneVideo).catch(msgSendError);
 }
 
 
@@ -642,7 +641,7 @@ var woof = function(bot, message, args)
 
 var callBastion = function(bot, message, args)
 {
-    message.channel.sendMessage("Hey, bastion, tell something!").catch(msgSendError);
+    message.channel.send("Hey, bastion, tell something!").catch(msgSendError);
 }
 
 var callBotane = function(bot, message, args)
@@ -664,9 +663,9 @@ var callBotane = function(bot, message, args)
 
     if(!inListFile("boop_zone.txt", message.channel.id))//"beep-boop"
     {
-        message.channel.sendMessage("Go to <#" + channel.id +"> to enjoy the show :wink: ").catch(msgSendError);
+        message.channel.send("Go to <#" + channel.id +"> to enjoy the show :wink: ").catch(msgSendError);
     }
-    chan.sendMessage("What is Horikawa?").catch(msgSendError);
+    chan.send("What is Horikawa?").catch(msgSendError);
 }
 
 var trollTimerIsBusy = new Array();
@@ -711,15 +710,14 @@ var trollTimer = function(bot, message, args)
         disableEveryone: true
     };
 
-    message.channel.sendMessage("Starting trolling by "+message.author.username +
-                                 "... (every second 5 times will be printed same message)",
-                                 opts).catch(msgSendError);
+    message.channel.send("Starting trolling by "+message.author.username +
+                         "... (every second 5 times will be printed same message)", opts).catch(msgSendError);
 
-    trollTimerIsBusy[message.author.id]=true;
+    trollTimerIsBusy[message.author.id] = true;
     var i = 5;
     setTimeout(function run()
     {
-        message.channel.sendMessage(args).catch(msgSendError);
+        message.channel.send(args).catch(msgSendError);
         i--;
         if(i>0)
             setTimeout(run, 1000);
@@ -732,12 +730,12 @@ var trollTimer = function(bot, message, args)
 
 var myTime = function(bot, message, args)
 {
-    message.channel.sendMessage(getLocalTime()).catch(msgSendError);
+    message.channel.send(getLocalTime()).catch(msgSendError);
 }
 
 var upTimeBot = function(bot, message, args)
 {
-    message.channel.sendMessage(getBotUptime()).catch(msgSendError);
+    message.channel.send(getBotUptime()).catch(msgSendError);
 }
 
 var aboutBot = function(bot, message, args)
@@ -754,7 +752,7 @@ var aboutBot = function(bot, message, args)
     msgtext += "Totally I know **" + Cmds.length + "** commands.\n"
     msgtext += "Unique are **" + CmdsREAL.length + "** commands.\n"
     msgtext += "\n";
-    message.channel.sendMessage(msgtext).catch(msgSendError);
+    message.channel.send(msgtext).catch(msgSendError);
 }
 
 var sendEmailFile = function(message, args, attachment, doReply)
@@ -801,10 +799,10 @@ var sendEmailFile = function(message, args, attachment, doReply)
         {
             if(error)
             {
-                message.channel.sendMessage('Failed to send mail: ' + error).catch(msgSendError);
+                message.channel.send('Failed to send mail: ' + error).catch(msgSendError);
                 return;
             }
-            message.channel.sendMessage('Message sent: ' + info.response).catch(msgSendError);
+            message.channel.send('Message sent: ' + info.response).catch(msgSendError);
         }
     });
 }
@@ -849,10 +847,10 @@ var sendEmailF = function(message, args, doReply)
         {
             if(error)
             {
-                message.channel.sendMessage('Failed to send mail: ' + error).catch(msgSendError);
+                message.channel.send('Failed to send mail: ' + error).catch(msgSendError);
                 return;
             }
-            message.channel.sendMessage('Message sent: ' + info.response).catch(msgSendError);
+            message.channel.send('Message sent: ' + info.response).catch(msgSendError);
         }
     });
 }
@@ -862,13 +860,13 @@ var sendEmail = function(bot, message, args)
     //if(inList(emailBlackList, message.author.id))
     if(inListFile("black_email.txt", message.author.id))
     {
-        message.channel.sendMessage("Sorry, " + message.author.toString() + ", emailing is forbidden for you! (you are in black list!) :cop:");
+        message.channel.send("Sorry, " + message.author.toString() + ", emailing is forbidden for you! (you are in black list!) :cop:").catch(msgSendError);
         return;
     }
 
     if( (emailWhiteList.length>0) && !inList(emailWhiteList, message.author.id))
     {
-        message.channel.sendMessage("Sorry, " + message.author.toString() + ", emailing is forbidden for you! (you are not in white list!) :cop:");
+        message.channel.send("Sorry, " + message.author.toString() + ", emailing is forbidden for you! (you are not in white list!) :cop:").catch(msgSendError);
         return;
     }
 
@@ -928,7 +926,7 @@ var listCmds = function(bot, message, args)
     commands += usefulCommands;
 
     commands += "\n\nType __**/foxy help <command>**__ to read detail help for specific command."
-    message.channel.sendMessage(commands).catch(msgSendError);
+    message.channel.send(commands).catch(msgSendError);
 }
 
 var cmdHelp = function(bot, message, args)

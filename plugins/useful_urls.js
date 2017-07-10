@@ -3,22 +3,22 @@ var core = undefined;
 
 var testUrl = function(bot, message, args)
 {
-    message.channel.sendMessage("http://wohlsoft.ru").catch(core.msgSendError);
+    message.channel.send("http://wohlsoft.ru").catch(core.msgSendError);
 }
 
 var lab = function(bot, message, args)
 {
-    message.channel.sendMessage("http://wohlsoft.ru/docs/_laboratory/").catch(core.msgSendError);
+    message.channel.send("http://wohlsoft.ru/docs/_laboratory/").catch(core.msgSendError);
 }
 
 var repo = function(bot, message, args)
 {
-    message.channel.sendMessage("https://github.com/WohlSoft/PGE-Project").catch(core.msgSendError);
+    message.channel.send("https://github.com/WohlSoft/PGE-Project").catch(core.msgSendError);
 }
 
 var markup = function(bot, message, args)
 {
-    message.channel.sendMessage("https://support.discordapp.com/hc/en-us/articles/210298617").catch(core.msgSendError);
+    message.channel.send("https://support.discordapp.com/hc/en-us/articles/210298617").catch(core.msgSendError);
 }
 
 
@@ -35,4 +35,3 @@ module.exports =
 {
     registerCommands:   registerCommands
 };
-

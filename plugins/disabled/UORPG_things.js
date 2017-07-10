@@ -60,22 +60,22 @@ function guildMemberAdd(bot, guildMember)
     {
         var ru = bot.channels.get(Chan_RUS);
         var en = bot.channels.get(Chan_ENG);
-        
+
         var message_ru =
             "<@" + guildMember.user.id +">, Приветствуем вас на сервере Ultima Online - UORPG.net!\n\n" +
             "Выберите вашу фракцию:\n" +
             "Альянс Порядок - Священная Империя и Повстанцы\n" +
             "Альянс Хаос - Армия Тьмы и Тени\n\n" +
             "Для того, чтобы выбрать вашу сторону в войне напишите в чате: /foxy order или /foxy chaos";
-        var message_en = 
+        var message_en =
             "<@" + guildMember.user.id +">, Hi, welcome to Ultima Online server - UORPG.net!\n\n" +
             "Assign your faction please:\n" +
             "The Order Alliance - Holy Empire and Insurgents\n" +
             "The Chaos Alliance - Army of Darkness and The Shadows\n\n"+
             "In order to confirm your war force, type: /foxy order ;  /foxy chaos";
 
-        ru.sendMessage(message_ru).catch(core.msgSendError);
-        en.sendMessage(message_en).catch(core.msgSendError);
+        ru.send(message_ru).catch(core.msgSendError);
+        en.send(message_en).catch(core.msgSendError);
     }
 }
 

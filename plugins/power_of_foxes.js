@@ -44,10 +44,10 @@ function getRandFile(bot, message, fromURL)
     {
         try{
             var randfox = eval(result);
-            message.channel.sendMessage(randfox.file, core.msgSendError);
+            message.channel.send(randfox.file, {"reply": ""}).catch(core.msgSendError);
         }catch(e){
             core.sendErrorMsg(bot, message.channel, e);
-            message.channel.sendMessage("```\nonResult: (" + statusCode + ")" + JSON.stringify(result) + "\n```", core.msgSendError);
+            message.channel.send("```\nonResult: (" + statusCode + ")" + JSON.stringify(result) + "\n```", {"reply": ""}).catch(core.msgSendError);
         }
     });
 }
@@ -134,13 +134,13 @@ var makeMe = function(bot, message, args)
         money(bot, message, args);
 
     if(argsL.indexOf("elephant")!=-1)
-        message.channel.sendMessage(":elephant:", core.msgSendError);
+        message.channel.send(":elephant:").catch(core.msgSendError);
 
     if((argsL.indexOf("police") != -1) || (argsL.indexOf("cop") != -1))
-        message.channel.sendMessage(":cop:", core.msgSendError);
+        message.channel.send(":cop:").catch(core.msgSendError);
 
     if((argsL.indexOf("butt") != -1) || (argsL.indexOf("ass") != -1))
-        message.channel.sendMessage("`(_|_)`", core.msgSendError);
+        message.channel.send("`(_|_)`").catch(core.msgSendError);
 
     if( (argsL.indexOf("fart") != -1) ||
         (argsL.indexOf("gas") != -1)  ||
@@ -153,7 +153,7 @@ var makeMe = function(bot, message, args)
         (argsL.indexOf("dung") != -1) ||
         (argsL.indexOf("shit") != -1) ||
         (argsL.indexOf("poop") != -1) )
-        message.channel.sendMessage(":poop:", core.msgSendError);
+        message.channel.send(":poop:").catch(core.msgSendError);
 
     if( (argsL.indexOf("sex") != -1) ||
         (argsL.indexOf("fuck") != -1) ||
@@ -163,7 +163,7 @@ var makeMe = function(bot, message, args)
         (argsL.indexOf("pennis") != -1) ||
         (argsL.indexOf("cunt") != -1) ||
         (argsL.indexOf("porn") != -1))
-        message.reply("Never, you are stupid pervert! You are worst person I know here!", core.msgSendError);
+        message.reply("Never, you are stupid pervert! You are worst person I know here!").catch(core.msgSendError);
 }
 
 var fart = function(bot, message, args)
@@ -198,12 +198,12 @@ var fart = function(bot, message, args)
 var butts = function(bot, message, args)
 {
     message.delete();
-    message.channel.sendMessage("`(__|__)`").catch(core.msgSendError);
+    message.channel.send("`(__|__)`").catch(core.msgSendError);
 }
 
 var burns = function(bot, message, args)
 {
-    message.channel.sendMessage("https://www.youtube.com/watch?v=gSzgNRzpjo8", core.msgSendError);
+    message.channel.send("https://www.youtube.com/watch?v=gSzgNRzpjo8").catch(core.msgSendError);
 }
 
 var spit = function(bot, message, args)
@@ -212,7 +212,7 @@ var spit = function(bot, message, args)
     {
         burn(bot, message, args);
     } else {
-        message.channel.sendMessage("https://www.youtube.com/results?search_query=" + encodeURIComponent("Spit " + args), core.msgSendError);
+        message.channel.send("https://www.youtube.com/results?search_query=" + encodeURIComponent("Spit " + args)).catch(core.msgSendError);
     }
 }
 
@@ -225,7 +225,7 @@ var randMsg_messages = [
 var randMsg = function(bot, message, args)
 {
     var msg = randMsg_messages[Math.floor(Math.random() * randMsg_messages.length)];
-    message.channel.sendMessage(msg.replace(/%u/g, "<@!" + message.author.id + ">")).catch(core.msgSendError);
+    message.channel.send(msg.replace(/%u/g, "<@!" + message.author.id + ">")).catch(core.msgSendError);
 }
 
 var randomCommand_available = [
@@ -236,9 +236,6 @@ var randomCommand_available = [
 
 var randomCommand = function(bot, message, args)
 {
-    message.reply("This command is under construction, sorry!", core.msgSendError);
-    return;
-    //Under construction
     var cmd = randomCommand_available[Math.floor(Math.random() * randomCommand_available.length)];
     cmd(bot, message, args);
 }
@@ -294,5 +291,3 @@ module.exports =
 {
     registerCommands:   registerCommands
 };
-
-

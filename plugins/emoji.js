@@ -19,7 +19,7 @@ var imgSOS = function(bot, message, args)
 
 var foxFace = function(bot, message, args)
 {
-    message.channel.sendMessage("http://wohlsoft.ru/images/foxybot/fox_face.png", core.msgSendError);
+    message.channel.send("http://wohlsoft.ru/images/foxybot/fox_face.png").catch(core.msgSendError);
 }
 
 
@@ -37,5 +37,3 @@ module.exports =
 {
     registerCommands:   registerCommands
 };
-
-

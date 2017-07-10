@@ -201,7 +201,7 @@ mybot.on("presenceUpdate", (oldUser, newUser) =>
     case "182039820879659008":
         if(newStatus == "online")
         {
-            chan.sendMessage("WOOO-HOO!!! :metal::skin-tone-1:");
+            chan.send("WOOO-HOO!!! :metal::skin-tone-1:").catch(botCommands.msgSendError);
         }
     break;
     */
@@ -210,10 +210,10 @@ mybot.on("presenceUpdate", (oldUser, newUser) =>
         {
             setTimeout(function()
             {
-                chan.sendMessage("Ah ow.. :open_mouth: Fried Egg is here!..." +
+                chan.send("Ah ow.. :open_mouth: Fried Egg is here!..." +
                     ( (nickOfBot != "Yoshi Egg") ?
                     "\nIt is masquarated as \"" + nickOfBot + "\", be careful!" : "")
-                );
+                ).catch(botCommands.msgSendError);
             }, 3000);
         }
     break;
@@ -221,19 +221,21 @@ mybot.on("presenceUpdate", (oldUser, newUser) =>
         if(newStatus == "offline")
         {
             //Send to #beeo-boop "WOO-HOO!!" since Botane is dead
-            chan.sendMessage("Botane is dead, WOOO-HOO!!! :metal::skin-tone-1:");
+            chan.send("Botane is dead, WOOO-HOO!!! :metal::skin-tone-1:").catch(botCommands.msgSendError);
         }
     break;
     case "216273975939039235": //LunaBot died
         if(newStatus == "offline")
         {
-            chan.sendMessage("<@214408564515667968>, LunaBot is dead...\nWHY???? :hushed:\n She was a VERY good bot! :sob:");
+            chan.send("<@214408564515667968>, LunaBot is dead...\n" +
+                      "WHY???? :hushed:\n " +
+                      "She was a VERY good bot! :sob:").catch(botCommands.msgSendError);
         }
     break;
     case "216243239391330305"://Bastion died
         if(newStatus == "offline")
         {
-            chan.sendMessage("Bastion is dead?! :hushed: What happen with it?");
+            chan.send("Bastion is dead?! :hushed: What happen with it?").catch(botCommands.msgSendError);
         }
     break;
     }
@@ -296,10 +298,10 @@ mybot.on("message", function(message)
             {
                 return;
             }
-            message.channel.sendMessage("Hello, I'm **FoxyBot**!\n" +
+            message.channel.send("Hello, I'm **FoxyBot**!\n" +
                                         "   Type **/foxy cmd** to learn my commands\n" +
-                                        "   Type __**/foxy help <command>**__ to read detail help for specific command.",
-                                        botCommands.msgSendError);
+                                        "   Type __**/foxy help <command>**__ to read detail help for specific command.")
+                                            .catch(botCommands.msgSendError);
         }
         catch(e)
         {

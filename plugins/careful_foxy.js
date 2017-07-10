@@ -187,14 +187,14 @@ var messageIn = function(mybot, message, allowWrite)
                     {
                         if(msgLowTrimmed.indexOf("is it porn?") != -1)
                         {
-                            setTimeout(function(){message.channel.sendMessage("No, <@216688100032643072>!").catch(botCommands.msgSendError);}, 1000);
+                            setTimeout(function(){message.channel.send("No, <@216688100032643072>!").catch(botCommands.msgSendError);}, 1000);
                         }
                         else
                         if(msgLowTrimmed.indexOf("i don't believe you") != -1)
                         {
-                            setTimeout(function(){message.channel.sendMessage("Let's play with Bastion!").catch(botCommands.msgSendError);}, 1000);
-                            setTimeout(function(){message.channel.sendMessage("Bastion Bastion Bastion Bastion!!!!").catch(botCommands.msgSendError);}, 2000);
-                            setTimeout(function(){message.channel.sendMessage("bastion bastion bastion bastion bastion").catch(botCommands.msgSendError);}, 3500);
+                            setTimeout(function(){message.channel.send("Let's play with Bastion!").catch(botCommands.msgSendError);}, 1000);
+                            setTimeout(function(){message.channel.send("Bastion Bastion Bastion Bastion!!!!").catch(botCommands.msgSendError);}, 2000);
+                            setTimeout(function(){message.channel.send("bastion bastion bastion bastion bastion").catch(botCommands.msgSendError);}, 3500);
                         }
                     }
                 }
