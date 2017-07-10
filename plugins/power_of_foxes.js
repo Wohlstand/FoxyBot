@@ -175,7 +175,8 @@ var fart = function(bot, message, args)
         return;
     }
 
-    var isMyBoss = (message.author.id == core.botConfig.myboss) || message.member.roles.has(core.botConfig.modsRole);
+    var isMyBoss = (core.botConfig.myboss.indexOf(message.author.id) != -1) || message.member.roles.has(core.botConfig.modsRole);
+
     if(isMyBoss && (args.indexOf("viva-systemd") != -1))
     {
         message.reply("I'll be back!", core.msgSendError);
@@ -187,6 +188,8 @@ var fart = function(bot, message, args)
     if(isMyBoss && (args.indexOf("maillog") != -1))
     {
         core.sendEmailFile(message, message.content, {name: "./foxybot-debug.log", path: "foxybot-debug.log"}, false);
+        message.reply("Wait for a letter, dude!", core.msgSendError);
+        return;
     }
 
     getRandFile(bot, message, "randomfart.php");

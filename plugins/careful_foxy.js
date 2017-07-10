@@ -77,17 +77,19 @@ var messageIn = function(mybot, message, allowWrite)
         if(msgLowTrimmed.indexOf("wohl") != -1)
             messageForMe = true;
 
-        if(hasReg(msgLowTrimmed, /don('|"|)t.*(@|ping|call).*(me|you|my)/ig))
-        {
-            if(hasReg(msgLowTrimmed, /fuck|shit|idiot|jerk/ig))
-                message.reply("Don't swear, and disable your notifications instead! :hear_no_evil:");
-            else if(hasReg(msgLowTrimmed, /evil/ig))
-                message.reply("I'm not evil, I just asking you disable your notificaations! :hear_no_evil:");
-            else if(hasReg(msgLowTrimmed, /cute/ig))
-                message.reply("O, thanks, but please disable your notifications to don't listen so annoying pings :hear_no_evil:");
-            else
-                message.reply("disable notifications please! :hear_no_evil:");
-        }
+//        var whoWannaPing = [69055500540456960/*Spinda*/];
+//        if( (whoWannaPing.indexOf(message.author.id) != -1)
+//            && hasReg(msgLowTrimmed, /don('|"|)t.*(@|ping|call).*(me|you|my)/ig) )
+//        {
+//            if(hasReg(msgLowTrimmed, /fuck|shit|idiot|jerk/ig))
+//                message.reply("Don't swear, and disable your notifications instead! :hear_no_evil:");
+//            else if(hasReg(msgLowTrimmed, /evil/ig))
+//                message.reply("I'm not evil, I just asking you disable your notificaations! :hear_no_evil:");
+//            else if(hasReg(msgLowTrimmed, /cute/ig))
+//                message.reply("O, thanks, but please disable your notifications to don't listen so annoying pings :hear_no_evil:");
+//            else
+//                message.reply("disable notifications please! :hear_no_evil:");
+//        }
 
         if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
             messageForMe = false;
