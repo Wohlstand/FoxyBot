@@ -53,7 +53,7 @@ var translate = function(bot, message, args)
         {
             message.edit(translation);
         } else {
-            core.say(bot, message,  "<@!" + message.author.id + ">: " + translation);
+            core.say(bot, message,  "__**[" + message.author.username + "#" + message.author.discriminator + "]**__: " + translation);
         }
     },
     function(fail)
