@@ -307,7 +307,7 @@ var sayLog = function(bot, message, args)
     if(sayLogArr.length > 0)
     {
         var whoTold="";
-        for(var i=0; i<sayLogArr.length; i++)
+        for(var i=0; i < sayLogArr.length; i++)
         {
             whoTold += sayLogArr[i][0] + " told \"" + sayLogArr[i][1] + "\"\n";
         }

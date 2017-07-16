@@ -312,7 +312,7 @@ mybot.on("message", function(message)
     if(allowWrite && msgLowTrimmed.startsWith("/foxy "))
     {
         var botCmd = msgTrimmed.slice(6).trim();
-        botCommands.foxylogInfo("Cmd received: "+botCmd);
+        botCommands.foxylogInfo("Cmd received: " + botCmd);
 
         var firstSpace = botCmd.indexOf(' ');
         if(firstSpace == -1)
@@ -322,7 +322,7 @@ mybot.on("message", function(message)
         if(firstSpace != -1)
         {
             botCommand = botCmd.slice(0, firstSpace).trim();
-            botArgs = botCmd.slice(firstSpace+1).trim();
+            botArgs = botCmd.slice(firstSpace + 1).trim();
             botCommands.foxylogInfo("->>Cmd: " + botCommand);
             botCommands.foxylogInfo("->>Arg: " + botArgs);
         }
