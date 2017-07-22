@@ -31,7 +31,8 @@ var roboloeSpeech = [
 // Catch incoming messages: you can make foxy be more talkative or implement a custom command handler from the raw text
 function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)
 {
-    if(channelIsWritable && (message.author.id == 320247723641012235) && (roboloeSpeech.indexOf(message.text) != -1))
+    var msgTrimmed      = message.content.trim();
+    if(channelIsWritable && (message.author.id == 320247723641012235) && (roboloeSpeech.indexOf(msgTrimmed) != -1))
     {
         setTimeout(function()
         {
