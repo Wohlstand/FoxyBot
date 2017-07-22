@@ -62,6 +62,11 @@ var fennec = function(bot, message, args)
     getRandFile(bot, message, "randomfennec.php");
 }
 
+var wraska = function(bot, message, args)
+{
+    getRandFile(bot, message, "randomwraska.php");
+}
+
 var boxy = function(bot, message, args)
 {
     getRandFile(bot, message, "randombox.php");
@@ -251,6 +256,8 @@ function registerCommands(foxyCore)
     core.addSynonimOf("fox", "fenec");
     core.addSynonimOf("fox", "desertfox");
 
+    core.addCMD(["wraska",      wraska,        "You still don't know who is a Wraksa the Fox? Just type \"/foxy wraska\"!"]);
+    core.wraska = wraska;//Add Wraska as function to use in another plugins
 
     core.addCMD(["boxy",     boxy,             "I wish put something into it..."]);
     core.addSynonimOf("boxy", "box");

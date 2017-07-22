@@ -1,5 +1,5 @@
 {
-    "myboss" : "<ID of yourself>",
+    "myboss" : ["<Array if IDs include yourself>"],
     "modsRole" : "<ID of your chat server moderator's role>",
     "defaultChannel" : ["216229325484064768", "218194030662647809"],
     "token" : "<your bot's token here!>",

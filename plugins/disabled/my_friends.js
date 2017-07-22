@@ -10,7 +10,7 @@ var echidnasDir = "/home/vitaly/_Bots/echidnabot";
 
 function isGranted(message)
 {
-    return (message.author.id == core.botConfig.myboss) || (message.author.id == "133426635998232577");
+    return (core.botConfig.myboss.indexOf(message.author.id) != -1) || (message.author.id == "133426635998232577");
 }
 
 var knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
