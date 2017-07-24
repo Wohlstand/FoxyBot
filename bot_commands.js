@@ -3,6 +3,7 @@ var http             = require("http");
 var https            = require("https");
 var fs               = require('fs');
 var nodemailer       = require('nodemailer');
+var escape           = require('escape-html');
 var mysql            = require('mysql');
 
 var foxyBotPackage  = require("./package.json");
@@ -777,6 +778,9 @@ var sendEmailFile = function(message, args, attachment, doReply)
     // create reusable transporter object using the default SMTP transport
     var transporter = nodemailer.createTransport(smtpMailLoginInfo);
 
+    var usr_nick = (message.member.nickname == null ? message.author.username : message.member.nickname);
+    var usr_sign = (message.author.username + "#" + message.author.discriminator);
+
     // setup e-mail data with unicode symbols
     var mailOptions =
     {
@@ -784,11 +788,17 @@ var sendEmailFile = function(message, args, attachment, doReply)
         //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
         to: smtpMailTo, // list of receivers
         subject: 'Message from ' + (message.author.bot ? "bot" : "user")
-                  + " " + (message.member.nickname == null ? message.author.username : message.member.nickname)
-                  + ' (@' + message.author.username + "#" + message.author.discriminator + ")"
-                  +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
-        text: args, //plaintext body
-        //html: '<b>Hello world!</b>' // html body
+                  + " " + usr_nick
+                  + ' (@' + usr_sign + ")"
+                  + ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
+        //text: args, //plaintext body
+        html: '<p><img style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0px;" src="' + message.author.avatarURL + '"> '+
+                (message.author.bot ?
+                    '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">Bot</span>' :
+                    '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
+              '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
+              '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
+              '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>',  //html body
         attachments: extraFiles
     };
 
@@ -825,6 +835,9 @@ var sendEmailF = function(message, args, doReply)
     // create reusable transporter object using the default SMTP transport
     var transporter = nodemailer.createTransport(smtpMailLoginInfo);
 
+    var usr_nick = (message.member.nickname == null ? message.author.username : message.member.nickname);
+    var usr_sign = (message.author.username + "#" + message.author.discriminator);
+
     // setup e-mail data with unicode symbols
     var mailOptions =
     {
@@ -835,8 +848,14 @@ var sendEmailF = function(message, args, doReply)
                   + " " + (message.member.nickname == null ? message.author.username : message.member.nickname)
                   + ' (@' + message.author.username + "#" + message.author.discriminator + ")"
                   +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
-        text: args, //plaintext body
-        //html: '<b>Hello world!</b>' // html body
+        //text: args, //plaintext body
+        html: '<p><img style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0px;" src="' + message.author.avatarURL + '"> '+
+                (message.author.bot ?
+                    '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">Bot</span>' :
+                    '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
+              '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
+              '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
+              '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>',  //html body
         attachments: extraFiles
     };
 

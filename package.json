@@ -1,6 +1,6 @@
 {
     "name": "FoxyBot",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "description": "FoxyBot for discord",
     "main": "foxy.js",
     "author": "",
@@ -10,7 +10,8 @@
         "nodemailer": "^3.0.0",
         "yandex.translate": "^1.0.0",
         "winston": "^2.0.0",
-        "mysql": "^2.13.0"
+        "mysql": "^2.13.0",
+        "escape-html": "^1.0.3"
     }
 }
 
