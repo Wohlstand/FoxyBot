@@ -62,6 +62,8 @@ var loadPlugins = function(dir)
             try
             {
                 var plugin = require(file.substring(0, file.length - 3));
+                if(typeof(plugin.setBot) === "function")
+                    plugin.setBot(mybot);
                 plugin.registerCommands(botCommands);
                 foxyPlugins.push(plugin);
             }
@@ -258,14 +260,21 @@ function getAuthorStr(message)
     var ch = message.channel;
     var gu = message.guild;
 
-    return "[" +  (z.bot ? "bot" : "user") + "] "
-            + ( (ch.type == 'dm') ?
-                       z.username
-                    : (message.member.nickname == null ? z.username : message.member.nickname)
-              )
-            + " <@" + z.username + "#" + z.discriminator + ", "
-            + ( (ch.type == 'dm') ? "PM" : (ch.name + '@' + gu.name) )
-            + ">";
+    try
+    {
+        return "[" +  (z.bot ? "bot" : "user") + "] "
+                + ( (ch.type == 'dm') ?
+                           z.username
+                        : (message.member.nickname == null ? z.username : message.member.nickname)
+                  )
+                + " <@" + z.username + "#" + z.discriminator + ", "
+                + ( (ch.type == 'dm') ? "PM" : (ch.name + '@' + gu.name) )
+                + ">";
+    }
+    catch(e)
+    {
+        return e.name;
+    }
 }
 
 mybot.on("messageDelete", function(message)

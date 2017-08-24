@@ -3,6 +3,12 @@
     "modsRole" : "<ID of your chat server moderator's role>",
     "defaultChannel" : ["216229325484064768", "218194030662647809"],
     "token" : "<your bot's token here!>",
+    "pop" : {
+        "host" : "mailserver.ru",
+        "port" : "110",
+        "login" : "mybotmailbox@server.ru",
+        "pass" : "superpassword"
+    },
     "smtp" : {
         "login" : "smtps://mybotmailbox%40server.ru:superpassword@mailserver.ru",
         "from" : "\"FoxyBot on Discord\" <mybotmailbox@server.ru>",
