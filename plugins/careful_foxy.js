@@ -20,7 +20,22 @@ function hasStr(msg, word)
     return msg.indexOf(word) != -1;
 }
 
-var eggCommands = ["!color", "!commander", "!egg", "!hatch", "!ping", "!prefix", "!quote", "!role", "!spam", "!tag", "!talk", "!cmd", "!help", "!rps"];
+var eggCommands = [
+    "!color",
+    "!commander",
+    "!egg",
+    "!hatch",
+    "!ping",
+    "!prefix",
+    "!quote",
+    "!role",
+    "!spam",
+    "!tag",
+    "!talk",
+    "!cmd",
+    "!help",
+    "!rps"
+];
 
 // Check out is Yoshi021's Egg bot online, if not - notify user
 // that Egg is "eaten" :-P
@@ -48,6 +63,27 @@ function lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite)
     return false;
 }
 
+var keyMentions = [
+    "pge",
+    "wohl",
+    "wohlstand",
+    "wholstand"
+];
+
+
+function lookUpForKeyMentions(msgLowTrimmed)
+{
+    var forMe = false;
+
+    for(var i = 0; i < keyMentions.length; i++)
+    {
+        if(msgLowTrimmed.indexOf(keyMentions[i]) != -1)
+            forMe = true;
+    }
+
+    return forMe;
+}
+
 var messageIn = function(mybot, message, allowWrite)
 {
     var msgTrimmed      = message.content.trim();
@@ -59,6 +95,7 @@ var messageIn = function(mybot, message, allowWrite)
     {
         var wasAsked = false;
         var messageForMe = false;
+        var messageForMeReact = true;
         var mentions = message.mentions.users.array();
 
         for(var i = 0; i < mentions.length; i++)
@@ -68,13 +105,7 @@ var messageIn = function(mybot, message, allowWrite)
             messageForMe = (mentions[i].id == 182039820879659008) && (message.author.id != 216943869424566273);
         }
 
-        if(msgLowTrimmed.indexOf("pge") != -1)
-            messageForMe = true;
-        if(msgLowTrimmed.indexOf("wohlstand") != -1)
-            messageForMe = true;
-        if(msgLowTrimmed.indexOf("wholstand") != -1)
-            messageForMe = true;
-        if(msgLowTrimmed.indexOf("wohl") != -1)
+        if(lookUpForKeyMentions(msgLowTrimmed))
             messageForMe = true;
 
 //        var whoWannaPing = [69055500540456960/*Spinda*/];
@@ -90,9 +121,14 @@ var messageIn = function(mybot, message, allowWrite)
 //            else
 //                message.reply("disable notifications please! :hear_no_evil:");
 //        }
-
         if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
             messageForMe = false;
+
+        if((message.author.id == 216273975939039235) && messageForMe)
+        {
+            if(msgLowTrimmed.indexOf("http://wohlsoft.ru/") == -1)
+                messageForMeReact = false; //Don't mark LunaBot's URLs
+        }
 
         //Check is botane offline, and reply on attempt call her
         var Botane = mybot.users.get("216688100032643072");
@@ -177,6 +213,8 @@ var messageIn = function(mybot, message, allowWrite)
             if(messageForMe)
             {
                 botCommands.sendEmail(message, message.content, false);
+                if(messageForMeReact)
+                    message.react("📧");//Mark message as reported
             }
 
             if(allowWrite)

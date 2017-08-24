@@ -1,6 +1,6 @@
 {
     "name": "FoxyBot",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "description": "FoxyBot for discord",
     "main": "foxy.js",
     "author": "",

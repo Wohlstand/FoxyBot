@@ -34,8 +34,9 @@ https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&p
 
 */
 
-var Discord = require("discord.js");
+var Discord     = require("discord.js");
 var botCommands = require("./bot_commands");
+var filesystem  = require("fs");
 
 var mybot = new Discord.Client();
 mybot.autoReconnect = true;
@@ -48,7 +49,6 @@ var foxyPlugins = [];
 
 var loadPlugins = function(dir)
 {
-    var filesystem = require("fs");
     var results = [];
 
     filesystem.readdirSync(dir).forEach(function(file)
@@ -61,7 +61,7 @@ var loadPlugins = function(dir)
             botCommands.foxylogInfo('Loading plugin: ' + file);
             try
             {
-                var plugin = require(file.substring(0, file.length-3));
+                var plugin = require(file.substring(0, file.length - 3));
                 plugin.registerCommands(botCommands);
                 foxyPlugins.push(plugin);
             }
@@ -76,6 +76,17 @@ var loadPlugins = function(dir)
 
 botCommands.registerCommands();
 loadPlugins("./plugins");
+
+function pluginsList(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    //TODO: Implement this!
+}
+
+function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    //TODO: Implement this!
+}
+
 
 function statusError(error)
 {
@@ -341,3 +352,4 @@ mybot.on("message", function(message)
 });
 
 botCommands.loginBot(mybot, botCommands.botConfig.token);
+
