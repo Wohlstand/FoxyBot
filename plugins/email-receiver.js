@@ -6,6 +6,7 @@
 var core = undefined;
 
 var util = require("util");
+var htmlToText = require('html-to-text');
 
 // Email client
 var Client = require('node-poplib-gowhich').Client;
@@ -82,10 +83,11 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
                     {
                         console.log(message.subject);
                         console.log("Message from: " + util.inspect(message.from));
-
-                        var msgRes = {text: message.text, uid: 0, gid: 0, cid: 0};
+                        console.log("Message body:\n===============\n\n" + util.inspect(message) + "\n\n========================\n");
+                        var msgText = (typeof(message.text) != "undefined" ? message.text : htmlToText.fromString(message.html));
+                        var msgRes = {text: msgText, uid: 0, gid: 0, cid: 0};
                         parseMessage(msgRes);
-                        var outText = "```\n" + msgRes.text + "\n```";
+                        var outText = "\n" + msgText;
                         var chan = bot.channels.get(msgRes.cid != 0 ? msgRes.cid : core.botConfig.defaultChannel[0]);
 
                         chan.send("__I got email reply from " + message.from[0].name + " for " + (msgRes.uid != 0 ? "<@" + msgRes.uid + ">" : "someone") + "__:\n",
@@ -100,7 +102,7 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
                                     footer: {
                                         text: "Note: to send email reply, you must have 'Wohlstand' (or 'Wohl') mention in every your message (letter sign 📧 means email was sent)"
                                     }
-                                }
+                                }, split: true
                             }
                         ).catch(core.msgSendError);
                     });
