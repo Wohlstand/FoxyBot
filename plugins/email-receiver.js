@@ -27,15 +27,18 @@ function parseMessage(msg)
     var uidMatch = uid.exec(msg.text);
     var gidMatch = gid.exec(msg.text);
     var cidMatch = cid.exec(msg.text);
-
-    //console.log("UID: " + util.inspect(uidMatch));
-    //console.log("GID: " + util.inspect(gidMatch));
-    //console.log("CID: " + util.inspect(cidMatch));
-    if(uidMatch != null && gidMatch != null && cidMatch != null)
+    try
     {
-        msg.uid = uidMatch[1];
-        msg.gid = gidMatch[1];
-        msg.cid = cidMatch[1];
+        if(uidMatch != null)
+            msg.uid = uidMatch[1];
+        if(gidMatch != null)
+            msg.gid = gidMatch[1];
+        if(cidMatch != null)
+            msg.cid = cidMatch[1];
+    }
+    catch(e)
+    {
+        console.log("parseMessage: FAILED: " + e.name);
     }
 }
 
