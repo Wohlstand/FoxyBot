@@ -126,7 +126,7 @@ var messageIn = function(mybot, message, allowWrite)
 
         if((message.author.id == 216273975939039235) && messageForMe)
         {
-            if(msgLowTrimmed.indexOf("http://wohlsoft.ru/") == -1)
+            if(msgLowTrimmed.indexOf("http://wohlsoft.ru/") != -1)
                 messageForMeReact = false; //Don't mark LunaBot's URLs
         }
 
