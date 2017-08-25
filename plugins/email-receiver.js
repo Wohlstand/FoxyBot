@@ -17,17 +17,25 @@ function setBot(botInstance)
     bot = botInstance;
 }
 
-function parseMessage(text)
+function parseMessage(msg)
 {
-    var reg = /User \*.+\* \((.+)\)/gi;
-    var arr = reg.exec(text);
+    var uid = /UserID: \[(\d+)\]/gi;
+    var gid = /GuildID: \[(\d+)\]/gi;
+    var cid = /ChannelID: \[(\d+)\]/gi;
 
-    if(arr != null)
+    var uidMatch = uid.exec(msg.text);
+    var gidMatch = gid.exec(msg.text);
+    var cidMatch = cid.exec(msg.text);
+
+    //console.log("UID: " + util.inspect(uidMatch));
+    //console.log("GID: " + util.inspect(gidMatch));
+    //console.log("CID: " + util.inspect(cidMatch));
+    if(uidMatch != null && gidMatch != null && cidMatch != null)
     {
-        return "@" + arr[1] + ",\n" + "```\n" + text + "\n```";
+        msg.uid = uidMatch[1];
+        msg.gid = gidMatch[1];
+        msg.cid = cidMatch[1];
     }
-
-    return "```\n" + text + "\n```";
 }
 
 var client;
@@ -75,19 +83,22 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
                         console.log(message.subject);
                         console.log("Message from: " + util.inspect(message.from));
 
-                        var chan = bot.channels.get(core.botConfig.defaultChannel[0]);
+                        var msgRes = {text: message.text, uid: 0, gid: 0, cid: 0};
+                        parseMessage(msgRes);
+                        var outText = "```\n" + msgRes.text + "\n```";
+                        var chan = bot.channels.get(msgRes.cid != 0 ? msgRes.cid : core.botConfig.defaultChannel[0]);
 
-                        chan.send("__I got email from " + message.from['name'] + "__:\n",
+                        chan.send("__I got email reply from " + message.from[0].name + " for " + (msgRes.uid != 0 ? "<@" + msgRes.uid + ">" : "someone") + "__:\n",
                             {
                                 embed:
                                 {
                                     color: 0xAF0000,
                                     fields: [{
                                         name : message.subject,
-                                        value: parseMessage(message.text)
+                                        value: outText
                                     }],
                                     footer: {
-                                        text: "Note: to send email reply, you must have 'Wohlstand' (or 'Wohl') mention in every your message (even it is short)"
+                                        text: "Note: to send email reply, you must have 'Wohlstand' (or 'Wohl') mention in every your message (letter sign 📧 means email was sent)"
                                     }
                                 }
                             }

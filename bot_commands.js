@@ -798,7 +798,13 @@ var sendEmailFile = function(message, args, attachment, doReply)
                     '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
               '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
               '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
-              '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>',  //html body
+              '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>' +
+              '<p><h3>Meta-data</h3></p>' +
+              '<ul>' +
+              '<li> UserID: [' + message.author.id + ']</li>' +
+              '<li> GuildID: [' + message.guild.id + ']</li>' +
+              '<li> ChannelID: [' + message.channel.id + ']</li>' +
+              '</ul>',  //html body
         attachments: extraFiles
     };
 
@@ -855,7 +861,13 @@ var sendEmailF = function(message, args, doReply)
                     '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
               '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
               '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
-              '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>',  //html body
+              '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>' +
+              '<p><h3>Meta-data</h3></p>' +
+              '<ul>' +
+              '<li> UserID: [' + message.author.id + ']</li>' +
+              '<li> GuildID: [' + message.guild.id + ']</li>' +
+              '<li> ChannelID: [' + message.channel.id + ']</li>' +
+              '</ul>',  //html body
         attachments: extraFiles
     };
 
