@@ -95,7 +95,7 @@ var messageIn = function(mybot, message, allowWrite)
     {
         var wasAsked = false;
         var messageForMe = false;
-        var messageForMeReact = true;
+        //var messageForMeReact = true; //Don't feed trolls
         var mentions = message.mentions.users.array();
 
         for(var i = 0; i < mentions.length; i++)
@@ -124,11 +124,12 @@ var messageIn = function(mybot, message, allowWrite)
         if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
             messageForMe = false;
 
+        /* //Don't feed trolls
         if((message.author.id == 216273975939039235) && messageForMe)
         {
             if(msgLowTrimmed.indexOf("http://wohlsoft.ru/") != -1)
                 messageForMeReact = false; //Don't mark LunaBot's URLs
-        }
+        }*/
 
         //Check is botane offline, and reply on attempt call her
         var Botane = mybot.users.get("216688100032643072");
@@ -213,8 +214,8 @@ var messageIn = function(mybot, message, allowWrite)
             if(messageForMe)
             {
                 botCommands.sendEmail(message, message.content, false);
-                if(messageForMeReact)
-                    message.react("📧");//Mark message as reported
+                //if(messageForMeReact) //Don't feed trolls
+                //    message.react("📧");//Mark message as reported
             }
 
             if(allowWrite)
