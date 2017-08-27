@@ -63,13 +63,32 @@ function lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite)
     return false;
 }
 
+var keyPrefix = [
+    "wohl",
+    "wohlstand",
+    "wholstand"
+];
+
+function lookUpForKeyPrefix(msgLowTrimmed)
+{
+    var forMe = false;
+
+    for(var i = 0; i < keyPrefix.length; i++)
+    {
+        if((msgLowTrimmed.indexOf(keyPrefix[i] + ":") == 0) ||
+           (msgLowTrimmed.indexOf(keyPrefix[i] + ",") == 0))
+            forMe = true;
+    }
+
+    return forMe;
+}
+
 var keyMentions = [
     "pge",
     "wohl",
     "wohlstand",
     "wholstand"
 ];
-
 
 function lookUpForKeyMentions(msgLowTrimmed)
 {
@@ -95,7 +114,7 @@ var messageIn = function(mybot, message, allowWrite)
     {
         var wasAsked = false;
         var messageForMe = false;
-        //var messageForMeReact = true; //Don't feed trolls
+        var messageForMeReact = false;
         var mentions = message.mentions.users.array();
 
         for(var i = 0; i < mentions.length; i++)
@@ -103,10 +122,17 @@ var messageIn = function(mybot, message, allowWrite)
             botCommands.foxylogInfo( "---> " + mentions[i].username + "#" + mentions[i].discriminator);
             wasAsked = (mentions[i].id == 216943869424566273);
             messageForMe = (mentions[i].id == 182039820879659008) && (message.author.id != 216943869424566273);
+            messageForMeReact = messageForMe;
         }
 
-        if(lookUpForKeyMentions(msgLowTrimmed))
+        if(lookUpForKeyMentions(msgLowTrimmed)) //Shadow email
             messageForMe = true;
+
+        if(lookUpForKeyPrefix(msgLowTrimmed))   //Transparent email
+        {
+            messageForMe = true;
+            messageForMeReact = true;
+        }
 
 //        var whoWannaPing = [69055500540456960/*Spinda*/];
 //        if( (whoWannaPing.indexOf(message.author.id) != -1)
@@ -124,12 +150,12 @@ var messageIn = function(mybot, message, allowWrite)
         if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
             messageForMe = false;
 
-        /* //Don't feed trolls
         if((message.author.id == 216273975939039235) && messageForMe)
         {
-            if(msgLowTrimmed.indexOf("http://wohlsoft.ru/") != -1)
-                messageForMeReact = false; //Don't mark LunaBot's URLs
-        }*/
+            messageForMeReact = false; //Don't react to LunaBot
+            if((msgLowTrimmed.indexOf("http://wohlsoft.ru/") == 0) && (msgLowTrimmed.indexOf(" ") == -1))
+                messageForMe = false; //Don't report LunaBot's URLs
+        }
 
         //Check is botane offline, and reply on attempt call her
         var Botane = mybot.users.get("216688100032643072");
@@ -213,9 +239,10 @@ var messageIn = function(mybot, message, allowWrite)
         {
             if(messageForMe)
             {
+                console.log("Sending email...");
                 botCommands.sendEmail(message, message.content, false);
-                //if(messageForMeReact) //Don't feed trolls
-                //    message.react("📧");//Mark message as reported
+                if(messageForMeReact)
+                    message.react("📧");//Mark message as reported
             }
 
             if(allowWrite)

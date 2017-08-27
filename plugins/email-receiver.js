@@ -103,7 +103,7 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
                                         value: outText
                                     }],
                                     footer: {
-                                        text: "Note: to send email reply, you must have 'Wohlstand' (or 'Wohl') mention in every your message (letter sign 📧 means email was sent)"
+                                        text: "Note: to send email to me, begin every your message with 'Wohlstand:' (or 'Wohl:') (letter sign 📧 means email was sent)"
                                     }
                                 }, split: true
                             }
