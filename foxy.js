@@ -362,3 +362,15 @@ mybot.on("message", function(message)
 
 botCommands.loginBot(mybot, botCommands.botConfig.token);
 
+setInterval(function()
+{
+    if(global.gc)
+    {
+        global.gc();
+    } else {
+        console.log('Garbage collection unavailable.  Pass --expose-gc '
+          + 'when launching node to enable forced garbage collection.');
+    }
+    console.log('Memory usage:', process.memoryUsage());
+}, 1800000); //Every half of hour
+
