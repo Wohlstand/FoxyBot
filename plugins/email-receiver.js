@@ -18,6 +18,12 @@ function setBot(botInstance)
     bot = botInstance;
 }
 
+// User in this list will be never pinged
+function isNoPingUser(userId)
+{
+    return (core.botConfig.pessimists.indexOf(userId) != -1)
+}
+
 function parseMessage(msg)
 {
     var uid = /UserID: \[(\d+)\]/gi;
@@ -93,7 +99,9 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
                         var outText = "\n" + msgText;
                         var chan = bot.channels.get(msgRes.cid != 0 ? msgRes.cid : core.botConfig.defaultChannel[0]);
 
-                        chan.send("__I got email reply from " + message.from[0].name + " for " + (msgRes.uid != 0 ? "<@" + msgRes.uid + ">" : "someone") + "__:\n",
+                        chan.send("__I got email reply from " + message.from[0].name + " for " +
+                                    (msgRes.uid != 0 ? (isNoPingUser(msgRes.uid) ? msgRes.uid : ("<@" + msgRes.uid + ">") ) : "someone")
+                                    + "__:\n",
                             {
                                 embed:
                                 {
