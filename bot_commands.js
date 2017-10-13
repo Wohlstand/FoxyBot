@@ -47,15 +47,38 @@ var smtpMailLoginInfo = botConfig.smtp.login;
 var smtpMailFrom      = botConfig.smtp.from;
 var smtpMailTo        = botConfig.smtp.to;
 
-var mydb = mysql.createConnection({
-      host     : botConfig.mysql.host,
-      user     : botConfig.mysql.user,
-      password : botConfig.mysql.password,
-      database : botConfig.mysql.db,
-      charset  : 'UTF8MB4_UNICODE_CI'
-});
+var mydb = undefined;
 
-mydb.connect();
+function connectMyDb()
+{
+    if(mydb == undefined)
+    {
+        mydb = mysql.createPool({
+              connectionLimit : 5,
+              host     : botConfig.mysql.host,
+              user     : botConfig.mysql.user,
+              password : botConfig.mysql.password,
+              database : botConfig.mysql.db,
+              charset  : 'UTF8MB4_UNICODE_CI'
+        });
+        //mydb.connect();
+    }
+}
+
+function disconnectMyDb()
+{
+    if(mydb != undefined)
+        mydb.destroy();
+    mydb = undefined;
+}
+
+function reconnectMyDb()
+{
+    disconnectMyDb();
+    connectMyDb();
+}
+
+connectMyDb();
 
 /* ******************Internal black/white lists ********************************/
 
@@ -450,6 +473,8 @@ var initRemindWatcher = function(bot)
         catch(e)
         {
             foxylogInfo("Error happen! " + e.name + ":" + e.message);
+            //Try to reconnect MySQL
+            reconnectMyDb();
         }
 
     }, 60000); //Check the database every minute
@@ -492,6 +517,8 @@ var sayDelayd = function(bot, message, args)
         if(error)
         {
             foxylogInfo("Error happen! " + error);
+            //Try to reconnect MySQL
+            reconnectMyDb();
             return;
         }
     });
@@ -539,6 +566,7 @@ var sayDelaydME = function(bot, message, args)
         if(error)
         {
             foxylogInfo("Error happen! " + error);
+            reconnectMyDb();
             return;
         }
     });
