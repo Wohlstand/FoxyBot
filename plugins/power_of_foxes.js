@@ -253,8 +253,8 @@ function registerCommands(foxyCore)
     core.addSynonimOf("fox", "🦊");
 
     core.addCMD(["fennec",      fennec,        "Are you fan of the desert foxes :fox:? Just type \"/foxy fennec\"!"]);
-    core.addSynonimOf("fox", "fenec");
-    core.addSynonimOf("fox", "desertfox");
+    core.addSynonimOf("fennec", "fenec");
+    core.addSynonimOf("fennec", "desertfox");
 
     core.addCMD(["wraska",      wraska,        "You still don't know who is a Wraksa the Fox? Just type \"/foxy wraska\"!"]);
     core.wraska = wraska;//Add Wraska as function to use in another plugins
