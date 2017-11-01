@@ -44,12 +44,44 @@ var joinChaos = function(bot, message, args)
     message.reply("Welcome to Chaos!", core.msgSendError);
 }
 
+var crystalPhase = function(bot, message, args)
+{
+    var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+    var firstDate = new Date(2017,11,1);//Точка отсчёта чётности
+    var secondDate = new Date();
+
+    var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+
+    var ru = bot.channels.get(Chan_RUS);
+    //var en = bot.channels.get(Chan_ENG);
+
+    var crystal_peace;
+    var crystal_war;
+
+    if(message.channel.id == ru.id)
+    {
+        crystal_peace = "# Кристал в мирной проекции мира.";
+        crystal_war = "# Кристал в боевой проекции мира.";
+    }
+    else
+    {
+        crystal_peace = "# The Crystal is in the world projection of the peace.";
+        crystal_war = "# The Crystal is in the world projection of the war.";
+    }
+
+    if((diffDays % 2) == 0)
+        message.channel.send(crystal_peace).catch(core.msgSendError);
+    else
+        message.channel.send(crystal_war).catch(core.msgSendError);
+}
+
 
 function registerCommands(foxyCore)
 {
     core = foxyCore;
     core.addCMD(["order",      joinOrder,           "Join The Order Alliance - Holy Empire and Insurgents!!!", [], true, [UORPG_Server] ]);
     core.addCMD(["chaos",      joinChaos,           "Join The Chaos Alliance - Army of Darkness and The Shadows!!!", [], true, [UORPG_Server] ]);
+    core.addCMD(["crystal",    crystalPhase,        "Show projection where crystal is located", [], true, [UORPG_Server] ]);
 }
 
 function guildMemberAdd(bot, guildMember)
