@@ -8,6 +8,7 @@ var UORPG_Server = "177730395352072192";
 
 var Chan_RUS = "203294045689217024";
 var Chan_ENG = "199908461549584384";
+var Chan_LAT = "369616743200456715";
 
 function isRussian(chan)
 {
@@ -52,21 +53,27 @@ var crystalPhase = function(bot, message, args)
 
     var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 
-    var ru = bot.channels.get(Chan_RUS);
-    //var en = bot.channels.get(Chan_ENG);
+    var rus = bot.channels.get(Chan_RUS);
+    var lat = bot.channels.get(Chan_LAT);
+    //var eng = bot.channels.get(Chan_ENG);
 
     var crystal_peace;
     var crystal_war;
 
-    if(message.channel.id == ru.id)
+    if(message.channel.id == rus.id)
     {
         crystal_peace = "# Кристал в мирной проекции мира.";
         crystal_war = "# Кристал в боевой проекции мира.";
     }
+    else if(message.channel.id == lat.id)
+    {
+        crystal_peace = "# Crystal mierīgā projekcijas pasaulē.";
+        crystal_war = "# Crystal kaujas projekcijas pasaulē.";
+    }
     else
     {
-        crystal_peace = "# The Crystal is in the world projection of the peace.";
-        crystal_war = "# The Crystal is in the world projection of the war.";
+        crystal_peace = "# The Crystal is in the peace projection of the world.";
+        crystal_war = "# The Crystal is in the war projection of the world.";
     }
 
     if((diffDays % 2) == 0)
