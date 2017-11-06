@@ -67,8 +67,8 @@ var crystalPhase = function(bot, message, args)
     }
     else if(message.channel.id == lat.id)
     {
-        crystal_peace = "# Crystal mierīgā projekcijas pasaulē.";
-        crystal_war = "# Crystal kaujas projekcijas pasaulē.";
+        crystal_peace = "# Kristāls ir pasaules mierā projekcijā.";
+        crystal_war = "# Kristāls ir pasaules karā projekcijā.";
     }
     else
     {
