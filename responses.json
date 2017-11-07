@@ -1,13 +1,14 @@
 {
-  "enter" :
-  [
-	"I live, again!",
-	"Hi guys, I'm here!",
-	"Hi, Do you waited for fluffy foxy?!",
-	"I'm here!",
-	"Knux sucks!",
-	"Hey, Luna, how long you are alive?",
-	"Mmmm, Egg, is it here? I'm hungry, I came to eat it!"
-  ]
+    "enter" :
+    [
+	    "I live, again!",
+	    "Hi guys, I'm here!",
+	    "Hi, Do you waited for fluffy foxy?!",
+	    "I'm here!",
+	    "Knux sucks!",
+	    "Hey, Luna, how long you are alive?",
+	    "It's sad that Egg is no more here... I'm hungry, I would eat it when it will return!",
+	    "Hai, Roboloe if you here!"
+    ]
 }
 

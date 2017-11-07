@@ -45,13 +45,16 @@ var sheIsWraska =
     "No one anime girl kawaii more than Wraska Snowy Fox",
     "I saw this lot of times... Let's enjoy a cute Wraska instead of this!",
     ".... boring! :expressionless:\nWraska, come here!",
-    "Maybe you will stop to post this anime post again? Wraska, please show your beauty to everyone!"
+    "Maybe you will stop to post this anime post again? Wraska, please show your beauty to everyone!",
+    "Hey, Knux, please ask Wraska to come here while I kicking to Roboloe's ass...\nNo? Okay, You better can kick his ass than me.\nAnyway, Wraska is already here!"
 ];
 
 var wraskaIsKawaii =
 [
     "No one anime girl kawaii more than Wraska Snowy Fox",
     "You are not kawaii, Wraska is kawaii!",
+    "No, you are not kawaii!\nWraska is kawaii!",
+    "No, you are not kawaii!\nWraska can confirm that :3",
     "Robo, you will never be kawaii!\nWraska is kawaii forever!",
     "I don't think this is kawaii... Let's see true kawaii - Wraska!"
 ];
@@ -138,6 +141,15 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
                         if(typeof(core.fox) != 'undefined')
                             core.fox(bot, message, "fox");
                     }, 3800);
+                    messageSent = true;
+                }
+
+                if(msgTrimmed == "im kawaii")
+                {
+                    setTimeout(function()
+                    {
+                        message.reply("Really?! Give a proof please :3", core.msgSendError);
+                    }, 3500);
                     messageSent = true;
                 }
 
