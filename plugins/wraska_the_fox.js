@@ -71,7 +71,17 @@ var roboloeTalkTable = [
         ["I want to see more furries than anime!",
          "Anime is no more actual, Furries are best choice for now!"]
     ],
+    ["Why does foxy occasionally post this?",
+        ["I want to see more furries than anime!",
+         "Anime is no more actual, Furries are best choice for now!"]
+    ],
     ["i find foxy more obnoxious by a long shot",
+        ["Mayby you will stop to post anime?",
+         "Robo, you are looking more obnoxious than me with that annoying anime!",
+         "Look to yourself, crazy anime bot!",
+         "Hey, Knux, please kick that anime bot to his metallic ass!"]
+    ],
+    ["i find foxy way more obnoxious by a long shot",
         ["Mayby you will stop to post anime?",
          "Robo, you are looking more obnoxious than me with that annoying anime!",
          "Look to yourself, crazy anime bot!",
