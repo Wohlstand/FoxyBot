@@ -42,11 +42,13 @@ var roboloeSpeech = [
 
 var sheIsWraska =
 [
-    "No one anime girl kawaii more than Wraska Snowy Fox",
     "I saw this lot of times... Let's enjoy a cute Wraska instead of this!",
     ".... boring! :expressionless:\nWraska, come here!",
     "Maybe you will stop to post this anime post again? Wraska, please show your beauty to everyone!",
-    "Hey, Knux, please ask Wraska to come here while I kicking to Roboloe's ass...\nNo? Okay, You better can kick his ass than me.\nAnyway, Wraska is already here!"
+    "Hey, Knux, please ask Wraska to come here while I kicking to Roboloe's ass...\nNo? Okay, You better can kick his ass than me.\nAnyway, Wraska is already here!",
+    "Roboloe, do you Wanna a good Anime? Go to Japen!\nOh, hello Wraska :3",
+    "Anime from Luna's collection is not better than Hayao Miyazaki's Anime, Wraska can confirm than :3",
+    ".... Boring and Annoying!\nI better watch something Hayao Miyazaki's together with Wraska!"
 ];
 
 var wraskaIsKawaii =
@@ -91,6 +93,17 @@ var roboloeTalkTable = [
         ["Don't forgot about furries!",
          "Anime - boring, Furries - funny, Anime + Furries = Let's see!",
          "& Foxes!"]
+    ],
+    ["Foxy just gets creepier",
+        ["Really? Then...... Boo! :ghost:",
+         "Why such a big robot is afraid a little Foxy? :3",
+         "You better fear ghosts and zombies than little fluffy foxies :-P",
+         "Do you really think Knux will do kick your ass so strong? Don't worry, he is too lazy to do this :wink:"]
+    ],
+    ["posting things like \"http://wohlsoft.ru/images/foxybot/wraskafox/piXbrpg9h4o.jpg\" is wasting everyone's time",
+        ["Anime posting is also wastes everyone's time!",
+         "You are wasting more time by posting anime things from Luna's outdated collection, why not to post something different than Anime?",
+         "Everyone, does Wraska wastes your time? Or you are prefer to see a boring outdated Luna's anime collection?"]
     ]
 ];
 
