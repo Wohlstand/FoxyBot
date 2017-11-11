@@ -100,7 +100,7 @@ var roboloeTalkTable = [
          "You better fear ghosts and zombies than little fluffy foxies :-P",
          "Do you really think Knux will do kick your ass so strong? Don't worry, he is too lazy to do this :wink:"]
     ],
-    ["posting things like \"http://wohlsoft.ru/images/foxybot/wraskafox/piXbrpg9h4o.jpg\" is wasting everyone's time",
+    ["\" is wasting everyone's time",
         ["Anime posting is also wastes everyone's time!",
          "You are wasting more time by posting anime things from Luna's outdated collection, why not to post something different than Anime?",
          "Everyone, does Wraska wastes your time? Or you are prefer to see a boring outdated Luna's anime collection?"]
@@ -192,7 +192,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
                 for(var i = 0; i < roboloeTalkTable.length; i++)
                 {
                     //debug += "'" + msgTrimmed + "' == '" + roboloeTalkTable[i][0] + "' ";
-                    if(msgTrimmed == roboloeTalkTable[i][0])
+                    if(msgTrimmed.indexOf(roboloeTalkTable[i][0]) != -1)
                     {
                         setTimeout(function()
                         {
