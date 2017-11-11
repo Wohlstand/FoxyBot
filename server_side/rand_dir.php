@@ -10,12 +10,20 @@ require_once("antidupe.php");
 
 $foxes = array();
 
+function endsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+
+    return $length === 0 ||
+    (substr($haystack, -$length) === $needle);
+}
+
 function fetchFoxes($dirxxx)
 {
     global $foxes;
-    if ($handle = opendir($dirxxx)) 
+    if ($handle = opendir($dirxxx))
     {
-        while (false !== ($entry = readdir($handle))) 
+        while (false !== ($entry = readdir($handle)))
         {
             if(($entry) != "." && ($entry) != ".." && (!fileUsed($entry)) )
             {
@@ -30,10 +38,10 @@ function randomFox($dirToFetch, $fieldName)
 {
     global $foxes, $debug;
     initSQL($dirToFetch);
-    //echo totalFiles()."\n\n";    
+    //echo totalFiles()."\n\n";
     $foxes = array();
     fetchFoxes('./'.$dirToFetch.'/');
-    
+
     if($debug) echo count($foxes);
 
     if(count($foxes)==0)
@@ -48,6 +56,12 @@ function randomFox($dirToFetch, $fieldName)
     addUsed($fox);
 
     if($debug) echo "\nadded: ".totalFiles()."\n";
+
+    if(endsWith($fox, ".link")) //If file is a link
+    {
+        echo "{\"file\": \"" . trim(file_get_contents($dirToFetch."/" . $fox)) . "\" }";
+        exit();
+    }
 
     echo "{\"file\": \"http://wohlsoft.ru/images/foxybot/".$dirToFetch."/" . $fox . "\" }";
 }
