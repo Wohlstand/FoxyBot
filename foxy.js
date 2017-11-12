@@ -53,40 +53,110 @@ var loadPlugins = function(dir)
 
     filesystem.readdirSync(dir).forEach(function(file)
     {
+        var pluginName = file.substring(0, file.length - 3);
         file = dir + '/' + file;
         var stat = filesystem.statSync(file);
         if (stat && stat.isDirectory()) {}
         else if(file.endsWith(".js"))
         {
             botCommands.foxylogInfo('Loading plugin: ' + file);
+            var pluginPath = file.substring(0, file.length - 3);
             try
             {
-                var plugin = require(file.substring(0, file.length - 3));
+                var plugin = require(pluginPath);
                 if(typeof(plugin.setBot) === "function")
                     plugin.setBot(mybot);
-                plugin.registerCommands(botCommands);
+                plugin.pluginName = pluginName;
+                plugin.pluginPath = pluginPath;
+                plugin.pluginStatus = "Ok";
                 foxyPlugins.push(plugin);
             }
             catch(e)
             {
+                var plugin = [];
+                plugin.pluginName = pluginName;
+                plugin.pluginPath = pluginPath;
+                plugin.pluginStatus = "Failed: [" + e.name + "]" + e.message;
                 botCommands.foxylogInfo("Failed to load plugin " + file + " because of exception: " + e.name + ":\n\n" + e.message);
+                foxyPlugins.push(plugin);
             }
         }
     });
     return results;
 };
 
-botCommands.registerCommands();
+
+function loadBotCommands()
+{
+    //Register common commands
+    botCommands.registerCommands();
+    //Register INTERNAL commands
+    botCommands.addCMD(["plugins-status",   pluginsList, "Show list of my plugins", [], true]);
+    botCommands.addCMD(["plugins-reload",   pluginsReload, "Show list of my plugins", [], true]);
+    //Register per-plugin commands
+    foxyPlugins.forEach(function(plugin)
+    {
+        try
+        {
+            if(typeof(plugin.setBot) === "function")
+                plugin.setBot(mybot);
+            if(typeof(plugin.registerCommands) === "function")
+                plugin.registerCommands(botCommands);
+        }
+        catch(e)
+        {
+            plugin.pluginStatus = "Failed to register commands: [" + e.name + "]" + e.message;
+            botCommands.foxylogInfo("Failed to initialize plugin " + file + " because of exception: " + e.name + ":\n\n" + e.message);
+        }
+    });
+}
+
 loadPlugins("./plugins");
+loadBotCommands();
 
 function pluginsList(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
-    //TODO: Implement this!
+    var pluginsInfo = "My plugins:\n";
+    pluginsInfo += "```\n";
+    foxyPlugins.forEach(function(plugin)
+    {
+        pluginsInfo += " * " + plugin.pluginName + " - " + plugin.pluginStatus + "\n";
+    });
+    pluginsInfo += "```\n";
+    message.channel.send(pluginsInfo).catch(botCommands.msgSendError);
 }
 
 function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
-    //TODO: Implement this!
+    var isMyBoss = (botCommands.botConfig.myboss.indexOf(message.author.id) != -1);
+
+    if(!isMyBoss)
+    {
+        message.reply("You are not granted to reload my plugins!", botCommands.msgSendError);
+        return;
+    }
+
+    //Destroy all plugins
+    foxyPlugins.forEach(function(plugin)
+    {
+        delete require.cache[require.resolve(plugin.pluginPath)];
+    });
+
+    //Load plugins again
+    foxyPlugins = [];
+    loadPlugins("./plugins");
+
+    botCommands.clearCommands();
+    loadBotCommands();
+
+    var pluginsInfo = "My plugins has been reloaded!\nResult:\n";
+    pluginsInfo += "```\n";
+    foxyPlugins.forEach(function(plugin)
+    {
+        pluginsInfo += " * " + plugin.pluginName + " - " + plugin.pluginStatus + "\n";
+    });
+    pluginsInfo += "```\n";
+    message.channel.send(pluginsInfo).catch(botCommands.msgSendError);
 }
 
 

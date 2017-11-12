@@ -15,7 +15,7 @@ var dummyPlugTest = function(/*Client*/ bot, /*Message*/ message, /*string*/ arg
 function registerCommands(/*bot_commands.js module*/ foxyCore)
 {
     core = foxyCore;
-    // Command structure: 
+    // Command structure:
     // name[0] {string}
     // function(bot,msg,args)[1] {function pointer}
     // help[2], {string}
@@ -42,3 +42,4 @@ module.exports =
     // Catch incoming messages: you can make foxy be more talkative or implement a custom command handler from the raw text
     messageIn:          messageIn
 };
+

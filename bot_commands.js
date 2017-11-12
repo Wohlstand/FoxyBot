@@ -1029,6 +1029,12 @@ function addCMD(cmd)
     Cmds.push(cmd);
 }
 
+function clearCommands()
+{
+    CmdsREAL = [];
+    Cmds = [];
+}
+
 function addSynonimOf(oldcmd, name, customHelp)
 {
     if(typeof(customHelp)==='undefined')
@@ -1180,5 +1186,7 @@ module.exports =
     botConfig:        botConfig,
     foxylogInfo:      foxylogInfo,
     addCMD:           addCMD,
-    addSynonimOf:     addSynonimOf
+    addSynonimOf:     addSynonimOf,
+    clearCommands:    clearCommands
 };
+
