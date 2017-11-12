@@ -293,6 +293,13 @@ mybot.on("messageUpdate", function(messageOld, messageNew)
     botCommands.foxylogInfo("*E* "+ getAuthorStr(messageOld) + ":"
                             + "\n OLD: " + messageOld.content
                             + "\n NEW: " + messageNew.content + "\n");
+
+    var allowWrite = !botCommands.inListFile("readonly_chans.txt", messageOld.channel.id);
+    foxyPlugins.forEach(function(plugin)
+    {
+        if(typeof(plugin.messageUpdate) === "function")
+            plugin.messageUpdate(mybot, messageOld, messageNew, allowWrite);
+    });
 });
 
 mybot.on("message", function(message)
