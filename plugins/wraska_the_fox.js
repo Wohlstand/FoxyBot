@@ -61,34 +61,27 @@ var wraskaIsKawaii =
     "I don't think this is kawaii... Let's see true kawaii - Wraska!"
 ];
 
-var roboloeTalkTable = [
-    ["okay maybe foxy is actually broken",
-        ["I'm not broken. You are broken: you have annoyed us with your dumb anime!",
+var myHealfIsFine = ["I'm not broken. You are broken: you have annoyed us with your dumb anime!",
          "I recently was at my doctor, and he told I'm fine! I suggesting you to do same!",
          "Why I'm sick? So, you are not a doctor to tell me that I'm sick... Can you check your health instead of mine?",
          "I was sick some time ago, but now I'm fine! :3",
-         "Broken? You want to say 'sick'? Sorry, but my doctor says I'm fine!"]
-    ],
-    ["Why does foxy occasionally post that?",
-        ["I want to see more furries than anime!",
-         "Anime is no more actual, Furries are best choice for now!"]
-    ],
-    ["Why does foxy occasionally post this?",
-        ["I want to see more furries than anime!",
-         "Anime is no more actual, Furries are best choice for now!"]
-    ],
-    ["i find foxy more obnoxious by a long shot",
-        ["Mayby you will stop to post anime?",
-         "Robo, you are looking more obnoxious than me with that annoying anime!",
-         "Look to yourself, crazy anime bot!",
-         "Hey, Knux, please kick that anime bot to his metallic ass!"]
-    ],
-    ["i find foxy way more obnoxious by a long shot",
-        ["Mayby you will stop to post anime?",
-         "Robo, you are looking more obnoxious than me with that annoying anime!",
-         "Look to yourself, crazy anime bot!",
-         "Hey, Knux, please kick that anime bot to his metallic ass!"]
-    ],
+         "Broken? You want to say 'sick'? Sorry, but my doctor says I'm fine!"];
+
+var furiesAreBest = ["I want to see more furries than anime!",
+                     "Anime is no more actual, Furries are best choice for now!"];
+
+var obnoxiusRobo = ["Mayby you will stop to post anime?",
+                     "Robo, you are looking more obnoxious than me with that annoying anime!",
+                     "Look to yourself, crazy anime bot!",
+                     "Hey, Knux, please kick that anime bot to his metallic ass!"];
+
+var roboloeTalkTable = [
+    ["okay maybe foxy is actually broken", myHealfIsFine ],
+    ["ok maybe foxy is actually broken", myHealfIsFine],
+    ["Why does foxy occasionally post that?", furiesAreBest],
+    ["Why does foxy occasionally post this?", furiesAreBest],
+    ["i find foxy more obnoxious by a long shot", obnoxiusRobo],
+    ["i find foxy way more obnoxious by a long shot", obnoxiusRobo],
     ["basically where it follows the manga it's good fun",
         ["Don't forgot about furries!",
          "Anime - boring, Furries - funny, Anime + Furries = Let's see!",
@@ -104,6 +97,9 @@ var roboloeTalkTable = [
         ["Anime posting is also wastes everyone's time!",
          "You are wasting more time by posting anime things from Luna's outdated collection, why not to post something different than Anime?",
          "Everyone, does Wraska wastes your time? Or you are prefer to see a boring outdated Luna's anime collection?"]
+    ],
+    ["yeah, foxy does or did some stuff",
+        [":3"]
     ]
 ];
 
@@ -169,6 +165,15 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
                         if(typeof(core.fox) != 'undefined')
                             core.fox(bot, message, "fox");
                     }, 3800);
+                    messageSent = true;
+                }
+
+                if(msgTrimmed == "thats a bad thing")
+                {
+                    setTimeout(function()
+                    {
+                        message.reply("Your is worse :-P", core.msgSendError);
+                    }, 3500);
                     messageSent = true;
                 }
 
