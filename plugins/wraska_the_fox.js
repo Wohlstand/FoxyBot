@@ -109,6 +109,11 @@ var roboloeTalkTable = [
 
 var wraskaWas = false;
 
+function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message*/ messageNew, /*bool*/ channelIsWritable)
+{
+    messageIn(bot, messageNew, channelIsWritable);
+}
+
 // Catch incoming messages: you can make foxy be more talkative or implement a custom command handler from the raw text
 function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)
 {
@@ -215,6 +220,7 @@ module.exports =
     // Initialize plugin and here you can add custom Foxy's commands
     registerCommands:   registerCommands,
     // Catch incoming messages: you can make foxy be more talkative or implement a custom command handler from the raw text
-    messageIn:          messageIn
+    messageIn:          messageIn,
+    messageUpdate:      messageUpdate
 };
 
