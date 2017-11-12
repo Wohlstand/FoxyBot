@@ -76,8 +76,7 @@ var obnoxiusRobo = ["Mayby you will stop to post anime?",
                      "Hey, Knux, please kick that anime bot to his metallic ass!"];
 
 var roboloeTalkTable = [
-    ["okay maybe foxy is actually broken", myHealfIsFine ],
-    ["ok maybe foxy is actually broken", myHealfIsFine],
+    ["maybe foxy is actually broken", myHealfIsFine],
     ["Why does foxy occasionally post that?", furiesAreBest],
     ["Why does foxy occasionally post this?", furiesAreBest],
     ["i find foxy more obnoxious by a long shot", obnoxiusRobo],
@@ -100,6 +99,12 @@ var roboloeTalkTable = [
     ],
     ["yeah, foxy does or did some stuff",
         [":3"]
+    ],
+    ["there are a couple of neat wraskas in the uk too",
+        ["Many foxes are living in the UK, and especially in London! :3",
+         "Are you met some of them? :3",
+         "Our Wraska is a Snowy fox who living in St. Peterburg in the flat together with her owners who are raised her",
+         "'Wraska' (Russian \"Враска\", reading as \"Vraska\") is a proper name of one fox, did you meant another Snowy foxies?"]
     ]
 ];
 
@@ -114,8 +119,10 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
 function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)
 {
     var msgTrimmed      = message.content.trim();
+
     if(channelIsWritable && (message.author.id == 320247723641012235)) //It's me: 182039820879659008, when I wanna play Roboloe
     {
+
         if(msgTrimmed == "/luna kawaii")
         {
             setTimeout(function()
@@ -215,6 +222,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
                 }
             }
             //message.channel.send("```\n" + debug + "```").catch(core.msgSendError);
+
             wraskaWas = false;
         }
     }
