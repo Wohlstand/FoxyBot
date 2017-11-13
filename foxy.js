@@ -111,8 +111,15 @@ function loadBotCommands()
     });
 }
 
-loadPlugins("./plugins");
-loadBotCommands();
+try
+{
+    loadPlugins("./plugins");
+    loadBotCommands();
+}
+catch(e)
+{
+    console.log("Failed to initialize plugin " + file + " because of exception: " + e.name + ":\n\n" + e.message);
+}
 
 function pluginsList(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
@@ -139,6 +146,8 @@ function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     //Destroy all plugins
     foxyPlugins.forEach(function(plugin)
     {
+        if(typeof(plugin.unloadPlugin) === "function")
+            plugin.unloadPlugin();//Call plugin destructor
         delete require.cache[require.resolve(plugin.pluginPath)];
     });
 
