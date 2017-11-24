@@ -362,6 +362,12 @@ mybot.on("messageDelete", function(message)
     if( message.author.id == 216943869424566273 )
         return;
     botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + message.content);
+    var allowWrite = !botCommands.inListFile("readonly_chans.txt", message.channel.id);
+    foxyPlugins.forEach(function(plugin)
+    {
+        if(typeof(plugin.messageDelete) === "function")
+            plugin.messageDelete(mybot, message, allowWrite);
+    });
 });
 
 mybot.on("messageUpdate", function(messageOld, messageNew)
