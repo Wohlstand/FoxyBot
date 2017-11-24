@@ -1,5 +1,5 @@
 /*
-    Automatical reply to Roboloe when it does "/luna kawaii" after few seconds
+    A buddy for a Roboloe who is a big fan of a boring anime
 */
 
 // Main module of FoxyBot
