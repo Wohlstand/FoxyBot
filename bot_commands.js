@@ -78,6 +78,16 @@ function reconnectMyDb()
     connectMyDb();
 }
 
+function errorMyDb(error, results, fields)
+{
+    if(error)
+    {
+        foxylogInfo("Error happen! " + error);
+        reconnectMyDb();
+        return;
+    }
+}
+
 connectMyDb();
 
 /* ******************Internal black/white lists ********************************/
@@ -454,15 +464,7 @@ var initRemindWatcher = function(bot)
                         /*}*/
                     }
 
-                    mydb.query("DELETE FROM foxy_reminds WHERE dest_date <= NOW();",
-                    function (error, results, fields)
-                    {
-                        if(error)
-                        {
-                            foxylogInfo("Error happen! " + error);
-                            return;
-                        }
-                    });
+                    mydb.query("DELETE FROM foxy_reminds WHERE dest_date <= NOW();", errorMyDb);
                 }
                 catch(e)
                 {
@@ -511,17 +513,7 @@ var sayDelayd = function(bot, message, args)
                         mydb.escape(guild_id) + ", " +
                         mydb.escape(chan_id) + ");";
     //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
-    mydb.query(insertQuery,
-    function (error, results, fields)
-    {
-        if(error)
-        {
-            foxylogInfo("Error happen! " + error);
-            //Try to reconnect MySQL
-            reconnectMyDb();
-            return;
-        }
-    });
+    mydb.query(insertQuery, errorMyDb);
     //
     // setTimeout(function()
     // {
@@ -560,16 +552,7 @@ var sayDelaydME = function(bot, message, args)
                         mydb.escape(guild_id) + ", " +
                         mydb.escape(chan_id) + ");";
     //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
-    mydb.query(insertQuery,
-    function (error, results, fields)
-    {
-        if(error)
-        {
-            foxylogInfo("Error happen! " + error);
-            reconnectMyDb();
-            return;
-        }
-    });
+    mydb.query(insertQuery, errorMyDb);
     // setTimeout(function()
     // {
     //     message.reply(some, msgSendError);
@@ -1184,6 +1167,8 @@ module.exports =
     msgSendError:     msgSendError,
     sendErrorMsg:     sendErrorMsg,
     botConfig:        botConfig,
+    mydb:             mydb,
+    errorMyDb:        errorMyDb,
     foxylogInfo:      foxylogInfo,
     addCMD:           addCMD,
     addSynonimOf:     addSynonimOf,
