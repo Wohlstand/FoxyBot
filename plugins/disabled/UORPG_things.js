@@ -48,7 +48,7 @@ var joinChaos = function(bot, message, args)
 var crystalPhase = function(bot, message, args)
 {
     var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-    var firstDate = new Date(2017,11,1);//Точка отсчёта чётности
+    var firstDate = new Date(2017,11,2);//Точка отсчёта чётности
     var secondDate = new Date();
 
     var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
