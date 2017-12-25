@@ -75,6 +75,15 @@ var obnoxiusRobo = ["Mayby you will stop to post anime?",
                      "Look to yourself, crazy anime bot!",
                      "Hey, Knux, please kick that anime bot to his metallic ass!"];
 
+var lunaOffline = [
+    "Robo, do you know that Luna is asleep! Please don't disturb her, stupid machine!",
+    "Shhh! Don't be loud, Luna is asleep!",
+    "Don't try to disturb sleeping Luna, or I'll bite you!",
+    "Robo, are you blind? Luna is sleeping!",
+    "Oh no, Robo, don't try to disturb Luna, she will be so angry...",
+    "Hoeloe, please explain to this stupid robot that Luna is sleeping, he don't wanna understand this!!!"
+];
+
 var roboloeTalkTable = [
     ["maybe foxy is actually broken", myHealfIsFine],
     ["Why does foxy occasionally post that?", furiesAreBest],
@@ -108,6 +117,22 @@ var roboloeTalkTable = [
     ]
 ];
 
+function isLunaHere(mybot, message)
+{
+    try
+    {
+        var Luna = mybot.users.get("216273975939039235");
+        if(Luna.presence.status == "offline")
+            return false;
+    }
+    catch(e)
+    {
+        core.sendErrorMsg(mybot, message.channel, e);
+        return false;
+    }
+    return true;
+}
+
 var wraskaWas = false;
 
 function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message*/ messageNew, /*bool*/ channelIsWritable)
@@ -120,37 +145,48 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
 {
     var msgTrimmed      = message.content.trim();
 
-    if(channelIsWritable && (message.author.id == 320247723641012235)) //It's me: 182039820879659008, when I wanna play Roboloe
+    if(channelIsWritable && (message.author.id == 320247723641012235)) //It's me: 182039820879659008, when I wanna play Roboloe (320247723641012235)
     {
-
         if(msgTrimmed == "/luna kawaii")
         {
-            setTimeout(function()
+            if(isLunaHere(bot, message))
             {
-                message.channel.send(getArrayRandom(wraskaIsKawaii).value).catch(core.msgSendError);
+                setTimeout(function()
+                {
+                    message.channel.send(getArrayRandom(wraskaIsKawaii).value).catch(core.msgSendError);
+                    wraskaWas = true;
+                }, 3000);
+                setTimeout(function()
+                {
+                    if(typeof(core.wraska) != 'undefined')
+                        core.wraska(bot, message, "wraska");
+                    wraskaWas = true;
+                }, 3500);
+            } else {
+                message.channel.send(getArrayRandom(lunaOffline).value).catch(core.msgSendError);
                 wraskaWas = true;
-            }, 3000);
-            setTimeout(function()
-            {
-                if(typeof(core.wraska) != 'undefined')
-                    core.wraska(bot, message, "wraska");
-                wraskaWas = true;
-            }, 3500);
+            }
         }
         else
         if(roboloeSpeech.indexOf(msgTrimmed) != -1)
         {
-            setTimeout(function()
+            if(isLunaHere(bot, message))
             {
-                message.channel.send(getArrayRandom(sheIsWraska).value).catch(core.msgSendError);
+                setTimeout(function()
+                {
+                    message.channel.send(getArrayRandom(sheIsWraska).value).catch(core.msgSendError);
+                    wraskaWas = true;
+                }, 3000);
+                setTimeout(function()
+                {
+                    if(typeof(core.wraska) != 'undefined')
+                        core.wraska(bot, message, "wraska");
+                    wraskaWas = true;
+                }, 3500);
+            } else {
+                message.channel.send(getArrayRandom(lunaOffline).value).catch(core.msgSendError);
                 wraskaWas = true;
-            }, 3000);
-            setTimeout(function()
-            {
-                if(typeof(core.wraska) != 'undefined')
-                    core.wraska(bot, message, "wraska");
-                wraskaWas = true;
-            }, 3500);
+            }
         }
         else
         {
