@@ -21,20 +21,40 @@ var knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
         return;
     }
 
-    exec('tail', ["-n", "25", "knuxlog.log"], {cwd: echidnasDir}, function(err, data)
+    var linesNumber = (args == "" ? 25 : Number(args));
+
+    exec('tail', ["-n", linesNumber.toString(), "knuxlog.log"], {cwd: echidnasDir}, function(err, data)
     {
         if(err == null)
         {
             var s = data.toString();
             if(s.length > 1900)
                 s = s.substr(s.length - 1900);
-            message.reply("tail -n 25 knuxlog.log\n```\n" + s + "\n```\n");
+            message.reply("tail -n " + linesNumber + " knuxlog.log\n```\n" + s + "\n```\n");
         }
         else
         {
             message.reply("ERROR of tail -n 25 knuxlog.log```\n" + err + "\n\n" + data.toString() + "\n```\n");
         }
     });
+}
+
+var knuxFullLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    if(!isGranted(message))
+    {
+        message.reply("Sorry, I can't help you, you are not allowed to use this command");
+        return;
+    }
+
+    exec('bzip2', ["-fk", echidnasDir + "/knuxlog.log"], {cwd: echidnasDir}, function(err, data)
+    {
+        if(err == null)
+            message.channel.sendFile(echidnasDir + "/knuxlog.log.bz2", "knuxlog.log.bz2").catch(core.msgSendError);
+        else
+            message.reply("ERROR of bzip2 -fk " + echidnasDir + "/knuxlog.log\n```\n" + err + "\n\n" + data.toString() + "\n```\n");
+    });
+
 }
 
 var knuxPoke = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
@@ -60,7 +80,8 @@ var knuxPoke = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 function registerCommands(foxyCore)
 {
     core = foxyCore;
-    core.addCMD(["knuxlog",   knuxLog,           "Check out Knux's log tail", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knuxlog",   knuxLog,           "Check out Knux's log tail. Has optional argument - a count of lines to print.", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knuxlogfile",knuxFullLog,       "Get a complete Knux's log file.", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knuxpoke",  knuxPoke,          "Poke Knux if he is asleep", [], true, [CODEHAUS_Server] ]);
 }
 
