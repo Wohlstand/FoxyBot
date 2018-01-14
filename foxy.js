@@ -201,7 +201,7 @@ process.on('SIGINT', function()
 {
     botCommands.foxylogInfo("\n\nCaught interrupt signal\n");
     mybot.user.setStatus("idle");
-    mybot.user.setGame("Interrupted");
+    mybot.user.setActivity("Interrupted");
     //mybot.setPlayingGame("Interrupted", statusError);
     botCommands.foxylogInfo("Sent \"Away\" status!");
     sleep(1000);
@@ -212,7 +212,7 @@ process.on('SIGHUP', function()
 {
     botCommands.foxylogInfo("\n\nCaught SIGHUP signal\n");
     mybot.user.setStatus("dnd");
-    mybot.user.setGame("Screen killed");
+    mybot.user.setActivity("Screen killed");
     //mybot.setStatusIdle();
     //mybot.setPlayingGame("Screen killed", statusError);
     botCommands.foxylogInfo("Sent \"Away\" status!");
@@ -227,7 +227,7 @@ mybot.on("ready", () =>
     botCommands.foxylogInfo('set status...');
     //mybot.setStatusOnline();
     mybot.user.setStatus("online");
-    mybot.user.setGame("/foxy cmd");
+    mybot.user.setActivity("/foxy cmd");
     //console.log('set nick...');
     //mybot.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
     //Start Remind watcher!

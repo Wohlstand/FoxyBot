@@ -68,7 +68,11 @@ function connectMyDb()
 function disconnectMyDb()
 {
     if(mydb != undefined)
-        mydb.destroy();
+    {
+        mydb.end(function(err) {
+            mydb = undefined;
+        });
+    }
     mydb = undefined;
 }
 
@@ -569,7 +573,7 @@ var setPlayingGame = function(bot, message, args)
         message.reply("Sorry, I can't, you not granted to do this :cop:!", msgSendError);
         return;
     }*/
-    bot.user.setGame(args);
+    bot.user.setActivity(args);
     /*, function(err)
     {
         if(err)
@@ -1112,7 +1116,8 @@ var callCommand = function(bot, message, command, args)
     {
         if(Cmds[i][0] == command)
         {
-            if(!commandAllowedOnServer(Cmds[i], message.guild.id))
+            var isDM = message.channel.type != "text";
+            if(!isDM && !commandAllowedOnServer(Cmds[i], message.guild.id))
                 continue;
             try{
                 found=true;

@@ -18,18 +18,20 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
     if(core.mydb == undefined)
         return;
 
+    var isDM = message.channel.type != "text";
     var mydb = core.mydb;
     var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message) "+
                         "values (" +
-                        message.guild.id.toString() + ", " +
+                        (isDM ? '0' : message.guild.id.toString()) + ", " +
                         message.channel.id.toString() + ", " +
-                        mydb.escape(message.guild.name) + ", " +
-                        mydb.escape(message.channel.name) + ", " +
+                        mydb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
+                        mydb.escape(isDM ? "DM" : message.channel.name) + ", " +
                         0 + ", " +
                         message.author.id.toString() + ", " +
                         (message.author.bot ? 1 : 0) + ", " +
                         mydb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
-                        mydb.escape(message.member.nickname == null ? message.author.username : message.member.nickname) + ", " +
+                        mydb.escape(isDM || message.member.nickname == null ?
+                                    message.author.username : message.member.nickname) + ", " +
                         mydb.escape(message.content) +
                         ");";
 
@@ -42,19 +44,21 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
 {
     if(core.mydb == undefined)
         return;
-    var mydb = core.mydb;
 
+    var isDM = message.channel.type != "text";
+    var mydb = core.mydb;
     var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message, message_old) "+
                         "values (" +
-                        message.guild.id.toString() + ", " +
+                        (isDM ? '0' : message.guild.id.toString()) + ", " +
                         message.channel.id.toString() + ", " +
-                        mydb.escape(message.guild.name) + ", " +
-                        mydb.escape(message.channel.name) + ", " +
+                        mydb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
+                        mydb.escape(isDM ? "DM" : message.channel.name) + ", " +
                         1 + ", " +
                         message.author.id.toString() + ", " +
                         (message.author.bot ? 1 : 0) + ", " +
                         mydb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
-                        mydb.escape(message.member.nickname == null ? message.author.username : message.member.nickname) + ", " +
+                        mydb.escape(isDM || message.member.nickname == null ?
+                                    message.author.username : message.member.nickname) + ", " +
                         mydb.escape(message.content) + ", " +
                         mydb.escape(messageOld.content) +
                         ");";
@@ -66,18 +70,21 @@ function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWr
 {
     if(core.mydb == undefined)
         return;
+
+    var isDM = message.channel.type != "text";
     var mydb = core.mydb;
     var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message) "+
                         "values (" +
-                        message.guild.id.toString() + ", " +
+                        (isDM ? '0' : message.guild.id.toString()) + ", " +
                         message.channel.id.toString() + ", " +
-                        mydb.escape(message.guild.name) + ", " +
-                        mydb.escape(message.channel.name) + ", " +
+                        mydb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
+                        mydb.escape(isDM ? "DM" : message.channel.name) + ", " +
                         2 + ", " +
                         message.author.id.toString() + ", " +
                         (message.author.bot ? 1 : 0) + ", " +
                         mydb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
-                        mydb.escape(message.member.nickname == null ? message.author.username : message.member.nickname) + ", " +
+                        mydb.escape(isDM || message.member.nickname == null ?
+                                    message.author.username : message.member.nickname) + ", " +
                         mydb.escape(message.content) +
                         ");";
 
