@@ -30,22 +30,40 @@ function getRenegades(guild)
     return guild.roles.find('name', 'Renegades');
 }
 
+var getKeys = function(obj)
+{
+    var keys = "";
+    for(var key in obj)
+    {
+        keys += key + "; ";
+    }
+    return keys;
+}
+
 var cleanRoles = function(bot, message, args)
 {
     var chaos = getChaos(message.guild);
     var order = getOrder(message.guild);
     var renegades = getRenegades(message.guild);
-    var member = message.guild.members.get(message.author.id);
-    member.removeRole(order);
-    member.removeRole(chaos);
-    member.removeRole(renegades);
+    var member = message.member;
+    var mKeys = getKeys(member);
+    if(mKeys != "")
+    {
+        member.removeRole(order);
+        member.removeRole(chaos);
+        member.removeRole(renegades);
+    }
+    else
+    {
+        message.reply("Something weird happen! I can't clean-up old roles! (type of member is " + typeof(member) + " and it has inside: [" + mKeys + "])", core.msgSendError);
+    }
 }
 
 var joinOrder = function(bot, message, args)
 {
     cleanRoles(bot, message, args);
     var order = getOrder(message.guild);
-    var member = message.guild.members.get(message.author.id);
+    var member = message.member;
     member.addRole(order);
     message.reply("Welcome to Order!", core.msgSendError);
 }
@@ -54,7 +72,7 @@ var joinChaos = function(bot, message, args)
 {
     cleanRoles(bot, message, args);
     var chaos = getChaos(message.guild);
-    var member = message.guild.members.get(message.author.id);
+    var member = message.member;
     member.addRole(chaos);
     message.reply("Welcome to Chaos!", core.msgSendError);
 }
@@ -63,7 +81,7 @@ var joinRenegades = function(bot, message, args)
 {
     cleanRoles(bot, message, args);
     var renegades = getRenegades(message.guild);
-    var member = message.guild.members.get(message.author.id);
+    var member = message.member;
     member.addRole(renegades);
     message.reply("Welcome to Renegades!", core.msgSendError);
 }
