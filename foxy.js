@@ -248,6 +248,9 @@ mybot.on('reconnecting', () =>
 
 mybot.on("guildMemberAdd", (newUser) =>
 {
+    //Fetch new-became user
+    newUser.guild.fetchMember(newUser).catch(botCommands.msgSendError);
+
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.guildMemberAdd) === "function")

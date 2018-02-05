@@ -42,6 +42,7 @@ var getKeys = function(obj)
 
 var cleanRoles = function(bot, message, args)
 {
+    message.guild.fetchMember(message.author);
     var chaos = getChaos(message.guild);
     var order = getOrder(message.guild);
     var renegades = getRenegades(message.guild);
