@@ -40,50 +40,41 @@ var getKeys = function(obj)
     return keys;
 }
 
-var cleanRoles = function(bot, message, args)
+var cleanRoles = function(bot, message, args, newRole)
 {
-    message.guild.fetchMember(message.author);
-    var chaos = getChaos(message.guild);
-    var order = getOrder(message.guild);
-    var renegades = getRenegades(message.guild);
-    var member = message.member;
-    var mKeys = getKeys(member);
-    if(mKeys != "")
-    {
-        member.removeRole(order);
-        member.removeRole(chaos);
-        member.removeRole(renegades);
-    }
-    else
-    {
-        message.reply("Something weird happen! I can't clean-up old roles! (type of member is " + typeof(member) + " and it has inside: [" + mKeys + "])", core.msgSendError);
-    }
+    message.guild.fetchMember(message.author)
+    .then(function(info) {
+        var chaos = getChaos(message.guild);
+        var order = getOrder(message.guild);
+        var renegades = getRenegades(message.guild);
+        var member = message.member;
+        member.removeRoles([order, chaos, renegades]).then(function(e) {
+                //message.channel.send("DEBUG [" + e +"]").catch(core.msgSendError);
+                member.addRole(newRole);
+        });
+    }).catch(function(err){
+        message.reply("Something weird happen! I can't clean-up old roles! (error is [" + err +"])", core.msgSendError);
+    });
 }
 
 var joinOrder = function(bot, message, args)
 {
-    cleanRoles(bot, message, args);
     var order = getOrder(message.guild);
-    var member = message.member;
-    member.addRole(order);
+    cleanRoles(bot, message, args, order);
     message.reply("Welcome to Order!", core.msgSendError);
 }
 
 var joinChaos = function(bot, message, args)
 {
-    cleanRoles(bot, message, args);
     var chaos = getChaos(message.guild);
-    var member = message.member;
-    member.addRole(chaos);
+    cleanRoles(bot, message, args, chaos);
     message.reply("Welcome to Chaos!", core.msgSendError);
 }
 
 var joinRenegades = function(bot, message, args)
 {
-    cleanRoles(bot, message, args);
     var renegades = getRenegades(message.guild);
-    var member = message.member;
-    member.addRole(renegades);
+    cleanRoles(bot, message, args, renegades);
     message.reply("Welcome to Renegades!", core.msgSendError);
 }
 
@@ -168,3 +159,4 @@ module.exports =
     registerCommands:   registerCommands,
     guildMemberAdd:     guildMemberAdd
 };
+
