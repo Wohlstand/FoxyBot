@@ -43,11 +43,11 @@ var getKeys = function(obj)
 var cleanRoles = function(bot, message, args, newRole)
 {
     message.guild.fetchMember(message.author)
-    .then(function(info) {
+    .then(function(gotMember) {
         var chaos = getChaos(message.guild);
         var order = getOrder(message.guild);
         var renegades = getRenegades(message.guild);
-        var member = message.member;
+        var member = gotMember;
         member.removeRoles([order, chaos, renegades]).then(function(e) {
                 //message.channel.send("DEBUG [" + e +"]").catch(core.msgSendError);
                 member.addRole(newRole);
