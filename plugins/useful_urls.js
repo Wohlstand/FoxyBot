@@ -26,6 +26,30 @@ var markup = function(bot, message, args)
     message.channel.send("https://support.discordapp.com/hc/en-us/articles/210298617").catch(core.msgSendError);
 }
 
+function isURL(str)
+{
+    // https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url/30229098
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\.)+[a-z]{2,}|' + // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-zA-Z\\:\\(\\)\\d%_.~+]*)*' + // port and path
+    '(\\?[;&A-Za-z\\d%\\:\\(\\)_.~+=-]*)?' + // query string
+    '(\\#[-a-zA-Z\\d_]*)?$', 'i'); // fragment locater
+    if(!pattern.test(str))
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+var isUrlCheck = function(bot, message, args)
+{
+    message.channel.send("Your string [" + args + "] is " + (isURL(args) ? "a valid" : "NOT an" ) + " URL!").catch(core.msgSendError);
+}
+
 
 function registerCommands(foxyCore)
 {
@@ -35,6 +59,7 @@ function registerCommands(foxyCore)
     core.addCMD(["s2p",      smbx2pgeUpdate,   "Returns URL to PGE update guide for SMBX 2"]);
     core.addCMD(["repo",     repo,             "Returns URL to PGE repository on GitHub"]);
     core.addCMD(["markup",   markup,           "Returns URL for a Discord markdown guide"]);
+    core.addCMD(["isurl",    isUrlCheck,       "Checks is given string an URL", [], true]);
 }
 
 module.exports =
