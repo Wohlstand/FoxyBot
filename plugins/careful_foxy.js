@@ -152,7 +152,7 @@ var messageIn = function(mybot, message, allowWrite)
         if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
             messageForMe = false;
 
-        if(core.isurl(msgTrimmed))//Also please, don't report me URLs
+        if(botCommands.isurl(msgTrimmed))//Also please, don't report me URLs
             messageForMe = false;
 
         if((message.author.id == 216273975939039235) && messageForMe)

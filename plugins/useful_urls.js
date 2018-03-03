@@ -60,7 +60,7 @@ function registerCommands(foxyCore)
     core.addCMD(["repo",     repo,             "Returns URL to PGE repository on GitHub"]);
     core.addCMD(["markup",   markup,           "Returns URL for a Discord markdown guide"]);
     core.addCMD(["isurl",    isUrlCheck,       "Checks is given string an URL", [], true]);
-    core.isurl = isUrlCheck; //Public this function!
+    core.isurl = isURL; //Public this function!
 }
 
 module.exports =
