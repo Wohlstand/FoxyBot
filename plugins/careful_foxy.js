@@ -37,24 +37,6 @@ var eggCommands = [
     "!rps"
 ];
 
-function isURL(str)
-{
-    // https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url/30229098
-    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\.)+[a-z]{2,}|' + // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-zA-Z\\:\\(\\)\\d%_.~+]*)*' + // port and path
-    '(\\?[;&A-Za-z\\d%\\:\\(\\)_.~+=-]*)?' + // query string
-    '(\\#[-a-zA-Z\\d_]*)?$', 'i'); // fragment locater
-    if(!pattern.test(str))
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-}
 
 // Check out is Yoshi021's Egg bot online, if not - notify user
 // that Egg is "eaten" :-P
@@ -170,7 +152,7 @@ var messageIn = function(mybot, message, allowWrite)
         if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
             messageForMe = false;
 
-        if(isURL(msgTrimmed))//Also please, don't report me URLs
+        if(core.isurl(msgTrimmed))//Also please, don't report me URLs
             messageForMe = false;
 
         if((message.author.id == 216273975939039235) && messageForMe)
