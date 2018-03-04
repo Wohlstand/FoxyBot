@@ -1,10 +1,10 @@
-
-var http             = require("http");
-var https            = require("https");
-var fs               = require('fs');
-var nodemailer       = require('nodemailer');
-var escape           = require('escape-html');
-var mysql            = require('mysql');
+const http        = require("http");
+const https       = require("https");
+const fs          = require('fs');
+const nodemailer  = require('nodemailer');
+const escape      = require('escape-html');
+const mysql       = require('mysql');
+const Discord     = require("discord.js");
 
 var foxyBotPackage  = require("./package.json");
 var responses       = require("./responses.json");
@@ -765,8 +765,13 @@ var aboutBot = function(bot, message, args)
     msgtext += "\n";
     msgtext += "**Kernel** __*(foxy.js)*__ - updated " + stats1["mtime"] + "\n";
     msgtext += "**Functions** __*(bot_commands.js)*__ - updated " + stats2["mtime"] + "\n";
+    msgtext += "\n";
     msgtext += "Totally I know **" + Cmds.length + "** commands.\n"
     msgtext += "Unique are **" + CmdsREAL.length + "** commands.\n"
+    msgtext += "\n";
+    msgtext += "**Node.js** version " + process.versions['node'] + "\n";
+    msgtext += "**V8** version " + process.versions['v8'] + "\n";
+    msgtext += "**Discord.js API** version " + Discord.version + "\n";
     msgtext += "\n";
     message.channel.send(msgtext).catch(msgSendError);
 }

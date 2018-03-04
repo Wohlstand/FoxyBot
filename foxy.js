@@ -34,16 +34,16 @@ https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&p
 
 */
 
-var Discord     = require("discord.js");
-var botCommands = require("./bot_commands");
-var filesystem  = require("fs");
-
-var mybot = new Discord.Client();
-mybot.autoReconnect = true;
+const filesystem  = require("fs");
+const Discord     = require("discord.js");
+var   botCommands = require("./bot_commands");
+const mybot       = new Discord.Client();
 
 console.log("==========================================================");
 console.log("           FoxyBotJr by Wohlstand          ");
 console.log("==========================================================");
+
+console.log("Using Discord.JS version " + Discord.version + "");
 
 var foxyPlugins = [];
 
