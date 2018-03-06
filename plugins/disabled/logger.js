@@ -45,25 +45,30 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
     if(core.mydb == undefined)
         return;
 
-    var isDM = message.channel.type != "text";
-    var mydb = core.mydb;
-    var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message, message_old) "+
-                        "values (" +
-                        (isDM ? '0' : message.guild.id.toString()) + ", " +
-                        message.channel.id.toString() + ", " +
-                        mydb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
-                        mydb.escape(isDM ? "DM" : message.channel.name) + ", " +
-                        1 + ", " +
-                        message.author.id.toString() + ", " +
-                        (message.author.bot ? 1 : 0) + ", " +
-                        mydb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
-                        mydb.escape(isDM || message.member.nickname == null ?
-                                    message.author.username : message.member.nickname) + ", " +
-                        mydb.escape(message.content) + ", " +
-                        mydb.escape(messageOld.content) +
-                        ");";
+    message.guild.fetchMember(message.author)
+    .then(function(gotMember) {
+        var isDM = message.channel.type != "text";
+        var mydb = core.mydb;
+        var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message, message_old) "+
+                            "values (" +
+                            (isDM ? '0' : message.guild.id.toString()) + ", " +
+                            message.channel.id.toString() + ", " +
+                            mydb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
+                            mydb.escape(isDM ? "DM" : message.channel.name) + ", " +
+                            1 + ", " +
+                            message.author.id.toString() + ", " +
+                            (message.author.bot ? 1 : 0) + ", " +
+                            mydb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
+                            mydb.escape(isDM || gotMember.nickname == null ?
+                                        message.author.username : gotMember.nickname) + ", " +
+                            mydb.escape(message.content) + ", " +
+                            mydb.escape(messageOld.content) +
+                            ");";
 
-    mydb.query(insertQuery, core.errorMyDb);
+        mydb.query(insertQuery, core.errorMyDb);
+    }).catch(function(err){
+        message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+    });
 }
 
 function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)

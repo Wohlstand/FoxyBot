@@ -794,52 +794,57 @@ var sendEmailFile = function(message, args, attachment, doReply)
                    filename: attachment.name,
                    path: attachment.path
                 };
-
-    // create reusable transporter object using the default SMTP transport
-    var transporter = nodemailer.createTransport(smtpMailLoginInfo);
-
-    var usr_nick = (message.member.nickname == null ? message.author.username : message.member.nickname);
-    var usr_sign = (message.author.username + "#" + message.author.discriminator);
-
-    // setup e-mail data with unicode symbols
-    var mailOptions =
+    message.guild.fetchMember(message.author)
+    .then(function(gotMember)
     {
-        from: smtpMailFrom, // sender address
-        //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
-        to: smtpMailTo, // list of receivers
-        subject: 'Message from ' + (message.author.bot ? "bot" : "user")
-                  + " " + usr_nick
-                  + ' (@' + usr_sign + ")"
-                  + ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
-        //text: args, //plaintext body
-        html: '<p><img style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0px;" src="' + message.author.avatarURL + '"> '+
-                (message.author.bot ?
-                    '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">Bot</span>' :
-                    '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
-              '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
-              '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
-              '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>' +
-              '<p><h3>Meta-data</h3></p>' +
-              '<ul>' +
-              '<li> UserID: [' + message.author.id + ']</li>' +
-              '<li> GuildID: [' + message.guild.id + ']</li>' +
-              '<li> ChannelID: [' + message.channel.id + ']</li>' +
-              '</ul>',  //html body
-        attachments: extraFiles
-    };
+        // create reusable transporter object using the default SMTP transport
+        var transporter = nodemailer.createTransport(smtpMailLoginInfo);
 
-    // send mail with defined transport object
-    transporter.sendMail(mailOptions, function(error, info)
-    {
-        if(doReply)
+        var usr_nick = (gotMember.nickname == null ? message.author.username : gotMember.nickname);
+        var usr_sign = (message.author.username + "#" + message.author.discriminator);
+
+        // setup e-mail data with unicode symbols
+        var mailOptions =
         {
-            if(error)
+            from: smtpMailFrom, // sender address
+            //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
+            to: smtpMailTo, // list of receivers
+            subject: 'Message from ' + (message.author.bot ? "bot" : "user")
+                      + " " + usr_nick
+                      + ' (@' + usr_sign + ")"
+                      + ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
+            //text: args, //plaintext body
+            html: '<p><img style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0px;" src="' + message.author.avatarURL + '"> '+
+                    (message.author.bot ?
+                        '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">Bot</span>' :
+                        '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
+                  '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
+                  '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
+                  '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>' +
+                  '<p><h3>Meta-data</h3></p>' +
+                  '<ul>' +
+                  '<li> UserID: [' + message.author.id + ']</li>' +
+                  '<li> GuildID: [' + message.guild.id + ']</li>' +
+                  '<li> ChannelID: [' + message.channel.id + ']</li>' +
+                  '</ul>',  //html body
+            attachments: extraFiles
+        };
+
+        // send mail with defined transport object
+        transporter.sendMail(mailOptions, function(error, info)
+        {
+            if(doReply)
             {
-                message.channel.send('Failed to send mail: ' + error).catch(msgSendError);
-                return;
+                if(error)
+                {
+                    message.channel.send('Failed to send mail: ' + error).catch(msgSendError);
+                    return;
+                }
+                message.channel.send('Message sent: ' + info.response).catch(msgSendError);
             }
-            message.channel.send('Message sent: ' + info.response).catch(msgSendError);
-        }
+        });
+    }).catch(function(err){
+        message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
@@ -858,51 +863,57 @@ var sendEmailF = function(message, args, doReply)
                         };
     }
 
-    // create reusable transporter object using the default SMTP transport
-    var transporter = nodemailer.createTransport(smtpMailLoginInfo);
-
-    var usr_nick = (message.member.nickname == null ? message.author.username : message.member.nickname);
-    var usr_sign = (message.author.username + "#" + message.author.discriminator);
-
-    // setup e-mail data with unicode symbols
-    var mailOptions =
+    message.guild.fetchMember(message.author)
+    .then(function(gotMember)
     {
-        from: smtpMailFrom, // sender address
-        //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
-        to: smtpMailTo, // list of receivers
-        subject: 'Message from ' + (message.author.bot ? "bot" : "user")
-                  + " " + (message.member.nickname == null ? message.author.username : message.member.nickname)
-                  + ' (@' + message.author.username + "#" + message.author.discriminator + ")"
-                  +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
-        //text: args, //plaintext body
-        html: '<p><img style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0px;" src="' + message.author.avatarURL + '"> '+
-                (message.author.bot ?
-                    '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">Bot</span>' :
-                    '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
-              '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
-              '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
-              '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>' +
-              '<p><h3>Meta-data</h3></p>' +
-              '<ul>' +
-              '<li> UserID: [' + message.author.id + ']</li>' +
-              '<li> GuildID: [' + message.guild.id + ']</li>' +
-              '<li> ChannelID: [' + message.channel.id + ']</li>' +
-              '</ul>',  //html body
-        attachments: extraFiles
-    };
+        // create reusable transporter object using the default SMTP transport
+        var transporter = nodemailer.createTransport(smtpMailLoginInfo);
 
-    // send mail with defined transport object
-    transporter.sendMail(mailOptions, function(error, info)
-    {
-        if(doReply)
+        var usr_nick = (gotMember.nickname == null ? message.author.username : gotMember.nickname);
+        var usr_sign = (message.author.username + "#" + message.author.discriminator);
+
+        // setup e-mail data with unicode symbols
+        var mailOptions =
         {
-            if(error)
+            from: smtpMailFrom, // sender address
+            //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
+            to: smtpMailTo, // list of receivers
+            subject: 'Message from ' + (message.author.bot ? "bot" : "user")
+                      + " " + (gotMember.nickname == null ? message.author.username : gotMember.nickname)
+                      + ' (@' + message.author.username + "#" + message.author.discriminator + ")"
+                      +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
+            //text: args, //plaintext body
+            html: '<p><img style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0px;" src="' + message.author.avatarURL + '"> '+
+                    (message.author.bot ?
+                        '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">Bot</span>' :
+                        '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
+                  '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
+                  '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
+                  '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>' +
+                  '<p><h3>Meta-data</h3></p>' +
+                  '<ul>' +
+                  '<li> UserID: [' + message.author.id + ']</li>' +
+                  '<li> GuildID: [' + message.guild.id + ']</li>' +
+                  '<li> ChannelID: [' + message.channel.id + ']</li>' +
+                  '</ul>',  //html body
+            attachments: extraFiles
+        };
+
+        // send mail with defined transport object
+        transporter.sendMail(mailOptions, function(error, info)
+        {
+            if(doReply)
             {
-                message.channel.send('Failed to send mail: ' + error).catch(msgSendError);
-                return;
+                if(error)
+                {
+                    message.channel.send('Failed to send mail: ' + error).catch(msgSendError);
+                    return;
+                }
+                message.channel.send('Message sent: ' + info.response).catch(msgSendError);
             }
-            message.channel.send('Message sent: ' + info.response).catch(msgSendError);
-        }
+        });
+    }).catch(function(err){
+        message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
