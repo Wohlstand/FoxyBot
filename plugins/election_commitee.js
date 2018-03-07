@@ -113,7 +113,10 @@ var voting = function(bot, message, args)
             if( (vote > 0) && (vote <= votingVotings[chid].votingVariants.length) )
             {
                 core.foxylogInfo("Vote remembered: " + vote);
-                votingVotings[chid].voters[message.author.id] = (vote-1);
+                if(typeof(votingVotings[chid].voters[message.author.id]) != 'undefined')
+                    message.react("🔄");//Mark re-voting
+                votingVotings[chid].voters[message.author.id] = (vote - 1);
+                message.react("✅");//Mark vote as accepted
             } else {
                 message.reply("Out of range!, Vote variant from 1 to " + (votingVotings[chid].votingVariants.length), core.msgSendError);
             }
