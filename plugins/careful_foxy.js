@@ -20,6 +20,7 @@ function hasStr(msg, word)
     return msg.indexOf(word) != -1;
 }
 
+/*
 var eggCommands = [
     "!color",
     "!commander",
@@ -63,6 +64,7 @@ function lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite)
     }
     return false;
 }
+*/
 
 var keyPrefix = [
     "wohl",
@@ -111,30 +113,33 @@ var messageIn = function(mybot, message, allowWrite)
     var msgLow          = message.content.toLowerCase();
     var msgLowTrimmed   = msgLow.trim();
 
-    if(!lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite))
+    /*
+    if(lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite))
+        return;
+    */
+
     /* *********Auto-replying for some conditions********* */
+    var wasAsked = false;
+    var messageForMe = false;
+    var messageForMeReact = false;
+    var mentions = message.mentions.users.array();
+
+    for(var i = 0; i < mentions.length; i++)
     {
-        var wasAsked = false;
-        var messageForMe = false;
-        var messageForMeReact = false;
-        var mentions = message.mentions.users.array();
+        botCommands.foxylogInfo( "---> " + mentions[i].username + "#" + mentions[i].discriminator);
+        wasAsked = (mentions[i].id == 216943869424566273);
+        messageForMe = (mentions[i].id == 182039820879659008) && (message.author.id != 216943869424566273);
+        messageForMeReact = messageForMe;
+    }
 
-        for(var i = 0; i < mentions.length; i++)
-        {
-            botCommands.foxylogInfo( "---> " + mentions[i].username + "#" + mentions[i].discriminator);
-            wasAsked = (mentions[i].id == 216943869424566273);
-            messageForMe = (mentions[i].id == 182039820879659008) && (message.author.id != 216943869424566273);
-            messageForMeReact = messageForMe;
-        }
+    if(lookUpForKeyMentions(msgLowTrimmed)) //Shadow email
+        messageForMe = true;
 
-        if(lookUpForKeyMentions(msgLowTrimmed)) //Shadow email
-            messageForMe = true;
-
-        if(lookUpForKeyPrefix(msgLowTrimmed))   //Transparent email
-        {
-            messageForMe = true;
-            messageForMeReact = true;
-        }
+    if(lookUpForKeyPrefix(msgLowTrimmed))   //Transparent email
+    {
+        messageForMe = true;
+        messageForMeReact = true;
+    }
 
 //        var whoWannaPing = [69055500540456960/*Spinda*/];
 //        if( (whoWannaPing.indexOf(message.author.id) != -1)
@@ -149,124 +154,123 @@ var messageIn = function(mybot, message, allowWrite)
 //            else
 //                message.reply("disable notifications please! :hear_no_evil:");
 //        }
-        if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
-            messageForMe = false;
+    if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
+        messageForMe = false;
 
-        if(botCommands.isurl(msgTrimmed))//Also please, don't report me URLs
-            messageForMe = false;
+    if(botCommands.isurl(msgTrimmed))//Also please, don't report me URLs
+        messageForMe = false;
 
-        if((message.author.id == 216273975939039235) && messageForMe)
+    if((message.author.id == 216273975939039235) && messageForMe)
+    {
+        messageForMeReact = false; //Don't react to LunaBot
+        if((msgLowTrimmed.indexOf("http://wohlsoft.ru/") == 0) && (msgLowTrimmed.indexOf(" ") == -1))
+            messageForMe = false; //Don't report LunaBot's URLs
+    }
+
+    //Check is botane offline, and reply on attempt call her
+    var Botane = mybot.users.get("216688100032643072");
+    if(allowWrite && (Botane.presence.status == "offline"))
+    {
+        if(msgLowTrimmed == "what is horikawa?")
         {
-            messageForMeReact = false; //Don't react to LunaBot
-            if((msgLowTrimmed.indexOf("http://wohlsoft.ru/") == 0) && (msgLowTrimmed.indexOf(" ") == -1))
-                messageForMe = false; //Don't report LunaBot's URLs
+            message.reply("Don't try call her, she is dead bot!");
         }
+    }
 
-        //Check is botane offline, and reply on attempt call her
-        var Botane = mybot.users.get("216688100032643072");
-        if(allowWrite && (Botane.presence.status == "offline"))
+    if(allowWrite && (wasAsked || message.channel.isPrivate))
+    {
+        if(message.author.id == 216688100032643072)//Horikawa Botane
         {
-            if(msgLowTrimmed == "what is horikawa?")
+            if(msgLow.indexOf("dorkatron")!=-1)
             {
-                message.reply("Don't try call her, she is dead bot!");
-            }
-        }
-
-        if(allowWrite && (wasAsked || message.channel.isPrivate))
-        {
-            if(message.author.id == 216688100032643072)//Horikawa Botane
-            {
-                if(msgLow.indexOf("dorkatron")!=-1)
-                {
-                    message.reply("maybe you are a Dorkatron? I'm not!");
-                }
-            }
-            else//Any other
-            {
-                if(msgLow.indexOf("pets") != -1)
-                {
-                    setTimeout(function(){ message.reply("Do you really wanna pet the fox? :fox:"); }, 1000);
-                    setTimeout(function() { botCommands.callCommand(mybot, message, "fox", ""); }, 3500);
-                }
-                else
-                if(msgLow.indexOf("hi!") != -1)
-                {
-                    setTimeout(function(){ message.channel.sendFile(__dirname+"/images/hi.gif"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("hi") != -1)
-                {
-                    setTimeout(function(){ message.reply("Hi!"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("i like you") != -1)
-                {
-                    setTimeout(function(){ message.reply(":blush:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("i love you") != -1)
-                {
-                    setTimeout(function(){ message.reply(":blush:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("♥") != -1)
-                {
-                    setTimeout(function(){ message.reply(":blush:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("❤") != -1)
-                {
-                    setTimeout(function(){ message.reply(":blush:"); }, 1000);
-                }//♥ ❤ ღ ❦ ❥❣
-                else
-                if(msgLow.indexOf("🍺") != -1)
-                {
-                    setTimeout(function(){ message.reply(":beers:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("🍻") != -1)
-                {
-                    setTimeout(function(){ message.reply(":beers: :beer:"); }, 1000);
-                }
-                else
-                if(hasReg(msgLow, /((f[auo]([ck][ck]|[ck])|[cs][ck]rew)( ||\n)+(you|[yu]|yo|yu|yoo))/ig))
-                {
-                    setTimeout(function(){ message.reply("You so rude! :angry:"); }, 1000);
-                }
-                else
-                if(msgLow.indexOf("🤘") != -1)
-                {
-                    setTimeout(function(){ message.reply("Сool, dude!"); }, 1000);
-                }
+                message.reply("maybe you are a Dorkatron? I'm not!");
             }
         }
-        else
+        else//Any other
         {
-            if(messageForMe)
+            if(msgLow.indexOf("pets") != -1)
             {
-                console.log("Sending email...");
-                botCommands.sendEmail(message, message.content, false);
-                if(messageForMeReact)
-                    message.react("📧");//Mark message as reported
+                setTimeout(function(){ message.reply("Do you really wanna pet the fox? :fox:"); }, 1000);
+                setTimeout(function() { botCommands.callCommand(mybot, message, "fox", ""); }, 3500);
             }
-
-            if(allowWrite)
+            else
+            if(msgLow.indexOf("hi!") != -1)
             {
-                if(botCommands.botConfig.defaultChannel.includes(message.channel.id))//"beep-boop", "fun" 218194030662647809
+                setTimeout(function(){ message.channel.sendFile(__dirname+"/images/hi.gif"); }, 1000);
+            }
+            else
+            if(msgLow.indexOf("hi") != -1)
+            {
+                setTimeout(function(){ message.reply("Hi!"); }, 1000);
+            }
+            else
+            if(msgLow.indexOf("i like you") != -1)
+            {
+                setTimeout(function(){ message.reply(":blush:"); }, 1000);
+            }
+            else
+            if(msgLow.indexOf("i love you") != -1)
+            {
+                setTimeout(function(){ message.reply(":blush:"); }, 1000);
+            }
+            else
+            if(msgLow.indexOf("♥") != -1)
+            {
+                setTimeout(function(){ message.reply(":blush:"); }, 1000);
+            }
+            else
+            if(msgLow.indexOf("❤") != -1)
+            {
+                setTimeout(function(){ message.reply(":blush:"); }, 1000);
+            }//♥ ❤ ღ ❦ ❥❣
+            else
+            if(msgLow.indexOf("🍺") != -1)
+            {
+                setTimeout(function(){ message.reply(":beers:"); }, 1000);
+            }
+            else
+            if(msgLow.indexOf("🍻") != -1)
+            {
+                setTimeout(function(){ message.reply(":beers: :beer:"); }, 1000);
+            }
+            else
+            if(hasReg(msgLow, /((f[auo]([ck][ck]|[ck])|[cs][ck]rew)( ||\n)+(you|[yu]|yo|yu|yoo))/ig))
+            {
+                setTimeout(function(){ message.reply("You so rude! :angry:"); }, 1000);
+            }
+            else
+            if(msgLow.indexOf("🤘") != -1)
+            {
+                setTimeout(function(){ message.reply("Сool, dude!"); }, 1000);
+            }
+        }
+    }
+    else
+    {
+        if(messageForMe)
+        {
+            console.log("Sending email...");
+            botCommands.sendEmail(message, message.content, false);
+            if(messageForMeReact)
+                message.react("📧");//Mark message as reported
+        }
+
+        if(allowWrite)
+        {
+            if(botCommands.botConfig.defaultChannel.includes(message.channel.id))//"beep-boop", "fun" 218194030662647809
+            {
+                if(message.author.id == 216688100032643072)//Horikawa Botane
                 {
-                    if(message.author.id == 216688100032643072)//Horikawa Botane
+                    if(msgLowTrimmed.indexOf("is it porn?") != -1)
                     {
-                        if(msgLowTrimmed.indexOf("is it porn?") != -1)
-                        {
-                            setTimeout(function(){message.channel.send("No, <@216688100032643072>!").catch(botCommands.msgSendError);}, 1000);
-                        }
-                        else
-                        if(msgLowTrimmed.indexOf("i don't believe you") != -1)
-                        {
-                            setTimeout(function(){message.channel.send("Let's play with Bastion!").catch(botCommands.msgSendError);}, 1000);
-                            setTimeout(function(){message.channel.send("Bastion Bastion Bastion Bastion!!!!").catch(botCommands.msgSendError);}, 2000);
-                            setTimeout(function(){message.channel.send("bastion bastion bastion bastion bastion").catch(botCommands.msgSendError);}, 3500);
-                        }
+                        setTimeout(function(){message.channel.send("No, <@216688100032643072>!").catch(botCommands.msgSendError);}, 1000);
+                    }
+                    else
+                    if(msgLowTrimmed.indexOf("i don't believe you") != -1)
+                    {
+                        setTimeout(function(){message.channel.send("Let's play with Bastion!").catch(botCommands.msgSendError);}, 1000);
+                        setTimeout(function(){message.channel.send("Bastion Bastion Bastion Bastion!!!!").catch(botCommands.msgSendError);}, 2000);
+                        setTimeout(function(){message.channel.send("bastion bastion bastion bastion bastion").catch(botCommands.msgSendError);}, 3500);
                     }
                 }
             }
