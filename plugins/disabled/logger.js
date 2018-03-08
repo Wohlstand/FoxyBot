@@ -81,7 +81,7 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
 // Catch the newbie joining
 function guildMemberAdd(/*Client*/ bot, /*GuildMember*/ guildMember)
 {
-    message.guild.fetchMember(guildMember.user)
+    guildMember.guild.fetchMember(guildMember.user)
     .catch(function(err)
     {
         //message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
