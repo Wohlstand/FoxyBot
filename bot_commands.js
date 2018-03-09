@@ -136,10 +136,17 @@ function sendErrorMsg(bot, channel, e)
     channel.send("**OUCH** :dizzy_face: \n```\n"+
                  "Name:    " + e.name + "\n"+
                  "Message: " + e.message + "\n\n"+
-                 e.stack + "```");
+                 e.stack + "```").then(function(){}, msgSendError).catch(msgSendError);
 }
 
 var msgFailedAttempts = 0;
+
+function loginBot(bot, token)
+{
+    authToken = token;
+    bot.login(authToken);
+    BotPtr = bot;
+}
 
 function msgSendError(error, message)
 {
@@ -149,11 +156,8 @@ function msgSendError(error, message)
         foxylogInfo(ErrorText);
         if(++msgFailedAttempts > 2)
         {
-            BotPtr.logout(function()
-            {
-                foxylogInfo("Trying to relogin...");
-                loginBot(BotPtr, authToken);
-            });
+            foxylogInfo("Trying to relogin...");
+            loginBot(BotPtr, authToken);
             msgFailedAttempts = 0;
         }
         return;
@@ -161,6 +165,16 @@ function msgSendError(error, message)
         msgFailedAttempts = 0;
     }
 }
+
+function msgDeleteError(error, message)
+{
+    if (error)
+    {
+        var ErrorText = "Can't delete message because: " + error;
+        foxylogInfo(ErrorText);
+    }
+}
+
 
 function secondsToTimeDate(time)
 {
@@ -296,18 +310,18 @@ var say = function(bot, message, args)
 
     if(attachments.length==0)
     {
-        chan.send(args).catch(msgSendError);
+        chan.send(args).then(function(){}, msgSendError).catch(msgSendError);
     }
     else
     for(var i=0; i < attachments.length; i++)
     {
         var attachm = attachments[i];
-        chan.send(args).catch(msgSendError);
-        chan.sendFile(attachm.url, attachm.filename).catch(msgSendError);
+        chan.send(args).catch(msgSendError).reject(msgSendError);
+        chan.sendFile(attachm.url, attachm.filename).then(function(){}, msgSendError).catch(msgSendError);
     }
 
     if(attachments.length == 0)
-        message.delete();
+        message.delete().then(function(){}, msgDeleteError).catch(msgDeleteError);
 
     sayLogArr.push([authorname, args]);
     if(sayLogArr.length > 5)
@@ -322,18 +336,18 @@ var sayTTS = function(bot, message, args)
 
     if(attachments.length == 0)
     {
-        chan.send(args, {"tts" : true}).catch(msgSendError);
+        chan.send(args, {"tts" : true}).then(function(){}, msgSendError).catch(msgSendError);
     }
     else
     for(var i=0; i < attachments.length; i++)
     {
         var attachm = attachments[i];
-        chan.send(args, {"tts" : true}).catch(msgSendError);
-        chan.sendFile(attachm.url, attachm.filename).catch(msgSendError);
+        chan.send(args, {"tts" : true}).then(function(){}, msgSendError).catch(msgSendError);
+        chan.sendFile(attachm.url, attachm.filename).then(function(){}, msgSendError).catch(msgSendError);
     }
 
     if(attachments.length==0)
-        message.delete();
+        message.delete().then(function(){}, msgDeleteError).catch(msgDeleteError);
 
     sayLogArr.push([authorname, args]);
     if(sayLogArr.length > 5)
@@ -957,9 +971,12 @@ var listCmds = function(bot, message, args)
 {
     var commands = "**Available commands:**\n";
     var commandsCount = 0;
+    var isGuild = (message.channel.type == "text");
     for(var i=0; i < Cmds.length; i++)
     {
-        if(!commandAllowedOnServer(Cmds[i], message.guild.id))
+        if(!isGuild && (typeof(Cmds[i][5]) !== 'undefined'))
+            continue;
+        if(isGuild && !commandAllowedOnServer(Cmds[i], message.guild.id))
             continue;
         if(i > 0)
             commands += ", ";
@@ -974,7 +991,9 @@ var listCmds = function(bot, message, args)
     var usefulCommands = "";
     for(k in CmdsREAL)
     {
-        if(!commandAllowedOnServer(CmdsREAL[k], message.guild.id))
+        if(!isGuild && (typeof(CmdsREAL[k][5]) !== 'undefined'))
+            continue;
+        if(isGuild && !commandAllowedOnServer(CmdsREAL[k], message.guild.id))
             continue;
         if(typeof(CmdsREAL[k][4]) !== 'undefined')
         {
@@ -993,7 +1012,8 @@ var listCmds = function(bot, message, args)
 
 var cmdHelp = function(bot, message, args)
 {
-    if(args.trim()=="")
+    var isGuild = (message.channel.type == "text");
+    if(args.trim() == "")
     {
         message.reply("Sorry, I can't describe you empty space! Please specify command you wanna learn!").catch(msgSendError);
         return;
@@ -1002,7 +1022,9 @@ var cmdHelp = function(bot, message, args)
     {
         if(Cmds[i][0] == args)
         {
-            if(!commandAllowedOnServer(Cmds[i], message.guild.id))
+            if(!isGuild && (typeof(Cmds[i][5]) !== 'undefined'))
+                continue;
+            if(isGuild && !commandAllowedOnServer(Cmds[i], message.guild.id))
                 continue;
             var helpCmd = "\n**" + Cmds[i][0] + "**\n" + Cmds[i][2] + "\n";
             if(typeof(Cmds[i][3]) !== 'undefined')
@@ -1127,12 +1149,14 @@ var callCommand = function(bot, message, command, args)
         return;
     }
 
+    var isDM = (message.channel.type != "text");
     var found=false;
     for(var i=0; i < Cmds.length; i++)
     {
         if(Cmds[i][0] == command)
         {
-            var isDM = message.channel.type != "text";
+            if(isDM && (typeof(Cmds[i][5]) != 'undefined'))
+                continue;
             if(!isDM && !commandAllowedOnServer(Cmds[i], message.guild.id))
                 continue;
             try{
@@ -1163,13 +1187,6 @@ function output(error, token)
     {
         foxylogInfo('Logged in. Token: ' + token);
     }
-}
-
-function loginBot(bot, token)
-{
-    authToken = token;
-    bot.login(authToken);
-    BotPtr = bot;
 }
 
 module.exports =
