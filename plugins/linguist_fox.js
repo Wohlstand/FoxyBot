@@ -55,16 +55,19 @@ var translate = function(bot, message, args)
         } else {
             var msgText = "\n" + translation;
             var title = message.author.username + "#" + message.author.discriminator;
-            message.channel.sendEmbed({
-                color: 0xffff66,
-                fields: [{
-                    name : title,
-                    value: msgText
-                }],
-                footer: {
-                    text: "Powered by Yandex.Translate (https://translate.yandex.ru)"
-                },
-                url: "https://translate.yandex.ru"
+            message.channel.send("",
+            {
+                embed:{
+                    color: 0xffff66,
+                    fields: [{
+                        name : title,
+                        value: msgText
+                    }],
+                    footer: {
+                        text: "Powered by Yandex.Translate (https://translate.yandex.ru)"
+                    },
+                    url: "https://translate.yandex.ru"
+                }
             }).catch(core.msgSendError);
             //core.say(bot, message,  "__**[" + message.author.username + "#" + message.author.discriminator + "]**__: " + translation);
         }
