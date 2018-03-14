@@ -1203,6 +1203,7 @@ module.exports =
     initRemindWatcher:initRemindWatcher,
     postGreeting:     postGreeting,
     msgSendError:     msgSendError,
+    msgDeleteError:   msgDeleteError,
     sendErrorMsg:     sendErrorMsg,
     botConfig:        botConfig,
     mydb:             mydb,
