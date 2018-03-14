@@ -30,10 +30,10 @@ function isURL(str)
 {
     // https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url/30229098
     var pattern = new RegExp('^(https?:\\/\\/)' + // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\.)+[a-z]{2,}|' + // domain name
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])?)\\.)+[a-z]{2,}|' + // domain name
     '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
     '(\\:\\d+)?(\\/[-a-zA-Z\\:\\(\\)\\d%_.~+]*)*' + // port and path
-    '(\\?[;&A-Za-z\\d%\\:\\(\\)_.~+=-]*)?' + // query string
+    '(\\?[;&A-Za-z\\d%\\:\\/\\(\\)_.~+=-]*)?' + // query string
     '(\\#[-a-zA-Z\\d_]*)?$', 'i'); // fragment locater
     if(!pattern.test(str))
     {
