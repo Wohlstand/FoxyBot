@@ -404,6 +404,9 @@ mybot.on("message", function(message)
 
     botCommands.foxylogInfo("*** " + getAuthorStr(message) + ": " + message.content );
 
+    if(message.webhookID != undefined)
+        return;//Reject webhooks!
+
     /* *********Standard command processor********* */
     if((msgLowTrimmed == "/foxy") && (allowWrite))
     {
