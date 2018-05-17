@@ -10,10 +10,10 @@ var translator = undefined;
 // Main module of FoxyBot
 var core = undefined;
 
-//var langReg = new RegExp("/^\[([a-z]){2}\&]/ig", "ig");
+//var langReg = new RegExp("/^\[([a-z]){2-8}\&]/ig", "ig");
 function isLanguage(word)
 {
-    return /^\[([a-z]){2}\]$/ig.test(word.trim());
+    return /^\[([a-z]){2,8}\]$/ig.test(word.trim());
 }
 
 var langChannels = require("./linguist_fox_channel_langs.json");
@@ -35,7 +35,14 @@ var translate = function(bot, message, args)
     }
     else
     {
-        arg1 = arg1.substr(1, 2);
+        var re = /^\[([a-z]{2,8})\]$/ig;
+        var m;
+        while ((m = re.exec(arg1)) !== null)
+        {
+            if (m.index === re.lastIndex)
+                re.lastIndex++;
+            arg1 = m[1];
+        }
     }
 
     if(phraze.res == "")
