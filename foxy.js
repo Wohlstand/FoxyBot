@@ -362,8 +362,12 @@ function getAuthorStr(message)
 mybot.on("messageDelete", function(message)
 {
     //Ignore messages sent by myself
-    if( message.author.id == 216943869424566273 )
+    if(message.author.id == 216943869424566273)
         return;
+
+    if(message.webhookID != undefined)
+        return;//Reject webhooks!
+
     botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + message.content);
     var allowWrite = !botCommands.inListFile("readonly_chans.txt", message.channel.id);
     foxyPlugins.forEach(function(plugin)
@@ -376,8 +380,12 @@ mybot.on("messageDelete", function(message)
 mybot.on("messageUpdate", function(messageOld, messageNew)
 {
     //Ignore messages sent by myself
-    if( messageOld.author.id == 216943869424566273 )
+    if(messageOld.author.id == 216943869424566273)
         return;
+
+    if(messageOld.webhookID != undefined)
+        return;//Reject webhooks!
+
     botCommands.foxylogInfo("*E* "+ getAuthorStr(messageOld) + ":"
                             + "\n OLD: " + messageOld.content
                             + "\n NEW: " + messageNew.content + "\n");
