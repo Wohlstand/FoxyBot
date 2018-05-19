@@ -11,8 +11,7 @@ FoxyBot :fox: A funny and functional chat bot for Discord service
 ## Quick install of dependencies
 
 ```bash
-npm install discord.js --save
-npm install nodemailer --save
-npm install yandex.translate mysql winston
+sudo yum install systemd-devel
+npm install
 ```
 

@@ -38,6 +38,8 @@ const filesystem  = require("fs");
 const Discord     = require("discord.js");
 var   botCommands = require("./bot_commands");
 const mybot       = new Discord.Client();
+// WatchDog for SystemD
+const notify = require('sd-notify');
 
 console.log("==========================================================");
 console.log("           FoxyBotJr by Wohlstand          ");
@@ -224,6 +226,11 @@ var greetingSent = false;
 
 mybot.on("ready", () =>
 {
+    notify.ready();
+    const watchdogInterval = 2800;
+    botCommands.foxylogInfo('Initializing SystemD WatchDog with ' + watchdogInterval + ' millseconds internal ...');
+    notify.startWatchdogMode(watchdogInterval);
+
     botCommands.foxylogInfo('set status...');
     //mybot.setStatusOnline();
     mybot.user.setStatus("online");

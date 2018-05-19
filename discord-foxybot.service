@@ -2,16 +2,18 @@
 Description=FoxyBot for Discord.JS
 # Requires the mysql service to run first
 Requires=my-mariadb.service
-After=my-mariadb.service
+Wants=local-fs.target network.target my-mariadb.service
+After=local-fs.target network.target my-mariadb.service
 
 [Service]
-ExecStart=/home/vitaly/_Bots/FoxyBotJrDiscord/server.sh
-Restart=always
-# Restart service after 10 seconds if node service crashes
-RestartSec=10
-# Output to syslog
+ExecStart=/usr/bin/node --max-old-space-size=256 --expose-gc /home/vitaly/_Bots/FoxyBotJrDiscord/foxy.js
+WorkingDirectory=/home/vitaly/_Bots/FoxyBotJrDiscord
+Type=notify
+KillMode=process
+WatchdogSec=5
+Restart=on-failure
+RestartSec=5
 StandardOutput=syslog
-# Output to syslog
 StandardError=syslog
 SyslogIdentifier=discord-foxybot
 User=vitaly
@@ -20,3 +22,4 @@ Environment=NODE_ENV=discordfoxybot
 
 [Install]
 WantedBy=multi-user.target
+
