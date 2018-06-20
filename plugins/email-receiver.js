@@ -96,24 +96,32 @@ var mailChecker = function()
                                     parseMessage(msgRes);
                                     var outText = "\n" + msgText;
                                     var chan = bot.channels.get(msgRes.cid != 0 ? msgRes.cid : core.botConfig.defaultChannel[0]);
+                                    var isWritable = core.isWritableChannel(msgRes.cid) && core.isWritableGuild(chan.guild.id);
 
-                                    chan.send("__I got email reply from " + message.from[0].name + " for " +
-                                                (msgRes.uid != 0 ? (isNoPingUser(msgRes.uid) ? msgRes.uid : ("<@" + msgRes.uid + ">") ) : "someone")
-                                                + "__:\n",
-                                        {
-                                            embed:
+                                    if(isWritable)
+                                    {
+                                        chan.send("__I got email reply from " + message.from[0].name + " for " +
+                                                    (msgRes.uid != 0 ? (isNoPingUser(msgRes.uid) ? msgRes.uid : ("<@" + msgRes.uid + ">") ) : "someone")
+                                                    + "__:\n",
                                             {
-                                                color: 0xAF0000,
-                                                fields: [{
-                                                    name : message.subject,
-                                                    value: outText
-                                                }],
-                                                footer: {
-                                                    text: "Note: to send email to me, begin every your message with 'Wohlstand:' (or 'Wohl:') (letter sign 📧 means email was sent)"
-                                                }
-                                            }, split: true
-                                        }
-                                    ).catch(core.msgSendError);
+                                                embed:
+                                                {
+                                                    color: 0xAF0000,
+                                                    fields: [{
+                                                        name : message.subject,
+                                                        value: outText
+                                                    }],
+                                                    footer: {
+                                                        text: "Note: to send email to me, begin every your message with 'Wohlstand:' (or 'Wohl:') (letter sign 📧 means email was sent)"
+                                                    }
+                                                }, split: true
+                                            }
+                                        ).catch(core.msgSendError);
+                                    }
+                                    else
+                                    {
+                                        console.log("EmailReciver: Can't post email because of write permission denied!");
+                                    }
                                 });
 
                                 client.deleteAll(function(err, statuses)

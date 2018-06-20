@@ -95,6 +95,8 @@ function loadBotCommands()
     //Register INTERNAL commands
     botCommands.addCMD(["plugins-status",   pluginsList, "Show list of my plugins", [], true]);
     botCommands.addCMD(["plugins-reload",   pluginsReload, "Show list of my plugins", [], true]);
+    //Initialize built-in lists
+    botCommands.cachedFiles_init();
     //Register per-plugin commands
     foxyPlugins.forEach(function(plugin)
     {
@@ -376,8 +378,8 @@ mybot.on("messageDelete", function(message)
         return;//Reject webhooks!
 
     botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + message.content);
-    var allowWrite = !botCommands.inListFile("readonly_chans.txt", message.channel.id);
-    allowWrite = allowWrite && !botCommands.inListFile("readonly_guilds.txt", message.guild.id);
+    var allowWrite = botCommands.isWritableChannel(message.channel.id);
+    allowWrite = allowWrite && botCommands.isWritableGuild(message.guild.id);
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.messageDelete) === "function")
@@ -398,8 +400,8 @@ mybot.on("messageUpdate", function(messageOld, messageNew)
                             + "\n OLD: " + messageOld.content
                             + "\n NEW: " + messageNew.content + "\n");
 
-    var allowWrite = !botCommands.inListFile("readonly_chans.txt", messageOld.channel.id);
-    allowWrite = allowWrite && !botCommands.inListFile("readonly_guilds.txt", message.guild.id);
+    var allowWrite = botCommands.isWritableChannel(messageOld.channel.id);
+    allowWrite = allowWrite && botCommands.isWritableGuild(messageOld.guild.id);
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.messageUpdate) === "function")
@@ -413,8 +415,8 @@ mybot.on("message", function(message)
     if( message.author.id == 216943869424566273 )
         return;
 
-    var allowWrite = !botCommands.inListFile("readonly_chans.txt", message.channel.id);
-    allowWrite = allowWrite && !botCommands.inListFile("readonly_guilds.txt", message.guild.id);
+    var allowWrite = botCommands.isWritableChannel(message.channel.id);
+    allowWrite = allowWrite && botCommands.isWritableGuild(message.guild.id);
 
     var msgTrimmed      = message.cleanContent.trim();
     var msgLow          = message.cleanContent.toLowerCase();

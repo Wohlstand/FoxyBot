@@ -216,9 +216,9 @@ function getLocalTime()
 
 function inList(list, userID)
 {
-    if(list.length>0)
+    if(list.length > 0)
     {
-        for(var i=0; i<list.length; i++)
+        for(var i=0; i < list.length; i++)
         {
             if(userID == list[i])
             {
@@ -229,17 +229,72 @@ function inList(list, userID)
     return false;
 }
 
+var cachedFiles = {};
+
+function cachedFiles_loadFile(file, alias)
+{
+    cachedFiles[alias] = [];
+    var userList = fs.readFileSync(__dirname + "/" + file);
+    var userArr = userList.toString().trim().split(/[\n\ ]/g);
+    for(var i = 0; i < userArr.length; i++)
+        cachedFiles[alias].push(userArr[i].trim());
+}
+
+function cachedFiles_init()
+{
+    cachedFiles = {};
+    cachedFiles_loadFile("lists/boop_zone.txt", "boop_zone.txt");
+    cachedFiles_loadFile("lists/readonly_chans.txt", "readonly_chans.txt");
+    cachedFiles_loadFile("lists/readonly_guilds.txt", "readonly_guilds.txt");
+}
+
 function inListFile(file, userID)
 {
-    var userIDstr = userID.toString();
-    var userList = fs.readFileSync(__dirname+"/"+file);
-    var userArr = userList.toString().trim().split(/[\n\ ]/g);
-    for(var i=0; i<userArr.length; i++)
+    if(!cachedFiles.hasOwnProperty(file))
+        return false;
+    if(cachedFiles[file].indexOf(userID) == -1)
+        return false;
+    return true;
+}
+
+var cachedFiles_ReLeload = function(bot, message, args)
+{
+    var isMyBoss = (botConfig.myboss.indexOf(message.author.id) != -1);
+    if(!isMyBoss)
     {
-        if(userArr[i]==userIDstr)
-            return true;
+        message.reply("You are not granted to reload my built-in lists!", msgSendError);
+        return;
     }
-    return false;
+
+    cachedFiles_init();
+
+    message.channel.send("Lists has been reloaded!\n" +
+    "```\n" + JSON.stringify(cachedFiles) + "\n```"
+    ).catch(msgSendError);
+}
+
+var cachedFiles_Check = function(bot, message, args)
+{
+    var keys = args.split(/[\n\ ]/g);
+    if((keys.length==1) && (keys[0].trim()==""))
+    {
+        message.reply("you sent me nothing! I can't check the list! :confused:").catch(msgSendError);
+        return;
+    }
+    if(inListFile(keys[0], keys[1]))
+        message.channel.send("Yes, the **" + keys[1] + "** is listed in **" + keys[0] + "** list!").catch(msgSendError);
+    else
+        message.channel.send("No, the **" + keys[1] + "** is NOT listed in **" + keys[0] + "** list!").catch(msgSendError);
+}
+
+function isWritableGuild(guild)
+{
+    return !inListFile("readonly_guilds.txt", guild);
+}
+
+function isWritableChannel(channel)
+{
+    return !inListFile("readonly_chans.txt", channel);
 }
 
 function getArrayRandom(array)
@@ -1139,6 +1194,10 @@ var registerCommands = function()
     addCMD(["mailwohlstand", sendEmail,   "Send email to my creator while he is offline. (Attachments are supported!) \n" +
                                           "__*Syntax:*__ mailwohlstand <any your text>", [], true]);
 
+    addCMD(["check-in-list", cachedFiles_Check, "Check the existing of something in one of built-in lists", [], true]);
+    addCMD(["reload-lists", cachedFiles_ReLeload, "<Owner-Only> Reload built-in lists", [], true]);
+
+
     foxylogInfo( Cmds.length + " command has been registered!");
 }
 
@@ -1197,7 +1256,11 @@ module.exports =
     callCommand:      callCommand,
     registerCommands: registerCommands,
     loginBot:         loginBot,
+    cachedFiles_init: cachedFiles_init,
+    cachedFiles_loadFile: cachedFiles_loadFile,
     inListFile:       inListFile,
+    isWritableGuild:  isWritableGuild,
+    isWritableChannel: isWritableChannel,
     sendEmail:        sendEmailF,
     sendEmailFile:    sendEmailFile,
     initRemindWatcher:initRemindWatcher,

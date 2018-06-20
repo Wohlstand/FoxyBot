@@ -41,8 +41,9 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
         //channel.send(insertQuery).catch(core.msgSendError);
 
         mydb.query(insertQuery, core.errorMyDb);
-    }).catch(function(err){
-        message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+    }).catch(function(err) {
+        if(channelIsWritable)
+            message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
@@ -73,8 +74,9 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
                             ");";
 
         mydb.query(insertQuery, core.errorMyDb);
-    }).catch(function(err){
-        message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+    }).catch(function(err) {
+        if(channelIsWritable)
+            message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
@@ -84,7 +86,8 @@ function guildMemberAdd(/*Client*/ bot, /*GuildMember*/ guildMember)
     guildMember.guild.fetchMember(guildMember.user)
     .catch(function(err)
     {
-        //message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+        //if(channelIsWritable)
+        //    message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
@@ -115,7 +118,8 @@ function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWr
 
         mydb.query(insertQuery, core.errorMyDb);
     }).catch(function(err){
-        message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+        if(channelIsWritable)
+            message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
