@@ -412,6 +412,7 @@ mybot.on("message", function(message)
         return;
 
     var allowWrite = !botCommands.inListFile("readonly_chans.txt", message.channel.id);
+    allowWrite = allowWrite && !botCommands.inListFile("readonly_guilds.txt", message.guild.id);
 
     var msgTrimmed      = message.cleanContent.trim();
     var msgLow          = message.cleanContent.toLowerCase();
