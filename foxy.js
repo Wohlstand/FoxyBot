@@ -377,6 +377,7 @@ mybot.on("messageDelete", function(message)
 
     botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + message.content);
     var allowWrite = !botCommands.inListFile("readonly_chans.txt", message.channel.id);
+    allowWrite = allowWrite && !botCommands.inListFile("readonly_guilds.txt", message.guild.id);
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.messageDelete) === "function")
@@ -398,6 +399,7 @@ mybot.on("messageUpdate", function(messageOld, messageNew)
                             + "\n NEW: " + messageNew.content + "\n");
 
     var allowWrite = !botCommands.inListFile("readonly_chans.txt", messageOld.channel.id);
+    allowWrite = allowWrite && !botCommands.inListFile("readonly_guilds.txt", message.guild.id);
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.messageUpdate) === "function")
