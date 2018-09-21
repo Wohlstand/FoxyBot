@@ -119,31 +119,31 @@ var makeMe = function(bot, message, args)
     if(args.trim() == "")
         message.reply("Sorry, I can't: you wasn't told what I must do!", core.msgSendError);
 
-    if(argsL.indexOf("ship")!=-1)
+    if(argsL.indexOf("ship") != -1)
         ship(bot, message, args);
 
-    if(argsL.indexOf("boat")!=-1)
+    if(argsL.indexOf("boat") != -1)
         boat(bot, message, args);
 
-    if(argsL.indexOf("fire")!=-1)
+    if(argsL.indexOf("fire") != -1)
         burn(bot, message, args);
 
-    if(argsL.indexOf("fox")!=-1)
+    if(argsL.indexOf("fox") != -1)
         fox(bot, message, args);
 
-    if(argsL.indexOf("lego")!=-1)
+    if(argsL.indexOf("lego") != -1)
         lego(bot, message, args);
 
-    if(argsL.indexOf("box")!=-1)
+    if(argsL.indexOf("box") != -1)
         boxy(bot, message, args);
 
-    if(argsL.indexOf("flower")!=-1)
+    if(argsL.indexOf("flower") != -1)
         flower(bot, message, args);
 
     if((argsL.indexOf("money") != -1) || (argsL.indexOf("coin") != -1) || (argsL.indexOf("cash") != -1))
         money(bot, message, args);
 
-    if(argsL.indexOf("elephant")!=-1)
+    if(argsL.indexOf("elephant") != -1)
         message.channel.send(":elephant:").catch(core.msgSendError);
 
     if((argsL.indexOf("police") != -1) || (argsL.indexOf("cop") != -1))
@@ -218,7 +218,7 @@ var burns = function(bot, message, args)
 
 var spit = function(bot, message, args)
 {
-    if(args.indexOf("hot fire")!=-1)
+    if(args.indexOf("hot fire") != -1)
     {
         burn(bot, message, args);
     } else {
