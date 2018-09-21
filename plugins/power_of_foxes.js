@@ -107,6 +107,11 @@ var smile = function(bot, message, args)
     getRandFile(bot, message, "randomsmile.php");
 }
 
+var facepalm = function(bot, message, args)
+{
+    getRandFile(bot, message, "randomfacepalm.php");
+}
+
 var makeMe = function(bot, message, args)
 {
     var argsL = args.toLowerCase();
@@ -261,6 +266,10 @@ function registerCommands(foxyCore)
     core.addSynonimOf("wraska", "vraska");
     core.addSynonimOf("wraska", "враска");
     core.wraska = wraska;//Add Wraska as function to use in another plugins
+
+    core.addCMD(["facepalm",    facepalm,      "D'oh! :face_palm:"]);
+    core.addSynonimOf("facepalm", "palm");
+    core.addSynonimOf("facepalm", "sigh");
 
     core.addCMD(["boxy",     boxy,             "I wish put something into it..."]);
     core.addSynonimOf("boxy", "box");
