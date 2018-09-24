@@ -91,7 +91,11 @@ var keyMentions = [
     "wohl",
     "wohlstand",
     "wholstand",
-    "moondust"
+    "moondust",
+    "adlmidi",
+    "opnmidi",
+    "sdl",
+    "midi"
 ];
 
 function lookUpForKeyMentions(msgLowTrimmed)
