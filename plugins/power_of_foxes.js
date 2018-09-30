@@ -112,6 +112,12 @@ var facepalm = function(bot, message, args)
     getRandFile(bot, message, "randomfacepalm.php");
 }
 
+var frog = function(bot, message, args)
+{
+    getRandFile(bot, message, "randomfrog.php");
+}
+
+
 var makeMe = function(bot, message, args)
 {
     var argsL = args.toLowerCase();
@@ -130,6 +136,9 @@ var makeMe = function(bot, message, args)
 
     if(argsL.indexOf("fox") != -1)
         fox(bot, message, args);
+
+    if(argsL.indexOf("frog") != -1)
+        frog(bot, message, args);
 
     if(argsL.indexOf("lego") != -1)
         lego(bot, message, args);
@@ -271,6 +280,10 @@ function registerCommands(foxyCore)
     core.addSynonimOf("facepalm", "palm");
     core.addSynonimOf("facepalm", "sigh");
 
+    core.addCMD(["frog",    frog,      "Quaaaa, Quaaaa.... Quaaaaa! :frog:"]);
+    core.addSynonimOf("frog", "froggie");
+    core.addSynonimOf("frog", "toad");
+
     core.addCMD(["boxy",     boxy,             "I wish put something into it..."]);
     core.addSynonimOf("boxy", "box");
     core.addSynonimOf("boxy", "🗃");
@@ -286,7 +299,7 @@ function registerCommands(foxyCore)
                                           "__*Syntax:*__:\n\n"+
                                           " **/foxy make <any phraze contains any key word(s)>**\n\n" +
                                           "__*Full list things I can do (available key words):*__\n"+
-                                          "ship, boat, fire, fox, box, flower, money, coin, cash, lego, elephant, police, cop, butt, ass, fart, gas, smoke, stink, smell, crap, dung, shit, poop."]);
+                                          "ship, boat, fire, fox, box, flower, frog, money, coin, cash, lego, elephant, police, cop, butt, ass, fart, gas, smoke, stink, smell, crap, dung, shit, poop."]);
     core.addSynonimOf("makeme", "make");
     core.addSynonimOf("makeme", "create");
     core.addSynonimOf("makeme", "build");
