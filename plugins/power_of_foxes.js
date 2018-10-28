@@ -28,7 +28,7 @@ function getJSON(options, onResult)
     req.end();
 };
 
-function getRandFile(bot, message, fromURL)
+function getRandFile(bot, message, fromURL, messageTitle="", messageColor=0xD77D31)
 {
     var options = {
         host: 'wohlsoft.ru',
@@ -44,7 +44,18 @@ function getRandFile(bot, message, fromURL)
     {
         try{
             var randfox = eval(result);
-            message.channel.send(randfox.file, {"reply": ""}).catch(core.msgSendError);
+            message.channel.send(messageTitle,
+                {
+                    embed:
+                    {
+                        image: {
+                            url: randfox.file
+                        },
+                        color: messageColor,
+                    }, split: true,
+                    reply : ""
+                }
+            ).catch(core.msgSendError);
         }catch(e){
             core.sendErrorMsg(bot, message.channel, e);
             message.channel.send("```\nonResult: (" + statusCode + ")" + JSON.stringify(result) + "\n```", {"reply": ""}).catch(core.msgSendError);
@@ -54,52 +65,52 @@ function getRandFile(bot, message, fromURL)
 
 var fox = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomfox.php");
+    getRandFile(bot, message, "randomfox.php", ":fox: | **Your random fox:**", 0xD77D31);
 }
 
 var fennec = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomfennec.php");
+    getRandFile(bot, message, "randomfennec.php", ":fox: | **Fennec is here:**", 0xF7EAE1);
 }
 
 var wraska = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomwraska.php");
+    getRandFile(bot, message, "randomwraska.php", ":fox: | **It's Vraska the snowy fox:**", 0xFFFFFF);
 }
 
 var boxy = function(bot, message, args)
 {
-    getRandFile(bot, message, "randombox.php");
+    getRandFile(bot, message, "randombox.php", ":card_box: | **Just a box with some:**", 0x946B54);
 }
 
 var boat = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomboat.php");
+    getRandFile(bot, message, "randomboat.php", ":rowboat: | **Do you wanna fishing?**", 0xFFFFFF);
 }
 
 var ship = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomship.php");
+    getRandFile(bot, message, "randomship.php", ":ship: | **Ship is here:**", 0xBC987E);
 }
 
 var flower = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomflower.php");
+    getRandFile(bot, message, "randomflower.php", ":rose: | **Do you like flowers?**", 0xA52A2A);
 }
 
 var burn = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomburn.php");
+    getRandFile(bot, message, "randomburn.php", ":fire: | **It's hot!**", 0xFF7F49);
 }
 
 var money = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomoney.php");
+    getRandFile(bot, message, "randomoney.php", ":moneybag: | **You are rich!**", 0xB8860B);
 }
 
 var lego = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomlego.php");
+    getRandFile(bot, message, "randomlego.php", ":sun_with_face: | **Lego!**", 0x5E2129);
 }
 
 var smile = function(bot, message, args)
@@ -114,7 +125,7 @@ var facepalm = function(bot, message, args)
 
 var frog = function(bot, message, args)
 {
-    getRandFile(bot, message, "randomfrog.php");
+    getRandFile(bot, message, "randomfrog.php", ":frog: | **I see fly!**", 0x8CCB5E);
 }
 
 
