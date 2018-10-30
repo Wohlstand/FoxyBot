@@ -1,7 +1,8 @@
-var http             = require("http");
-var https            = require("https");
+let http             = require("http");
+let https            = require("https");
+let exec = require('child_process').execFile;
 
-var core = undefined;
+let core = undefined;
 
 function getJSON(options, onResult)
 {
@@ -222,6 +223,21 @@ var fart = function(bot, message, args)
     {
         core.sendEmailFile(message, message.content, {name: "./foxybot-debug.log", path: "foxybot-debug.log"}, false);
         message.reply("Wait for a letter, dude!", core.msgSendError);
+        return;
+    }
+
+    if(isMyBoss && (args.indexOf("pullmaster") !== -1))
+    {
+        exec('git', ["pull", "origin", "master"], {cwd: "."}, function(err, data)
+        {
+            if(err == null)
+                message.reply("git pull origin master\n```\n" + data.toString() + "\n```\n");
+            else
+            {
+                message.reply("ERROR of git pull origin master```\n" + err + "\n\n" + data.toString() + "\n```\n");
+                exec('git', ["merge", "--abort"], {cwd: "."}, function(err, data){});
+            }
+        });
         return;
     }
 
