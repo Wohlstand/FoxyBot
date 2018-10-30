@@ -3,16 +3,16 @@
 */
 
 // Main module of FoxyBot
-var core = undefined;
-var exec = require('child_process').execFile;
+let core = undefined;
+let exec = require('child_process').execFile;
 
-var serverUptime = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+let serverUptime = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     exec('uptime', ["--pretty"], {}, function(err, data)
     {
         if(err == null)
         {
-            var s = data.toString();
+            let s = data.toString();
             if(s.length > 1900)
                 s = s.substr(s.length - 1900);
             message.channel.send("Uptime of server is\n```\n" + s + "\n```\n").catch(core.msgSendError);
@@ -24,13 +24,13 @@ var serverUptime = function(/*Client*/ bot, /*Message*/ message, /*string*/ args
     });
 }
 
-var serverUnameA = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+let serverUnameA = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     exec('uname', ["-a"], {}, function(err, data)
     {
         if(err == null)
         {
-            var s = data.toString();
+            let s = data.toString();
             if(s.length > 1900)
                 s = s.substr(s.length - 1900);
             message.channel.send("UNAME:\n```\n" + s + "\n```\n").catch(core.msgSendError);
@@ -42,7 +42,7 @@ var serverUnameA = function(/*Client*/ bot, /*Message*/ message, /*string*/ args
     });
 }
 
-var ifconfig = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+let ifconfig = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     let ip_expr = /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/;
     let rx_traffic = /RX packets \d+ +bytes \d+ \(([0-9.TtGgMmKkiBb ]+)\)/;
@@ -53,21 +53,21 @@ var ifconfig = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     let outMsg = "**Information about server network interfaces:**\n\n";
     let ifaces = ["ethlan1", "ethlan2"];//Queue
 
-    var runIfConfig = function()
+    let runIfConfig = function()
     {
-        var i = ifaces.shift();
+        let i = ifaces.shift();
         exec('ifconfig', [i], {}, function(err, data)
         {
             try
             {
                 if(err == null)
                 {
-                    var s = data.toString();
-                    var ip = ip_expr.exec(s);
-                    var rxt = rx_traffic.exec(s);
-                    var txt = tx_traffic.exec(s);
-                    var rxs = rx_stats.exec(s);
-                    var txs = tx_stats.exec(s);
+                    let s = data.toString();
+                    let ip = ip_expr.exec(s);
+                    let rxt = rx_traffic.exec(s);
+                    let txt = tx_traffic.exec(s);
+                    let rxs = rx_stats.exec(s);
+                    let txs = tx_stats.exec(s);
 
                     outMsg += "**Interface name**: " + i + "\n" +
                               "**Internal IP address:** " + ip[1] + "\n" +
@@ -96,7 +96,7 @@ var ifconfig = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     runIfConfig();
 }
 
-var speedtest = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+let speedtest = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     message.channel.send("Speed testing began, wait a few seconds...").catch(core.msgSendError);
     exec('speedtest', ["--json"], {}, function(err, data)

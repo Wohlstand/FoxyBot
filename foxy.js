@@ -37,24 +37,24 @@ https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&p
 const filesystem  = require("fs");
 const Discord     = require("discord.js");
 let   botCommands = require("./bot_commands");
-const mybot       = new Discord.Client();
+const foxyBotCli  = new Discord.Client();
 // WatchDog for SystemD
-const notify = require('sd-notify');
+const notify      = require('sd-notify');
 
 let   botPrefix = "/foxy";
 let   botUserId = "0";
 
 console.log("==========================================================");
-console.log("           FoxyBotJr by Wohlstand          ");
+console.log("                  FoxyBot by Wohlstand                    ");
 console.log("==========================================================");
 
 console.log("Using Discord.JS version " + Discord.version + "");
 
-var foxyPlugins = [];
+let foxyPlugins = [];
 
-var loadPlugins = function(dir)
+let loadPlugins = function(dir)
 {
-    var results = [];
+    let results = [];
 
     filesystem.readdirSync(dir).forEach(function(file)
     {
@@ -70,7 +70,7 @@ var loadPlugins = function(dir)
             {
                 let plugin = require(pluginPath);
                 if(typeof(plugin.setBot) === "function")
-                    plugin.setBot(mybot);
+                    plugin.setBot(foxyBotCli);
                 plugin.pluginName = pluginName;
                 plugin.pluginPath = pluginPath;
                 plugin.pluginStatus = "Ok";
@@ -110,7 +110,7 @@ function loadBotCommands()
         try
         {
             if(typeof(plugin.setBot) === "function")
-                plugin.setBot(mybot);
+                plugin.setBot(foxyBotCli);
             if(typeof(plugin.registerCommands) === "function")
                 plugin.registerCommands(botCommands);
         }
@@ -211,8 +211,8 @@ function sleep(milliseconds)
 process.on('SIGINT', function()
 {
     botCommands.foxylogInfo("\n\nCaught interrupt signal\n");
-    mybot.user.setStatus("idle");
-    mybot.user.setActivity("Interrupted");
+    foxyBotCli.user.setStatus("idle");
+    foxyBotCli.user.setActivity("Interrupted");
     //mybot.setPlayingGame("Interrupted", statusError);
     botCommands.foxylogInfo("Sent \"Away\" status!");
     sleep(1000);
@@ -222,8 +222,8 @@ process.on('SIGINT', function()
 process.on('SIGHUP', function()
 {
     botCommands.foxylogInfo("\n\nCaught SIGHUP signal\n");
-    mybot.user.setStatus("dnd");
-    mybot.user.setActivity("Screen killed");
+    foxyBotCli.user.setStatus("dnd");
+    foxyBotCli.user.setActivity("Screen killed");
     //mybot.setStatusIdle();
     //mybot.setPlayingGame("Screen killed", statusError);
     botCommands.foxylogInfo("Sent \"Away\" status!");
@@ -233,7 +233,7 @@ process.on('SIGHUP', function()
 
 let greetingSent = false;
 
-mybot.on("ready", () =>
+foxyBotCli.on("ready", () =>
 {
     notify.ready();
     const watchdogInterval = 2800;
@@ -241,31 +241,31 @@ mybot.on("ready", () =>
     notify.startWatchdogMode(watchdogInterval);
 
     //Get ID of self
-    botUserId = mybot.user.id;
+    botUserId = foxyBotCli.user.id;
 
     botCommands.foxylogInfo('set status...');
     //mybot.setStatusOnline();
-    mybot.user.setStatus("online");
-    mybot.user.setActivity(botPrefix + " cmd");
+    foxyBotCli.user.setStatus("online");
+    foxyBotCli.user.setActivity(botPrefix + " cmd");
     //console.log('set nick...');
     //mybot.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
     //Start Remind watcher!
-    botCommands.initRemindWatcher(mybot);
+    botCommands.initRemindWatcher(foxyBotCli);
     if(!greetingSent)
     {
         //Send greeting message once on startup
-        botCommands.postGreeting(mybot);
+        botCommands.postGreeting(foxyBotCli);
         greetingSent = true;
     }
     console.log('DONE!\n==========================================================\n\n');
 });
 
-mybot.on('reconnecting', () =>
+foxyBotCli.on('reconnecting', () =>
 {
     botCommands.foxylogInfo('Connection lost, trying to reconnect...');
 });
 
-mybot.on("guildMemberAdd", (newUser) =>
+foxyBotCli.on("guildMemberAdd", (newUser) =>
 {
     //Fetch new-became user
     newUser.guild.fetchMember(newUser).catch(botCommands.msgSendError);
@@ -273,11 +273,11 @@ mybot.on("guildMemberAdd", (newUser) =>
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.guildMemberAdd) === "function")
-            plugin.guildMemberAdd(mybot, newUser);
+            plugin.guildMemberAdd(foxyBotCli, newUser);
     });
 });
 
-mybot.on("guildMemberUpdate", (oldUser, newUser) =>
+foxyBotCli.on("guildMemberUpdate", (oldUser, newUser) =>
 {
     if(newUser.user.username == null)
         return;
@@ -299,14 +299,14 @@ mybot.on("guildMemberUpdate", (oldUser, newUser) =>
     }
 });
 
-mybot.on("presenceUpdate", (oldUser, newUser) =>
+foxyBotCli.on("presenceUpdate", (oldUser, newUser) =>
 {
     if(newUser.nickname == null)
         return;
 
     let nickOfBot = newUser.nickname;
     let newStatus = newUser.presence.status;
-    let chan = mybot.channels.get(botCommands.botConfig.defaultChannel[0]);//boopZone
+    let chan = foxyBotCli.channels.get(botCommands.botConfig.defaultChannel[0]);//boopZone
     //console.log('=> User ' + newUser.nickname + ' was changed to ' + newStatus + '\n');
 
     switch(newUser.id)
@@ -378,7 +378,7 @@ function getAuthorStr(message)
     }
 }
 
-mybot.on("messageDelete", function(message)
+foxyBotCli.on("messageDelete", function(message)
 {
     //Ignore messages sent by myself
     if(message.author.id === botUserId)
@@ -388,16 +388,16 @@ mybot.on("messageDelete", function(message)
         return;//Reject webhooks!
 
     botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + message.content);
-    var allowWrite = botCommands.isWritableChannel(message.channel.id);
+    let allowWrite = botCommands.isWritableChannel(message.channel.id);
     allowWrite = allowWrite && botCommands.isWritableGuild(message.guild.id);
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.messageDelete) === "function")
-            plugin.messageDelete(mybot, message, allowWrite);
+            plugin.messageDelete(foxyBotCli, message, allowWrite);
     });
 });
 
-mybot.on("messageUpdate", function(messageOld, messageNew)
+foxyBotCli.on("messageUpdate", function(messageOld, messageNew)
 {
     //Ignore messages sent by myself
     if(messageOld.author.id === botUserId)
@@ -410,16 +410,16 @@ mybot.on("messageUpdate", function(messageOld, messageNew)
                             + "\n OLD: " + messageOld.content
                             + "\n NEW: " + messageNew.content + "\n");
 
-    var allowWrite = botCommands.isWritableChannel(messageOld.channel.id);
+    let allowWrite = botCommands.isWritableChannel(messageOld.channel.id);
     allowWrite = allowWrite && botCommands.isWritableGuild(messageOld.guild.id);
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.messageUpdate) === "function")
-            plugin.messageUpdate(mybot, messageOld, messageNew, allowWrite);
+            plugin.messageUpdate(foxyBotCli, messageOld, messageNew, allowWrite);
     });
 });
 
-mybot.on("message", function(message)
+foxyBotCli.on("message", function(message)
 {
     //Ignore messages sent by myself
     if(message.author.id === botUserId)
@@ -453,7 +453,7 @@ mybot.on("message", function(message)
         }
         catch(e)
         {
-            botCommands.sendErrorMsg(mybot, message.channel, e);
+            botCommands.sendErrorMsg(foxyBotCli, message.channel, e);
         }
     }
     else
@@ -476,19 +476,19 @@ mybot.on("message", function(message)
         }
         else
             botCommand = botCmd.trim();
-        botCommands.callCommand(mybot, message, botCommand.toLowerCase(), botArgs);
+        botCommands.callCommand(foxyBotCli, message, botCommand.toLowerCase(), botArgs);
     }
     else
     {
         foxyPlugins.forEach(function(plugin)
         {
             if(typeof(plugin.messageIn) === "function")
-                plugin.messageIn(mybot, message, allowWrite);
+                plugin.messageIn(foxyBotCli, message, allowWrite);
         });
     }
 });
 
-botCommands.loginBot(mybot, botCommands.botConfig.token);
+botCommands.loginBot(foxyBotCli, botCommands.botConfig.token);
 
 setInterval(function()
 {

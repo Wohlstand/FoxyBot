@@ -47,15 +47,15 @@ let smtpMailLoginInfo = botConfig.smtp.login;
 let smtpMailFrom      = botConfig.smtp.from;
 let smtpMailTo        = botConfig.smtp.to;
 
-let mydb = undefined;
+let my_db = undefined;
 
-let mydb_enabled = (botConfig.mysql.disabled !== undefined) && (botConfig.mysql.disabled !== true);
+let my_db_enabled = (botConfig.mysql.disabled !== undefined) && (botConfig.mysql.disabled !== true);
 
 function connectMyDb()
 {
-    if(mydb_enabled && mydb === undefined)
+    if(my_db_enabled && my_db === undefined)
     {
-        mydb = mysql.createPool({
+        my_db = mysql.createPool({
               connectionLimit : 5,
               host     : botConfig.mysql.host,
               user     : botConfig.mysql.user,
@@ -63,24 +63,24 @@ function connectMyDb()
               database : botConfig.mysql.db,
               charset  : 'UTF8MB4_UNICODE_CI'
         });
-        //mydb.connect();
+        //my_db.connect();
     }
 }
 
 function disconnectMyDb()
 {
-    if(mydb_enabled && mydb !== undefined)
+    if(my_db_enabled && my_db !== undefined)
     {
-        mydb.end(function(err) {
-            mydb = undefined;
+        my_db.end(function(err) {
+            my_db = undefined;
         });
     }
-    mydb = undefined;
+    my_db = undefined;
 }
 
 function reconnectMyDb()
 {
-    if(!mydb_enabled)
+    if(!my_db_enabled)
         return;
     disconnectMyDb();
     connectMyDb();
@@ -502,7 +502,7 @@ function getMsFromMsg(bot, message, args)
 
 var initRemindWatcher = function(bot)
 {
-    if(!mydb_enabled)
+    if(!my_db_enabled)
         return; //Reminder requires DB support. Withot DB, disable reminder completely
 
     BotPtr = bot;
@@ -511,7 +511,7 @@ var initRemindWatcher = function(bot)
     {
         try
         {
-            mydb.query('SELECT * FROM foxy_reminds WHERE dest_date <= NOW();',
+            my_db.query('SELECT * FROM foxy_reminds WHERE dest_date <= NOW();',
             function (error, results, fields)
             {
                 try
@@ -543,7 +543,7 @@ var initRemindWatcher = function(bot)
                         /*}*/
                     }
 
-                    mydb.query("DELETE FROM foxy_reminds WHERE dest_date <= NOW();", errorMyDb);
+                    my_db.query("DELETE FROM foxy_reminds WHERE dest_date <= NOW();", errorMyDb);
                 }
                 catch(e)
                 {
@@ -563,7 +563,7 @@ var initRemindWatcher = function(bot)
 
 let sayDelayd = function(bot, message, args)
 {
-    if(!mydb_enabled)
+    if(!my_db_enabled)
     {
         message.reply("Sorry, this command is inavailable for now...", msgSendError);
         return;
@@ -591,15 +591,15 @@ let sayDelayd = function(bot, message, args)
     let some = args.slice(0, index).trim();
     let guild_id = (message.channel.type === 'dm') ? 0 : message.channel.guild.id;
     let chan_id  = message.channel.id;
-    let waitTime = mydb.escape(timeInt/1000);
+    let waitTime = my_db.escape(timeInt/1000);
     //foxylogInfo("Remind: Wait " + (timeInt/1000) + " vs " +  waitTime + " seconds!");
     let insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
                         "values ((NOW() + INTERVAL " + waitTime + " SECOND), " +
-                        mydb.escape(some.toString()) + ", " +
-                        mydb.escape(guild_id) + ", " +
-                        mydb.escape(chan_id) + ");";
-    //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
-    mydb.query(insertQuery, errorMyDb);
+                        my_db.escape(some.toString()) + ", " +
+                        my_db.escape(guild_id) + ", " +
+                        my_db.escape(chan_id) + ");";
+    //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + my_db.escape(guild_id) + " Query is: " + insertQuery);
+    my_db.query(insertQuery, errorMyDb);
     //
     // setTimeout(function()
     // {
@@ -610,7 +610,7 @@ let sayDelayd = function(bot, message, args)
 
 var sayDelaydME = function(bot, message, args)
 {
-    if(!mydb_enabled)
+    if(!my_db_enabled)
     {
         message.reply("Sorry, this command is inavailable for now...", msgSendError);
         return;
@@ -637,14 +637,14 @@ var sayDelaydME = function(bot, message, args)
     let some = "<@" + message.author.id + ">, " + args.slice(0, index).trim();
     let guild_id    = (message.channel.type === 'dm') ? 0 : message.channel.guild.id;
     let chan_id     = message.channel.id;
-    let waitTime    = mydb.escape(timeInt/1000);
+    let waitTime    = my_db.escape(timeInt/1000);
     let insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
                         "values ((NOW() + INTERVAL " + waitTime + " SECOND), " +
-                        mydb.escape(some.toString()) + ", " +
-                        mydb.escape(guild_id) + ", " +
-                        mydb.escape(chan_id) + ");";
-    //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + mydb.escape(guild_id) + " Query is: " + insertQuery);
-    mydb.query(insertQuery, errorMyDb);
+                        my_db.escape(some.toString()) + ", " +
+                        my_db.escape(guild_id) + ", " +
+                        my_db.escape(chan_id) + ");";
+    //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + my_db.escape(guild_id) + " Query is: " + insertQuery);
+    my_db.query(insertQuery, errorMyDb);
     // setTimeout(function()
     // {
     //     message.reply(some, msgSendError);
@@ -1292,7 +1292,7 @@ module.exports =
     msgDeleteError:   msgDeleteError,
     sendErrorMsg:     sendErrorMsg,
     botConfig:        botConfig,
-    mydb:             mydb,
+    my_db:            my_db,
     errorMyDb:        errorMyDb,
     foxylogInfo:      foxylogInfo,
     addCMD:           addCMD,

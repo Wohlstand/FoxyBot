@@ -13,7 +13,7 @@ function isGranted(message)
     return (core.botConfig.myboss.indexOf(message.author.id) !== -1) || (message.author.id === "133426635998232577");
 }
 
-var knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+let knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     if(!isGranted(message))
     {
@@ -21,13 +21,13 @@ var knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
         return;
     }
 
-    var linesNumber = (args === "" ? 25 : Number(args));
+    let linesNumber = (args === "" ? 25 : Number(args));
 
     exec('tail', ["-n", linesNumber.toString(), "knuxlog.log"], {cwd: echidnasDir}, function(err, data)
     {
         if(err == null)
         {
-            var s = data.toString();
+            let s = data.toString();
             if(s.length > 1900)
                 s = s.substr(s.length - 1900);
             message.reply("tail -n " + linesNumber + " knuxlog.log\n```\n" + s + "\n```\n");
@@ -39,7 +39,7 @@ var knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     });
 }
 
-var knuxFullLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+let knuxFullLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     if(!isGranted(message))
     {
@@ -57,7 +57,7 @@ var knuxFullLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 
 }
 
-var knuxPoke = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+let knuxPoke = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     if(!isGranted(message))
     {
@@ -80,9 +80,9 @@ var knuxPoke = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 function registerCommands(foxyCore)
 {
     core = foxyCore;
-    core.addCMD(["knuxlog",   knuxLog,           "Check out Knux's log tail. Has optional argument - a count of lines to print.", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knuxlog",    knuxLog,           "Check out Knux's log tail. Has optional argument - a count of lines to print.", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knuxlogfile",knuxFullLog,       "Get a complete Knux's log file.", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["knuxpoke",  knuxPoke,          "Poke Knux if he is asleep", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knuxpoke",   knuxPoke,          "Poke Knux if he is asleep", [], true, [CODEHAUS_Server] ]);
 }
 
 module.exports =

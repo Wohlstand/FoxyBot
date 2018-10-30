@@ -1,27 +1,27 @@
 
-var core = undefined;
+let core = undefined;
 
-var testUrl = function(bot, message, args)
+let testUrl = function(bot, message, args)
 {
     message.channel.send("http://wohlsoft.ru").catch(core.msgSendError);
 }
 
-var lab = function(bot, message, args)
+let lab = function(bot, message, args)
 {
     message.channel.send("http://wohlsoft.ru/docs/_laboratory/").catch(core.msgSendError);
 }
 
-var smbx2pgeUpdate = function(bot, message, args)
+let smbx2pgeUpdate = function(bot, message, args)
 {
     message.channel.send("http://wohlsoft.ru/forum/viewtopic.php?f=11&t=1977").catch(core.msgSendError);
 }
 
-var repo = function(bot, message, args)
+let repo = function(bot, message, args)
 {
     message.channel.send("https://github.com/WohlSoft/PGE-Project").catch(core.msgSendError);
 }
 
-var markup = function(bot, message, args)
+let markup = function(bot, message, args)
 {
     message.channel.send("https://support.discordapp.com/hc/en-us/articles/210298617").catch(core.msgSendError);
 }
@@ -29,23 +29,17 @@ var markup = function(bot, message, args)
 function isURL(str)
 {
     // https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url/30229098
-    var pattern = new RegExp('^(https?:\\/\\/)' + // protocol
+    let pattern = new RegExp('^(https?:\\/\\/)' + // protocol
     '((([a-z\\d]([a-z\\d-]*[a-z\\d])?)\\.)+[a-z]{2,}|' + // domain name
     '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
     '(\\:\\d+)?(\\/[-a-zA-Z\\:\\(\\)\\d%_.~+]*)*' + // port and path
     '(\\?[;&A-Za-z\\d%\\:\\/\\(\\)_.~+=-]*)?' + // query string
     '(\\#[-a-zA-Z\\d_]*)?$', 'i'); // fragment locater
-    if(!pattern.test(str))
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+
+    return pattern.test(str);
 }
 
-var isUrlCheck = function(bot, message, args)
+let isUrlCheck = function(bot, message, args)
 {
     message.channel.send("Your string [" + args + "] is " + (isURL(args) ? "a valid" : "NOT an" ) + " URL!").catch(core.msgSendError);
 }

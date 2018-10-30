@@ -3,7 +3,7 @@
 */
 
 // Main module of FoxyBot
-var core = undefined;
+let core = undefined;
 
 // Initialize plugin and here you can add custom Foxy's commands
 function registerCommands(/*bot_commands.js module*/ foxyCore)
@@ -15,32 +15,32 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
 function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)
 {
     //var channel = bot.channels.get("295860232532525056");
-    if(core.mydb === undefined)
+    if(core.my_db === undefined)
         return;
 
     message.guild.fetchMember(message.author)
     .then(function(gotMember)
     {
         let isDM = message.channel.type !== "text";
-        let mydb = core.mydb;
+        let myDb = core.my_db;
         let insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message) "+
                             "values (" +
                             (isDM ? '0' : message.guild.id.toString()) + ", " +
                             message.channel.id.toString() + ", " +
-                            mydb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
-                            mydb.escape(isDM ? "DM" : message.channel.name) + ", " +
+                            myDb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
+                            myDb.escape(isDM ? "DM" : message.channel.name) + ", " +
                             0 + ", " +
                             message.author.id.toString() + ", " +
                             (message.author.bot ? 1 : 0) + ", " +
-                            mydb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
-                            mydb.escape(isDM || gotMember.nickname == null ?
+                            myDb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
+                            myDb.escape(isDM || gotMember.nickname == null ?
                                         message.author.username : gotMember.nickname) + ", " +
-                            mydb.escape(message.content) +
+                            myDb.escape(message.content) +
                             ");";
 
         //channel.send(insertQuery).catch(core.msgSendError);
 
-        mydb.query(insertQuery, core.errorMyDb);
+        myDb.query(insertQuery, core.errorMyDb);
     }).catch(function(err) {
         if(channelIsWritable)
             message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
@@ -49,31 +49,31 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
 
 function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message*/ message, /*bool*/ channelIsWritable)
 {
-    if(core.mydb === undefined)
+    if(core.my_db === undefined)
         return;
 
     message.guild.fetchMember(message.author)
     .then(function(gotMember)
     {
-        var isDM = message.channel.type !== "text";
-        var mydb = core.mydb;
-        var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message, message_old) "+
+        let isDM = message.channel.type !== "text";
+        let myDb = core.my_db;
+        let insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message, message_old) "+
                             "values (" +
                             (isDM ? '0' : message.guild.id.toString()) + ", " +
                             message.channel.id.toString() + ", " +
-                            mydb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
-                            mydb.escape(isDM ? "DM" : message.channel.name) + ", " +
+                            myDb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
+                            myDb.escape(isDM ? "DM" : message.channel.name) + ", " +
                             1 + ", " +
                             message.author.id.toString() + ", " +
                             (message.author.bot ? 1 : 0) + ", " +
-                            mydb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
-                            mydb.escape(isDM || gotMember.nickname == null ?
+                            myDb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
+                            myDb.escape(isDM || gotMember.nickname == null ?
                                         message.author.username : gotMember.nickname) + ", " +
-                            mydb.escape(message.content) + ", " +
-                            mydb.escape(messageOld.content) +
+                            myDb.escape(message.content) + ", " +
+                            myDb.escape(messageOld.content) +
                             ");";
 
-        mydb.query(insertQuery, core.errorMyDb);
+        myDb.query(insertQuery, core.errorMyDb);
     }).catch(function(err) {
         if(channelIsWritable)
             message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
@@ -93,30 +93,30 @@ function guildMemberAdd(/*Client*/ bot, /*GuildMember*/ guildMember)
 
 function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)
 {
-    if(core.mydb === undefined)
+    if(core.my_db === undefined)
         return;
 
     message.guild.fetchMember(message.author)
     .then(function(gotMember)
     {
-        var isDM = message.channel.type !== "text";
-        var mydb = core.mydb;
-        var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message) "+
+        let isDM = message.channel.type !== "text";
+        let myDb = core.my_db;
+        let insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message) "+
                             "values (" +
                             (isDM ? '0' : message.guild.id.toString()) + ", " +
                             message.channel.id.toString() + ", " +
-                            mydb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
-                            mydb.escape(isDM ? "DM" : message.channel.name) + ", " +
+                            myDb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
+                            myDb.escape(isDM ? "DM" : message.channel.name) + ", " +
                             2 + ", " +
                             message.author.id.toString() + ", " +
                             (message.author.bot ? 1 : 0) + ", " +
-                            mydb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
-                            mydb.escape(isDM || gotMember.nickname == null ?
+                            myDb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
+                            myDb.escape(isDM || gotMember.nickname == null ?
                                         message.author.username : gotMember.nickname) + ", " +
-                            mydb.escape(message.content) +
+                            myDb.escape(message.content) +
                             ");";
 
-        mydb.query(insertQuery, core.errorMyDb);
+        myDb.query(insertQuery, core.errorMyDb);
     }).catch(function(err){
         if(channelIsWritable)
             message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
