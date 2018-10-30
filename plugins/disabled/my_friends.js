@@ -2,11 +2,11 @@
     A small plugin to help Foxy help his friends like Echidnabot
 */
 
-var core = undefined;
-var exec = require('child_process').execFile;
+let core = undefined;
+let exec = require('child_process').execFile;
 
-var CODEHAUS_Server = "215661302692052992";
-var echidnasDir = "/home/vitaly/_Bots/echidnabot";
+let CODEHAUS_Server = "215661302692052992";
+let echidnasDir = "/home/vitaly/_Bots/echidnabot";
 
 function isGranted(message)
 {
