@@ -8,7 +8,7 @@ var core = undefined;
 // Example bot command
 var setAvatar = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
-    var isMyBoss = (core.botConfig.myboss.indexOf(message.author.id) != -1) || message.member.roles.has(core.botConfig.modsRole);
+    var isMyBoss = (core.botConfig.myboss.indexOf(message.author.id) !== -1) || message.member.roles.has(core.botConfig.modsRole);
     if(isMyBoss)
         bot.user.setAvatar(args);
     else

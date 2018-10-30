@@ -13,7 +13,7 @@ var core = undefined;
 //var langReg = new RegExp("/^\[([a-z]){2-8}\&]/ig", "ig");
 function isLanguage(word)
 {
-    return /^\[([a-z]){2,8}\]$/ig.test(word.trim());
+    return /^\[([a-z]){2,8}]$/ig.test(word.trim());
 }
 
 var langChannels = require("./linguist_fox_channel_langs.json");
@@ -26,7 +26,7 @@ var translate = function(bot, message, args)
     {
         //Detect channel specific language
         var chID = message.channel.id;
-        if(langChannels[chID] != undefined)
+        if(langChannels[chID] !== undefined)
             arg1 = langChannels[chID];
         else
             arg1 = 'en';
@@ -35,7 +35,7 @@ var translate = function(bot, message, args)
     }
     else
     {
-        var re = /^\[([a-z]{2,8})\]$/ig;
+        var re = /^\[([a-z]{2,8})]$/ig;
         var m;
         while ((m = re.exec(arg1)) !== null)
         {
@@ -45,7 +45,7 @@ var translate = function(bot, message, args)
         }
     }
 
-    if(phraze.res == "")
+    if(phraze.res === "")
     {
         message.reply("Can't translate nothing!");
         return;

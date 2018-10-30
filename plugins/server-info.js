@@ -44,14 +44,14 @@ var serverUnameA = function(/*Client*/ bot, /*Message*/ message, /*string*/ args
 
 var ifconfig = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
-    var ip_expr = /inet\ (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/;
-    var rx_traffic = /RX\ packets\ \d+\ +bytes\ \d+\ \(([0-9.TtGgMmKkiBb ]+)\)/;
-    var tx_traffic = /TX\ packets\ \d+\ +bytes\ \d+\ \(([0-9.TtGgMmKkiBb ]+)\)/;
-    var rx_stats = /RX\ errors\ (\d+)\ +dropped\ +(\d+)\ +overruns\ +(\d+)\ +frame\ +(\d+)/;
-    var tx_stats = /TX\ errors\ (\d+)\ +dropped\ +(\d+)\ +overruns\ +(\d+)\ +carrier\ +(\d+)\ +collisions\ +(\d+)/;
+    let ip_expr = /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/;
+    let rx_traffic = /RX packets \d+ +bytes \d+ \(([0-9.TtGgMmKkiBb ]+)\)/;
+    let tx_traffic = /TX packets \d+ +bytes \d+ \(([0-9.TtGgMmKkiBb ]+)\)/;
+    let rx_stats = /RX errors (\d+) +dropped +(\d+) +overruns +(\d+) +frame +(\d+)/;
+    let tx_stats = /TX errors (\d+) +dropped +(\d+) +overruns +(\d+) +carrier +(\d+) +collisions +(\d+)/;
 
-    var outMsg = "**Information about server network interfaces:**\n\n";
-    var ifaces = ["ethlan1", "ethlan2"];//Queue
+    let outMsg = "**Information about server network interfaces:**\n\n";
+    let ifaces = ["ethlan1", "ethlan2"];//Queue
 
     var runIfConfig = function()
     {
@@ -105,10 +105,10 @@ var speedtest = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
         {
             try
             {
-                var s = data.toString();
-                var obj = JSON.parse(s);
+                let s = data.toString();
+                let obj = JSON.parse(s);
 
-                var out = "__**Speed test statistics:**__\n\n" +
+                let out = "__**Speed test statistics:**__\n\n" +
                           "**Ping**: " + obj.ping + " ms\n" +
                           "**Speed upload**: " + (obj.upload / (1024 * 1024)).toFixed(2) + " Mbps\n" +
                           "**Speed download**: " + (obj.download / (1024 * 1024)).toFixed(2) + " Mbps\n" +

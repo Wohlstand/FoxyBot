@@ -36,10 +36,13 @@ https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&p
 
 const filesystem  = require("fs");
 const Discord     = require("discord.js");
-var   botCommands = require("./bot_commands");
+let   botCommands = require("./bot_commands");
 const mybot       = new Discord.Client();
 // WatchDog for SystemD
 const notify = require('sd-notify');
+
+let   botPrefix = "/foxy";
+let   botUserId = "0";
 
 console.log("==========================================================");
 console.log("           FoxyBotJr by Wohlstand          ");
@@ -55,17 +58,17 @@ var loadPlugins = function(dir)
 
     filesystem.readdirSync(dir).forEach(function(file)
     {
-        var pluginName = file.substring(0, file.length - 3);
+        let pluginName = file.substring(0, file.length - 3);
         file = dir + '/' + file;
-        var stat = filesystem.statSync(file);
-        if (stat && stat.isDirectory()) {}
+        let stat = filesystem.statSync(file);
+        if(stat && stat.isDirectory()) {}
         else if(file.endsWith(".js"))
         {
             botCommands.foxylogInfo('Loading plugin: ' + file);
-            var pluginPath = file.substring(0, file.length - 3);
+            let pluginPath = file.substring(0, file.length - 3);
             try
             {
-                var plugin = require(pluginPath);
+                let plugin = require(pluginPath);
                 if(typeof(plugin.setBot) === "function")
                     plugin.setBot(mybot);
                 plugin.pluginName = pluginName;
@@ -75,7 +78,7 @@ var loadPlugins = function(dir)
             }
             catch(e)
             {
-                var plugin = [];
+                let plugin = [];
                 plugin.pluginName = pluginName;
                 plugin.pluginPath = pluginPath;
                 plugin.pluginStatus = "Failed: [" + e.name + "]" + e.message;
@@ -90,6 +93,10 @@ var loadPlugins = function(dir)
 
 function loadBotCommands()
 {
+    // Load bot prefox
+    if(botCommands.botConfig.prefix !== undefined)
+        botPrefix = botCommands.botConfig.prefix;
+
     //Register common commands
     botCommands.registerCommands();
     //Register INTERNAL commands
@@ -127,7 +134,7 @@ catch(e)
 
 function pluginsList(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
-    var pluginsInfo = "My plugins:\n";
+    let pluginsInfo = "My plugins:\n";
     pluginsInfo += "```\n";
     foxyPlugins.forEach(function(plugin)
     {
@@ -139,7 +146,7 @@ function pluginsList(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 
 function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
-    var isMyBoss = (botCommands.botConfig.myboss.indexOf(message.author.id) != -1);
+    let isMyBoss = (botCommands.botConfig.myboss.indexOf(message.author.id) !== -1);
 
     if(!isMyBoss)
     {
@@ -162,7 +169,7 @@ function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     botCommands.clearCommands();
     loadBotCommands();
 
-    var pluginsInfo = "My plugins has been reloaded!\nResult:\n";
+    let pluginsInfo = "My plugins has been reloaded!\nResult:\n";
     pluginsInfo += "```\n";
     foxyPlugins.forEach(function(plugin)
     {
@@ -191,8 +198,8 @@ function nickError(error)
 
 function sleep(milliseconds)
 {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++)
+    let start = new Date().getTime();
+    for(let i = 0; i < 1e7; i++)
     {
         if ((new Date().getTime() - start) > milliseconds)
         {
@@ -224,7 +231,7 @@ process.on('SIGHUP', function()
     process.exit();
 });
 
-var greetingSent = false;
+let greetingSent = false;
 
 mybot.on("ready", () =>
 {
@@ -233,10 +240,13 @@ mybot.on("ready", () =>
     botCommands.foxylogInfo('Initializing SystemD WatchDog with ' + watchdogInterval + ' millseconds internal ...');
     notify.startWatchdogMode(watchdogInterval);
 
+    //Get ID of self
+    botUserId = mybot.user.id;
+
     botCommands.foxylogInfo('set status...');
     //mybot.setStatusOnline();
     mybot.user.setStatus("online");
-    mybot.user.setActivity("/foxy cmd");
+    mybot.user.setActivity(botPrefix + " cmd");
     //console.log('set nick...');
     //mybot.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
     //Start Remind watcher!
@@ -275,7 +285,7 @@ mybot.on("guildMemberUpdate", (oldUser, newUser) =>
         return;
 
     //Log nick changes
-    if(oldUser.nickname != newUser.nickname)
+    if(oldUser.nickname !== newUser.nickname)
     {
         botCommands.foxylogInfo(
           "--- "
@@ -294,9 +304,9 @@ mybot.on("presenceUpdate", (oldUser, newUser) =>
     if(newUser.nickname == null)
         return;
 
-    var nickOfBot = newUser.nickname;
-    var newStatus = newUser.presence.status;
-    var chan = mybot.channels.get(botCommands.botConfig.defaultChannel[0]);//boopZone
+    let nickOfBot = newUser.nickname;
+    let newStatus = newUser.presence.status;
+    let chan = mybot.channels.get(botCommands.botConfig.defaultChannel[0]);//boopZone
     //console.log('=> User ' + newUser.nickname + ' was changed to ' + newStatus + '\n');
 
     switch(newUser.id)
@@ -310,26 +320,26 @@ mybot.on("presenceUpdate", (oldUser, newUser) =>
     break;
     */
     case "247080657182785546"://Yoshi's Egg
-        if(newStatus == "online")
+        if(newStatus === "online")
         {
             setTimeout(function()
             {
                 chan.send("Ah ow.. :open_mouth: Fried Egg is here!..." +
-                    ( (nickOfBot != "Yoshi Egg") ?
+                    ( (nickOfBot !== "Yoshi Egg") ?
                     "\nIt is masquarated as \"" + nickOfBot + "\", be careful!" : "")
                 ).catch(botCommands.msgSendError);
             }, 3000);
         }
     break;
     case "216688100032643072"://When Botane died
-        if(newStatus == "offline")
+        if(newStatus === "offline")
         {
             //Send to #beeo-boop "WOO-HOO!!" since Botane is dead
             chan.send("Botane is dead, WOOO-HOO!!! :metal::skin-tone-1:").catch(botCommands.msgSendError);
         }
     break;
     case "216273975939039235": //LunaBot died
-        if(newStatus == "offline")
+        if(newStatus === "offline")
         {
             chan.send("<@214408564515667968>, LunaBot is dead...\n" +
                       "WHY???? :hushed:\n " +
@@ -337,7 +347,7 @@ mybot.on("presenceUpdate", (oldUser, newUser) =>
         }
     break;
     case "216243239391330305"://Bastion died
-        if(newStatus == "offline")
+        if(newStatus === "offline")
         {
             chan.send("Bastion is dead?! :hushed: What happen with it?").catch(botCommands.msgSendError);
         }
@@ -347,19 +357,19 @@ mybot.on("presenceUpdate", (oldUser, newUser) =>
 
 function getAuthorStr(message)
 {
-    var z  = message.author;
-    var ch = message.channel;
-    var gu = message.guild;
+    let z  = message.author;
+    let ch = message.channel;
+    let gu = message.guild;
 
     try
     {
         return "[" +  (z.bot ? "bot" : "user") + "] "
-                + ( (ch.type == 'dm') ?
+                + ( (ch.type === 'dm') ?
                            z.username
                         : (message.member.nickname == null ? z.username : message.member.nickname)
                   )
                 + " <@" + z.username + "#" + z.discriminator + ", "
-                + ( (ch.type == 'dm') ? "PM" : (ch.name + '@' + gu.name) )
+                + ( (ch.type === 'dm') ? "PM" : (ch.name + '@' + gu.name) )
                 + ">";
     }
     catch(e)
@@ -371,10 +381,10 @@ function getAuthorStr(message)
 mybot.on("messageDelete", function(message)
 {
     //Ignore messages sent by myself
-    if(message.author.id == 216943869424566273)
+    if(message.author.id === botUserId)
         return;
 
-    if(message.webhookID != undefined)
+    if(message.webhookID !== undefined)
         return;//Reject webhooks!
 
     botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + message.content);
@@ -390,10 +400,10 @@ mybot.on("messageDelete", function(message)
 mybot.on("messageUpdate", function(messageOld, messageNew)
 {
     //Ignore messages sent by myself
-    if(messageOld.author.id == 216943869424566273)
+    if(messageOld.author.id === botUserId)
         return;
 
-    if(messageOld.webhookID != undefined)
+    if(messageOld.webhookID !== undefined)
         return;//Reject webhooks!
 
     botCommands.foxylogInfo("*E* "+ getAuthorStr(messageOld) + ":"
@@ -412,23 +422,23 @@ mybot.on("messageUpdate", function(messageOld, messageNew)
 mybot.on("message", function(message)
 {
     //Ignore messages sent by myself
-    if( message.author.id == 216943869424566273 )
+    if(message.author.id === botUserId)
         return;
 
-    var allowWrite = botCommands.isWritableChannel(message.channel.id);
+    let allowWrite = botCommands.isWritableChannel(message.channel.id);
     allowWrite = allowWrite && botCommands.isWritableGuild(message.guild.id);
 
-    var msgTrimmed      = message.cleanContent.trim();
-    var msgLow          = message.cleanContent.toLowerCase();
-    var msgLowTrimmed   = msgLow.trim();
+    let msgTrimmed      = message.cleanContent.trim();
+    let msgLow          = message.cleanContent.toLowerCase();
+    let msgLowTrimmed   = msgLow.trim();
 
     botCommands.foxylogInfo("*** " + getAuthorStr(message) + ": " + message.content );
 
-    if(message.webhookID != undefined)
-        return;//Reject webhooks!
+    if((message.webhookID !== undefined) && (message.webhookID !== null))
+        return;//Reject web hooks!
 
     /* *********Standard command processor********* */
-    if((msgLowTrimmed == "/foxy") && (allowWrite))
+    if((msgLowTrimmed === botPrefix) && (allowWrite))
     {
         try
         {
@@ -437,8 +447,8 @@ mybot.on("message", function(message)
                 return;
             }
             message.channel.send("Hello, I'm **FoxyBot**!\n" +
-                                        "   Type **/foxy cmd** to learn my commands\n" +
-                                        "   Type __**/foxy help <command>**__ to read detail help for specific command.")
+                                        "   Type **" + botPrefix + " cmd** to learn my commands\n" +
+                                        "   Type __**" + botPrefix + " help <command>**__ to read detail help for specific command.")
                                             .catch(botCommands.msgSendError);
         }
         catch(e)
@@ -447,17 +457,17 @@ mybot.on("message", function(message)
         }
     }
     else
-    if(allowWrite && msgLowTrimmed.startsWith("/foxy "))
+    if(allowWrite && msgLowTrimmed.startsWith(botPrefix + " "))
     {
-        var botCmd = msgTrimmed.slice(6).trim();
+        let botCmd = msgTrimmed.slice(botPrefix.length + 1).trim();
         botCommands.foxylogInfo("Cmd received: " + botCmd);
 
-        var firstSpace = botCmd.indexOf(' ');
-        if(firstSpace == -1)
+        let firstSpace = botCmd.indexOf(' ');
+        if(firstSpace === -1)
             firstSpace = botCmd.indexOf('\n');
-        var botCommand = "";
-        var botArgs = "";
-        if(firstSpace != -1)
+        let botCommand = "";
+        let botArgs = "";
+        if(firstSpace !== -1)
         {
             botCommand = botCmd.slice(0, firstSpace).trim();
             botArgs = botCmd.slice(firstSpace + 1).trim();

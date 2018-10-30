@@ -6,11 +6,11 @@ var core = undefined;
 function getJSON(options, onResult)
 {
     //foxylogInfo("rest::getJSON");
-    var prot = options.port == 443 ? https : http;
+    var prot = options.port === 443 ? https : http;
     var req = prot.request(options,
     function(res)
     {
-        var output = '';
+        let output = '';
         //foxylogInfo(options.host + ':' + res.statusCode);
         res.setEncoding('utf8');
 
@@ -30,7 +30,7 @@ function getJSON(options, onResult)
 
 function getRandFile(bot, message, fromURL, messageTitle="", messageColor=0xD77D31)
 {
-    var options = {
+    let options = {
         host: 'wohlsoft.ru',
         port: 80,
         path: '/images/foxybot/' + fromURL,
@@ -133,81 +133,84 @@ var makeMe = function(bot, message, args)
 {
     var argsL = args.toLowerCase();
 
-    if(args.trim() == "")
+    if(args.trim() === "")
         message.reply("Sorry, I can't: you wasn't told what I must do!", core.msgSendError);
 
-    if(argsL.indexOf("ship") != -1)
+    if(argsL.indexOf("ship") !== -1)
         ship(bot, message, args);
 
-    if(argsL.indexOf("boat") != -1)
+    if(argsL.indexOf("boat") !== -1)
         boat(bot, message, args);
 
-    if(argsL.indexOf("fire") != -1)
+    if(argsL.indexOf("fire") !== -1)
         burn(bot, message, args);
 
-    if(argsL.indexOf("fox") != -1)
+    if(argsL.indexOf("fox") !== -1)
         fox(bot, message, args);
 
-    if(argsL.indexOf("frog") != -1)
+    if((argsL.indexOf("vraska") !== -1) || (argsL.indexOf("wraska") !== -1))
+        wraska(bot, message, args);
+
+    if(argsL.indexOf("frog") !== -1)
         frog(bot, message, args);
 
-    if(argsL.indexOf("lego") != -1)
+    if(argsL.indexOf("lego") !== -1)
         lego(bot, message, args);
 
-    if(argsL.indexOf("box") != -1)
+    if(argsL.indexOf("box") !== -1)
         boxy(bot, message, args);
 
-    if(argsL.indexOf("flower") != -1)
+    if(argsL.indexOf("flower") !== -1)
         flower(bot, message, args);
 
-    if((argsL.indexOf("money") != -1) || (argsL.indexOf("coin") != -1) || (argsL.indexOf("cash") != -1))
+    if((argsL.indexOf("money") !== -1) || (argsL.indexOf("coin") !== -1) || (argsL.indexOf("cash") !== -1))
         money(bot, message, args);
 
-    if(argsL.indexOf("elephant") != -1)
+    if(argsL.indexOf("elephant") !== -1)
         message.channel.send(":elephant:").catch(core.msgSendError);
 
-    if((argsL.indexOf("police") != -1) || (argsL.indexOf("cop") != -1))
+    if((argsL.indexOf("police") !== -1) || (argsL.indexOf("cop") !== -1))
         message.channel.send(":cop:").catch(core.msgSendError);
 
-    if((argsL.indexOf("butt") != -1) || (argsL.indexOf("ass") != -1))
+    if((argsL.indexOf("butt") !== -1) || (argsL.indexOf("ass") !== -1))
         message.channel.send("`(_|_)`").catch(core.msgSendError);
 
-    if( (argsL.indexOf("fart") != -1) ||
-        (argsL.indexOf("gas") != -1)  ||
-        (argsL.indexOf("smoke") != -1) ||
-        (argsL.indexOf("stink") != -1) ||
-        (argsL.indexOf("smell") != -1) )
+    if( (argsL.indexOf("fart") !== -1) ||
+        (argsL.indexOf("gas") !== -1)  ||
+        (argsL.indexOf("smoke") !== -1) ||
+        (argsL.indexOf("stink") !== -1) ||
+        (argsL.indexOf("smell") !== -1) )
         fart(bot, message, args);
 
-    if( (argsL.indexOf("crap") != -1) ||
-        (argsL.indexOf("dung") != -1) ||
-        (argsL.indexOf("shit") != -1) ||
-        (argsL.indexOf("poop") != -1) )
+    if( (argsL.indexOf("crap") !== -1) ||
+        (argsL.indexOf("dung") !== -1) ||
+        (argsL.indexOf("shit") !== -1) ||
+        (argsL.indexOf("poop") !== -1) )
         message.channel.send(":poop:").catch(core.msgSendError);
 
-    if( (argsL.indexOf("sex") != -1) ||
-        (argsL.indexOf("fuck") != -1) ||
-        (argsL.indexOf("dick") != -1) ||
-        (argsL.indexOf("vagina") != -1) ||
-        (argsL.indexOf("penis") != -1) ||
-        (argsL.indexOf("pennis") != -1) ||
-        (argsL.indexOf("cunt") != -1) ||
-        (argsL.indexOf("porn") != -1))
+    if( (argsL.indexOf("sex") !== -1) ||
+        (argsL.indexOf("fuck") !== -1) ||
+        (argsL.indexOf("dick") !== -1) ||
+        (argsL.indexOf("vagina") !== -1) ||
+        (argsL.indexOf("penis") !== -1) ||
+        (argsL.indexOf("pennis") !== -1) ||
+        (argsL.indexOf("cunt") !== -1) ||
+        (argsL.indexOf("porn") !== -1))
         message.reply("Never, you are stupid pervert! You are worst person I know here!").catch(core.msgSendError);
 }
 
 var fart = function(bot, message, args)
 {
     /* Inside moderator channel, take log file */
-    if((message.channel.id == "215662579161235456") && (args == "debuglog"))
+    if((message.channel.id === "215662579161235456") && (args === "debuglog"))
     {
         message.channel.sendFile("./foxybot-debug.log", "foxybot-debug.log").catch(core.msgSendError);
         return;
     }
 
-    var isMyBoss = (core.botConfig.myboss.indexOf(message.author.id) != -1) || message.member.roles.has(core.botConfig.modsRole);
+    let isMyBoss = (core.botConfig.myboss.indexOf(message.author.id) !== -1) || message.member.roles.has(core.botConfig.modsRole);
 
-    if(isMyBoss && (args.indexOf("viva-systemd") != -1))
+    if(isMyBoss && (args.indexOf("viva-systemd") !== -1))
     {
         message.reply("I'll be back!", core.msgSendError);
         bot.setTimeout(function() { process.exit(1); }, 100);
@@ -215,7 +218,7 @@ var fart = function(bot, message, args)
     }
 
     /* Post a log file by email */
-    if(isMyBoss && (args.indexOf("maillog") != -1))
+    if(isMyBoss && (args.indexOf("maillog") !== -1))
     {
         core.sendEmailFile(message, message.content, {name: "./foxybot-debug.log", path: "foxybot-debug.log"}, false);
         message.reply("Wait for a letter, dude!", core.msgSendError);
@@ -238,7 +241,7 @@ var burns = function(bot, message, args)
 
 var spit = function(bot, message, args)
 {
-    if(args.indexOf("hot fire") != -1)
+    if(args.indexOf("hot fire") !== -1)
     {
         burn(bot, message, args);
     } else {

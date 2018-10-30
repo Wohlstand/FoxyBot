@@ -15,15 +15,15 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
 function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)
 {
     //var channel = bot.channels.get("295860232532525056");
-    if(core.mydb == undefined)
+    if(core.mydb === undefined)
         return;
 
     message.guild.fetchMember(message.author)
     .then(function(gotMember)
     {
-        var isDM = message.channel.type != "text";
-        var mydb = core.mydb;
-        var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message) "+
+        let isDM = message.channel.type !== "text";
+        let mydb = core.mydb;
+        let insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message) "+
                             "values (" +
                             (isDM ? '0' : message.guild.id.toString()) + ", " +
                             message.channel.id.toString() + ", " +
@@ -49,13 +49,13 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
 
 function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message*/ message, /*bool*/ channelIsWritable)
 {
-    if(core.mydb == undefined)
+    if(core.mydb === undefined)
         return;
 
     message.guild.fetchMember(message.author)
     .then(function(gotMember)
     {
-        var isDM = message.channel.type != "text";
+        var isDM = message.channel.type !== "text";
         var mydb = core.mydb;
         var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message, message_old) "+
                             "values (" +
@@ -93,13 +93,13 @@ function guildMemberAdd(/*Client*/ bot, /*GuildMember*/ guildMember)
 
 function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)
 {
-    if(core.mydb == undefined)
+    if(core.mydb === undefined)
         return;
 
     message.guild.fetchMember(message.author)
     .then(function(gotMember)
     {
-        var isDM = message.channel.type != "text";
+        var isDM = message.channel.type !== "text";
         var mydb = core.mydb;
         var insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message) "+
                             "values (" +

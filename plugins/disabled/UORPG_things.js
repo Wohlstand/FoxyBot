@@ -12,7 +12,7 @@ var Chan_LAT = "369616743200456715";
 
 function isRussian(chan)
 {
-    return (chan.id == Chan_RUS);
+    return (chan.id === Chan_RUS);
 }
 
 function getChaos(guild)
@@ -32,7 +32,7 @@ function getRenegades(guild)
 
 var getKeys = function(obj)
 {
-    var keys = "";
+    let keys = "";
     for(var key in obj)
     {
         keys += key + "; ";
@@ -44,10 +44,10 @@ var cleanRoles = function(bot, message, args, newRole)
 {
     message.guild.fetchMember(message.author)
     .then(function(gotMember) {
-        var chaos = getChaos(message.guild);
-        var order = getOrder(message.guild);
-        var renegades = getRenegades(message.guild);
-        var member = gotMember;
+        let chaos = getChaos(message.guild);
+        let order = getOrder(message.guild);
+        let renegades = getRenegades(message.guild);
+        let member = gotMember;
         member.removeRoles([order, chaos, renegades]).then(function(e) {
                 //message.channel.send("DEBUG [" + e +"]").catch(core.msgSendError);
                 member.addRole(newRole);
@@ -59,46 +59,46 @@ var cleanRoles = function(bot, message, args, newRole)
 
 var joinOrder = function(bot, message, args)
 {
-    var order = getOrder(message.guild);
+    let order = getOrder(message.guild);
     cleanRoles(bot, message, args, order);
     message.reply("Welcome to Order!", core.msgSendError);
 }
 
 var joinChaos = function(bot, message, args)
 {
-    var chaos = getChaos(message.guild);
+    let chaos = getChaos(message.guild);
     cleanRoles(bot, message, args, chaos);
     message.reply("Welcome to Chaos!", core.msgSendError);
 }
 
 var joinRenegades = function(bot, message, args)
 {
-    var renegades = getRenegades(message.guild);
+    let renegades = getRenegades(message.guild);
     cleanRoles(bot, message, args, renegades);
     message.reply("Welcome to Renegades!", core.msgSendError);
 }
 
 var crystalPhase = function(bot, message, args)
 {
-    var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-    var firstDate = new Date(2017,11,2);//Точка отсчёта чётности
-    var secondDate = new Date();
+    let oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+    let firstDate = new Date(2017,11,2);//Точка отсчёта чётности
+    let secondDate = new Date();
 
-    var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+    let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 
-    var rus = bot.channels.get(Chan_RUS);
-    var lat = bot.channels.get(Chan_LAT);
+    let rus = bot.channels.get(Chan_RUS);
+    let lat = bot.channels.get(Chan_LAT);
     //var eng = bot.channels.get(Chan_ENG);
 
-    var crystal_peace;
-    var crystal_war;
+    let crystal_peace;
+    let crystal_war;
 
-    if(message.channel.id == rus.id)
+    if(message.channel.id === rus.id)
     {
         crystal_peace = "# Кристал в мирной проекции мира.";
         crystal_war = "# Кристал в боевой проекции мира.";
     }
-    else if(message.channel.id == lat.id)
+    else if(message.channel.id === lat.id)
     {
         crystal_peace = "# Kristāls ir pasaules mierā projekcijā.";
         crystal_war = "# Kristāls ir pasaules karā projekcijā.";
@@ -109,7 +109,7 @@ var crystalPhase = function(bot, message, args)
         crystal_war = "# The Crystal is in the war projection of the world.";
     }
 
-    if((diffDays % 2) == 0)
+    if((diffDays % 2) === 0)
         message.channel.send(crystal_peace).catch(core.msgSendError);
     else
         message.channel.send(crystal_war).catch(core.msgSendError);
@@ -129,19 +129,19 @@ function guildMemberAdd(bot, guildMember)
 {
     // console.log("Кто-то новенький! " + guildMember.user.id +
     // " на серваке " + guildMember.guild.id + " == " + UORPG_Server);
-    if(guildMember.guild.id == UORPG_Server)
+    if(guildMember.guild.id === UORPG_Server)
     {
-        var ru = bot.channels.get(Chan_RUS);
-        var en = bot.channels.get(Chan_ENG);
+        let ru = bot.channels.get(Chan_RUS);
+        let en = bot.channels.get(Chan_ENG);
 
-        var message_ru =
+        let message_ru =
             "<@" + guildMember.user.id +">, Приветствуем вас на сервере Ultima Online - UORPG.net!\n\n" +
             "Выберите вашу фракцию:\n" +
             "Альянс Порядок - Священная Империя и Повстанцы\n" +
             "Альянс Хаос - Армия Тьмы и Тени\n" +
             "Ренегаты - предатели и отступники, войны без альянса.\n\n" +
             "Для того, чтобы выбрать вашу сторону в войне напишите в чате: /foxy order, /foxy chaos или /foxy renegades";
-        var message_en =
+        let message_en =
             "<@" + guildMember.user.id +">, Hi, welcome to Ultima Online server - UORPG.net!\n\n" +
             "Assign your faction please:\n" +
             "The Order Alliance - Holy Empire and Insurgents\n" +

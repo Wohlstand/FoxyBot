@@ -3,21 +3,21 @@
         catches mentions, or can play with other bots or users
 */
 
-var botCommands = undefined;
+let botCommands = undefined;
 
 String.prototype.regexIndexOf = function(regex, startpos) {
-    var indexOf = this.substring(startpos || 0).search(regex);
+    let indexOf = this.substring(startpos || 0).search(regex);
     return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
 }
 
 function hasReg(msg, word)
 {
-    return msg.regexIndexOf(word) != -1;
+    return msg.regexIndexOf(word) !== -1;
 }
 
 function hasStr(msg, word)
 {
-    return msg.indexOf(word) != -1;
+    return msg.indexOf(word) !== -1;
 }
 
 /*
@@ -78,8 +78,8 @@ function lookUpForKeyPrefix(msgLowTrimmed)
 
     for(var i = 0; i < keyPrefix.length; i++)
     {
-        if((msgLowTrimmed.indexOf(keyPrefix[i] + ":") == 0) ||
-           (msgLowTrimmed.indexOf(keyPrefix[i] + ",") == 0))
+        if((msgLowTrimmed.indexOf(keyPrefix[i] + ":") === 0) ||
+           (msgLowTrimmed.indexOf(keyPrefix[i] + ",") === 0))
             forMe = true;
     }
 
@@ -100,11 +100,11 @@ var keyMentions = [
 
 function lookUpForKeyMentions(msgLowTrimmed)
 {
-    var forMe = false;
+    let forMe = false;
 
-    for(var i = 0; i < keyMentions.length; i++)
+    for(let i = 0; i < keyMentions.length; i++)
     {
-        if(msgLowTrimmed.indexOf(keyMentions[i]) != -1)
+        if(msgLowTrimmed.indexOf(keyMentions[i]) !== -1)
             forMe = true;
     }
 
@@ -113,9 +113,9 @@ function lookUpForKeyMentions(msgLowTrimmed)
 
 var messageIn = function(mybot, message, allowWrite)
 {
-    var msgTrimmed      = message.content.trim();
-    var msgLow          = message.content.toLowerCase();
-    var msgLowTrimmed   = msgLow.trim();
+    let msgTrimmed      = message.content.trim();
+    let msgLow          = message.content.toLowerCase();
+    let msgLowTrimmed   = msgLow.trim();
 
     /*
     if(lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite))
@@ -123,16 +123,16 @@ var messageIn = function(mybot, message, allowWrite)
     */
 
     /* *********Auto-replying for some conditions********* */
-    var wasAsked = false;
-    var messageForMe = false;
-    var messageForMeReact = false;
-    var mentions = message.mentions.users.array();
+    let wasAsked = false;
+    let messageForMe = false;
+    let messageForMeReact = false;
+    let mentions = message.mentions.users.array();
 
-    for(var i = 0; i < mentions.length; i++)
+    for(let i = 0; i < mentions.length; i++)
     {
         botCommands.foxylogInfo( "---> " + mentions[i].username + "#" + mentions[i].discriminator);
-        wasAsked = (mentions[i].id == 216943869424566273);
-        messageForMe = (mentions[i].id == 182039820879659008) && (message.author.id != 216943869424566273);
+        wasAsked = (mentions[i].id === mybot.user.id);
+        messageForMe = (mentions[i].id === 182039820879659008) && (message.author.id !== mybot.user.id);
         messageForMeReact = messageForMe;
     }
 
@@ -158,24 +158,24 @@ var messageIn = function(mybot, message, allowWrite)
 //            else
 //                message.reply("disable notifications please! :hear_no_evil:");
 //        }
-    if(message.author.id == 182039820879659008)//Don't quote me, Foxy!!!
+    if(message.author.id === 182039820879659008)//Don't quote me, Foxy!!!
         messageForMe = false;
 
     if(botCommands.isurl(msgTrimmed))//Also please, don't report me URLs
         messageForMe = false;
 
-    if((message.author.id == 216273975939039235) && messageForMe)
+    if((message.author.id === 216273975939039235) && messageForMe)
     {
         messageForMeReact = false; //Don't react to LunaBot
-        if((msgLowTrimmed.indexOf("http://wohlsoft.ru/") == 0) && (msgLowTrimmed.indexOf(" ") == -1))
+        if((msgLowTrimmed.indexOf("http://wohlsoft.ru/") === 0) && (msgLowTrimmed.indexOf(" ") === -1))
             messageForMe = false; //Don't report LunaBot's URLs
     }
 
     //Check is botane offline, and reply on attempt call her
-    var Botane = mybot.users.get("216688100032643072");
-    if(allowWrite && (Botane.presence.status == "offline"))
+    let Botane = mybot.users.get("216688100032643072");
+    if(allowWrite && (Botane !== undefined) && (Botane.presence.status === "offline"))
     {
-        if(msgLowTrimmed == "what is horikawa?")
+        if(msgLowTrimmed === "what is horikawa?")
         {
             message.reply("Don't try call her, she is dead bot!");
         }
@@ -183,57 +183,57 @@ var messageIn = function(mybot, message, allowWrite)
 
     if(allowWrite && (wasAsked || message.channel.isPrivate))
     {
-        if(message.author.id == 216688100032643072)//Horikawa Botane
+        if(message.author.id === 216688100032643072)//Horikawa Botane
         {
-            if(msgLow.indexOf("dorkatron")!=-1)
+            if(msgLow.indexOf("dorkatron") !== -1)
             {
                 message.reply("maybe you are a Dorkatron? I'm not!");
             }
         }
         else//Any other
         {
-            if(msgLow.indexOf("pets") != -1)
+            if(msgLow.indexOf("pets") !== -1)
             {
                 setTimeout(function(){ message.reply("Do you really wanna pet the fox? :fox:"); }, 1000);
                 setTimeout(function() { botCommands.callCommand(mybot, message, "fox", ""); }, 3500);
             }
             else
-            if(msgLow.indexOf("hi!") != -1)
+            if(msgLow.indexOf("hi!") !== -1)
             {
                 setTimeout(function(){ message.channel.sendFile(__dirname+"/images/hi.gif"); }, 1000);
             }
             else
-            if(msgLow.indexOf("hi") != -1)
+            if(msgLow.indexOf("hi") !== -1)
             {
                 setTimeout(function(){ message.reply("Hi!"); }, 1000);
             }
             else
-            if(msgLow.indexOf("i like you") != -1)
+            if(msgLow.indexOf("i like you") !== -1)
             {
                 setTimeout(function(){ message.reply(":blush:"); }, 1000);
             }
             else
-            if(msgLow.indexOf("i love you") != -1)
+            if(msgLow.indexOf("i love you") !== -1)
             {
                 setTimeout(function(){ message.reply(":blush:"); }, 1000);
             }
             else
-            if(msgLow.indexOf("♥") != -1)
+            if(msgLow.indexOf("♥") !== -1)
             {
                 setTimeout(function(){ message.reply(":blush:"); }, 1000);
             }
             else
-            if(msgLow.indexOf("❤") != -1)
+            if(msgLow.indexOf("❤") !== -1)
             {
                 setTimeout(function(){ message.reply(":blush:"); }, 1000);
             }//♥ ❤ ღ ❦ ❥❣
             else
-            if(msgLow.indexOf("🍺") != -1)
+            if(msgLow.indexOf("🍺") !== -1)
             {
                 setTimeout(function(){ message.reply(":beers:"); }, 1000);
             }
             else
-            if(msgLow.indexOf("🍻") != -1)
+            if(msgLow.indexOf("🍻") !== -1)
             {
                 setTimeout(function(){ message.reply(":beers: :beer:"); }, 1000);
             }
@@ -243,7 +243,7 @@ var messageIn = function(mybot, message, allowWrite)
                 setTimeout(function(){ message.reply("You so rude! :angry:"); }, 1000);
             }
             else
-            if(msgLow.indexOf("🤘") != -1)
+            if(msgLow.indexOf("🤘") !== -1)
             {
                 setTimeout(function(){ message.reply("Сool, dude!"); }, 1000);
             }
@@ -263,14 +263,14 @@ var messageIn = function(mybot, message, allowWrite)
         {
             if(botCommands.botConfig.defaultChannel.includes(message.channel.id))//"beep-boop", "fun" 218194030662647809
             {
-                if(message.author.id == 216688100032643072)//Horikawa Botane
+                if(message.author.id === 216688100032643072)//Horikawa Botane
                 {
-                    if(msgLowTrimmed.indexOf("is it porn?") != -1)
+                    if(msgLowTrimmed.indexOf("is it porn?") !== -1)
                     {
                         setTimeout(function(){message.channel.send("No, <@216688100032643072>!").catch(botCommands.msgSendError);}, 1000);
                     }
                     else
-                    if(msgLowTrimmed.indexOf("i don't believe you") != -1)
+                    if(msgLowTrimmed.indexOf("i don't believe you") !== -1)
                     {
                         setTimeout(function(){message.channel.send("Let's play with Bastion!").catch(botCommands.msgSendError);}, 1000);
                         setTimeout(function(){message.channel.send("Bastion Bastion Bastion Bastion!!!!").catch(botCommands.msgSendError);}, 2000);

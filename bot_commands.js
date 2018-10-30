@@ -6,14 +6,14 @@ const escape      = require('escape-html');
 const mysql       = require('mysql');
 const Discord     = require("discord.js");
 
-var foxyBotPackage  = require("./package.json");
-var responses       = require("./responses.json");
+let foxyBotPackage  = require("./package.json");
+let responses       = require("./responses.json");
 
-var foxyBotVer  = foxyBotPackage.name + " v" + foxyBotPackage.version;
+let foxyBotVer  = foxyBotPackage.name + " v" + foxyBotPackage.version;
 
-var winston = require('winston');
+let winston = require('winston');
 
-var logger = new (winston.Logger)(
+let logger = new (winston.Logger)(
 {
     transports: [
         new (winston.transports.Console)({ json: false, timestamp: true }),
@@ -32,26 +32,28 @@ function foxylogInfo(outmsg)
 }
 
 //! List of available bot commands
-var Cmds      = [];
-var CmdsREAL  = [];
+let Cmds      = [];
+let CmdsREAL  = [];
 
 //! Recent auth token
-var authToken = "";
+let authToken = "";
 
 //! Pointer to the bot
-var BotPtr;
+let BotPtr;
 
-var botConfig = require("./setup.json");
+let botConfig = require("./setup.json");
 
-var smtpMailLoginInfo = botConfig.smtp.login;
-var smtpMailFrom      = botConfig.smtp.from;
-var smtpMailTo        = botConfig.smtp.to;
+let smtpMailLoginInfo = botConfig.smtp.login;
+let smtpMailFrom      = botConfig.smtp.from;
+let smtpMailTo        = botConfig.smtp.to;
 
-var mydb = undefined;
+let mydb = undefined;
+
+let mydb_enabled = (botConfig.mysql.disabled !== undefined) && (botConfig.mysql.disabled !== true);
 
 function connectMyDb()
 {
-    if(mydb == undefined)
+    if(mydb_enabled && mydb === undefined)
     {
         mydb = mysql.createPool({
               connectionLimit : 5,
@@ -67,7 +69,7 @@ function connectMyDb()
 
 function disconnectMyDb()
 {
-    if(mydb != undefined)
+    if(mydb_enabled && mydb !== undefined)
     {
         mydb.end(function(err) {
             mydb = undefined;
@@ -78,6 +80,8 @@ function disconnectMyDb()
 
 function reconnectMyDb()
 {
+    if(!mydb_enabled)
+        return;
     disconnectMyDb();
     connectMyDb();
 }
@@ -88,7 +92,6 @@ function errorMyDb(error, results, fields)
     {
         foxylogInfo("Error happen! " + error);
         reconnectMyDb();
-        return;
     }
 }
 
@@ -119,8 +122,8 @@ var emailWhiteList = [212297373827727360,//Yoshi021
 
 Object.size = function(obj)
 {
-    var size = 0, key;
-    for (key in obj) {
+    let size = 0, key;
+    for(key in obj) {
         if (obj.hasOwnProperty(key)) size++;
     }
     return size;
@@ -139,7 +142,8 @@ function sendErrorMsg(bot, channel, e)
                  e.stack + "```").then(function(){}, msgSendError).catch(msgSendError);
 }
 
-var msgFailedAttempts = 0;
+
+let msgFailedAttempts = 0;
 
 function loginBot(bot, token)
 {
@@ -152,7 +156,7 @@ function msgSendError(error, message)
 {
     if (error)
     {
-        var ErrorText = "Can't send message because: " + error;
+        let ErrorText = "Can't send message because: " + error;
         foxylogInfo(ErrorText);
         if(++msgFailedAttempts > 2)
         {
@@ -160,7 +164,6 @@ function msgSendError(error, message)
             loginBot(BotPtr, authToken);
             msgFailedAttempts = 0;
         }
-        return;
     } else {
         msgFailedAttempts = 0;
     }
@@ -340,14 +343,14 @@ var postGreeting = function(bot)
         chan.send(getArrayRandom(responses.enter).value).catch(msgSendError);
     });
     */
-    var chan = bot.channels.get(botConfig.defaultChannel[0]);
+    let chan = bot.channels.get(botConfig.defaultChannel[0]);
     chan.send(getArrayRandom(responses.enter).value).catch(msgSendError);
 }
 
 var isBeepBoop = function(bot, message, args)
 {
-    var channel = getDefaultChannelForGuild(bot, message);
-    if(channel.id == message.channel.id)
+    let channel = getDefaultChannelForGuild(bot, message);
+    if(channel.id === message.channel.id)
     {
         message.reply("No, on this server is no beep-boop channel", msgSendError);
     } else {
@@ -499,6 +502,9 @@ function getMsFromMsg(bot, message, args)
 
 var initRemindWatcher = function(bot)
 {
+    if(!mydb_enabled)
+        return; //Reminder requires DB support. Withot DB, disable reminder completely
+
     BotPtr = bot;
     //Check for remind every minute
     setInterval(function()
@@ -555,18 +561,25 @@ var initRemindWatcher = function(bot)
     }, 60000); //Check the database every minute
 }
 
-var sayDelayd = function(bot, message, args)
+let sayDelayd = function(bot, message, args)
 {
-    var index = args.lastIndexOf("after ");
-    if( (index==-1) || (index>(index.length-7)) )
+    if(!mydb_enabled)
+    {
+        message.reply("Sorry, this command is inavailable for now...", msgSendError);
+        return;
+    }
+
+    let index = args.lastIndexOf("after ");
+    if((index === -1) || (index > (index.length-7)))
     {
         message.reply("You missed time!", msgSendError);
         return;
     }
 
+
     var timeInt = getMsFromMsg(bot, message, args.slice(index + 6));
 
-    if(timeInt == -1)
+    if(timeInt === -1)
         return;
 
     if(timeInt == NaN)
@@ -575,12 +588,12 @@ var sayDelayd = function(bot, message, args)
         return;
     }
 
-    var some = args.slice(0, index).trim();
-    var guild_id = (message.channel.type == 'dm') ? 0 : message.channel.guild.id;
-    var chan_id  = message.channel.id;
-    var waitTime = mydb.escape(timeInt/1000);
+    let some = args.slice(0, index).trim();
+    let guild_id = (message.channel.type === 'dm') ? 0 : message.channel.guild.id;
+    let chan_id  = message.channel.id;
+    let waitTime = mydb.escape(timeInt/1000);
     //foxylogInfo("Remind: Wait " + (timeInt/1000) + " vs " +  waitTime + " seconds!");
-    var insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
+    let insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
                         "values ((NOW() + INTERVAL " + waitTime + " SECOND), " +
                         mydb.escape(some.toString()) + ", " +
                         mydb.escape(guild_id) + ", " +
@@ -597,16 +610,22 @@ var sayDelayd = function(bot, message, args)
 
 var sayDelaydME = function(bot, message, args)
 {
-    var index = args.lastIndexOf("after ");
-    if( (index==-1) || (index>(index.length-7)) )
+    if(!mydb_enabled)
+    {
+        message.reply("Sorry, this command is inavailable for now...", msgSendError);
+        return;
+    }
+
+    let index = args.lastIndexOf("after ");
+    if((index === -1) || (index > (index.length-7)))
     {
         message.reply("You missed time!", msgSendError);
         return;
     }
 
-    var timeInt = getMsFromMsg(bot, message, args.slice(index+6));
+    let timeInt = getMsFromMsg(bot, message, args.slice(index+6));
 
-    if(timeInt==-1)
+    if(timeInt === -1)
         return;
 
     if(timeInt == NaN)
@@ -615,11 +634,11 @@ var sayDelaydME = function(bot, message, args)
         return;
     }
 
-    var some = "<@" + message.author.id + ">, " + args.slice(0, index).trim();
-    var guild_id    = (message.channel.type == 'dm') ? 0 : message.channel.guild.id;
-    var chan_id     = message.channel.id;
-    var waitTime    = mydb.escape(timeInt/1000);
-    var insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
+    let some = "<@" + message.author.id + ">, " + args.slice(0, index).trim();
+    let guild_id    = (message.channel.type === 'dm') ? 0 : message.channel.guild.id;
+    let chan_id     = message.channel.id;
+    let waitTime    = mydb.escape(timeInt/1000);
+    let insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
                         "values ((NOW() + INTERVAL " + waitTime + " SECOND), " +
                         mydb.escape(some.toString()) + ", " +
                         mydb.escape(guild_id) + ", " +
@@ -732,7 +751,7 @@ var callBastion = function(bot, message, args)
 var callBotane = function(bot, message, args)
 {
     var chan = getDefaultChannelForGuild(bot, message);
-    if(chan.id == message.channel.id)
+    if(chan.id === message.channel.id)
     {
         message.reply("Don't play with Botane on this server!").catch(msgSendError);
         return;
@@ -740,7 +759,7 @@ var callBotane = function(bot, message, args)
 
     //Check is botane offline
     var Botane = bot.users.get("216688100032643072");
-    if(Botane.presence.status == "offline")
+    if(Botane.presence.status === "offline")
     {
         message.reply("Botane is dead! Let's play with another bot :smirk:").catch(msgSendError);
         return;
@@ -753,8 +772,8 @@ var callBotane = function(bot, message, args)
     chan.send("What is Horikawa?").catch(msgSendError);
 }
 
-var trollTimerIsBusy = new Array();
-var trollTimer = function(bot, message, args)
+let trollTimerIsBusy = [];
+let trollTimer = function(bot, message, args)
 {
     if(!inListFile("boop_zone.txt", message.channel.id) && (!message.channel.isPrivate))
         return;
@@ -783,7 +802,7 @@ var trollTimer = function(bot, message, args)
         return;
     }
 
-    for(var i=0; i<message.mentions.length; i++)
+    for(let i = 0; i < message.mentions.length; i++)
     {
         args = args.replace("<@"+message.mentions[i].id+">", "@"+message.mentions[i].username);
     }
@@ -799,7 +818,7 @@ var trollTimer = function(bot, message, args)
                          "... (every second 5 times will be printed same message)", opts).catch(msgSendError);
 
     trollTimerIsBusy[message.author.id] = true;
-    var i = 5;
+    let i = 5;
     setTimeout(function run()
     {
         message.channel.send(args).catch(msgSendError);
@@ -825,15 +844,19 @@ var upTimeBot = function(bot, message, args)
 
 var aboutBot = function(bot, message, args)
 {
-    var stats1 = fs.statSync("foxy.js");
-    var stats2 = fs.statSync("bot_commands.js");
+    let stats1 = fs.statSync("foxy.js");
+    let stats2 = fs.statSync("bot_commands.js");
 
-    var msgtext = "**" + foxyBotVer + "**\nCreated by <@182039820879659008>, built on the Node.JS\n";
+    let msgtext = "**" + foxyBotVer + "**\nCreated by <@182039820879659008>, built on the Node.JS\n";
     msgtext += getBotUptime() + "\n";
     msgtext += getLocalTime() + "\n";
     msgtext += "\n";
     msgtext += "**Kernel** __*(foxy.js)*__ - updated " + stats1["mtime"] + "\n";
     msgtext += "**Functions** __*(bot_commands.js)*__ - updated " + stats2["mtime"] + "\n";
+    msgtext += "\n";
+    msgtext += "Guilds where I am: **" + bot.guilds.size + "**.\n";
+    msgtext += "Channels where I am: **" + bot.channels.size + "**.\n";
+    msgtext += "Users I can see: **" + bot.users.size + "**.\n";
     msgtext += "\n";
     msgtext += "Totally I know **" + Cmds.length + "** commands.\n"
     msgtext += "Unique are **" + CmdsREAL.length + "** commands.\n"
@@ -1208,13 +1231,13 @@ var callCommand = function(bot, message, command, args)
         return;
     }
 
-    var isDM = (message.channel.type != "text");
-    var found=false;
-    for(var i=0; i < Cmds.length; i++)
+    let isDM = (message.channel.type !== "text");
+    let found=false;
+    for(let i=0; i < Cmds.length; i++)
     {
-        if(Cmds[i][0] == command)
+        if(Cmds[i][0] === command)
         {
-            if(isDM && (typeof(Cmds[i][5]) != 'undefined'))
+            if(isDM && (typeof(Cmds[i][5]) !== 'undefined'))
                 continue;
             if(!isDM && !commandAllowedOnServer(Cmds[i], message.guild.id))
                 continue;
@@ -1231,7 +1254,8 @@ var callCommand = function(bot, message, command, args)
     }
     if(!found)
     {
-        message.reply("Sorry, I don't know this command! Type \"/foxy cmd\"!").catch(msgSendError);
+        message.reply("Sorry, I don't know this command! " +
+            "Type \"" + (botConfig.prefix !== undefined ? botConfig.prefix : "/foxy") + " cmd\"!").catch(msgSendError);
     }
 }
 
@@ -1240,7 +1264,6 @@ function output(error, token)
     if (error)
     {
         foxylogInfo('There was an error logging in: ' + error);
-        return;
     }
     else
     {

@@ -2,22 +2,22 @@
     A small election system
 */
 
-var core = undefined;
+let core = undefined;
 
-var votingVotings = new Array();
+let votingVotings = [];
 
 function countVotes(chid)
 {
-    var votingResult = [];
-    var votingResultMsg = "";
-    if(Object.size(votingVotings[chid].voters) == 0)
+    let votingResult = [];
+    let votingResultMsg = "";
+    if(Object.size(votingVotings[chid].voters) === 0)
     {
         votingResultMsg = "No one voted :confused:";
     } else {
-        var voters = votingVotings[chid].voters;
-        for(var i=0; i<votingVotings[chid].votingVariants.length; i++)
+        let voters = votingVotings[chid].voters;
+        for(let i=0; i<votingVotings[chid].votingVariants.length; i++)
         {
-            votingResult[i] = new Array();
+            votingResult[i] = [];
             votingResult[i].title = votingVotings[chid].votingVariants[i];
             votingResult[i].votes = 0;
         }
@@ -39,12 +39,12 @@ var voting = function(bot, message, args)
     var chid = message.channel.id;
     if(typeof(votingVotings[message.channel.id])==='undefined')
     {
-        votingVotings[chid] = new Array();
+        votingVotings[chid] = [];
         votingVotings[chid].votingInProcess = false;
     }
     core.foxylogInfo("====Voting mechanism====");
     //on "start <variants>" begin vote counts
-    if(args.indexOf("start ") != -1)
+    if(args.indexOf("start ") !== -1)
     {
         core.foxylogInfo("--start--");
         if(votingVotings[chid].votingInProcess)
@@ -52,15 +52,15 @@ var voting = function(bot, message, args)
             message.reply("Another voting in process! Finish this voting and then you will be able to start new one!", core.msgSendError);
             return;
         }
-        var variants = args.slice(6);
-        if(variants.trim()=="")
+        let variants = args.slice(6);
+        if(variants.trim() === "")
         {
             message.reply("Nothing to vote!", core.msgSendError);
             return;
         }
         votingVotings[chid].voters = [];//If user is here - ignore next votes. Revoting is not allowed
         votingVotings[chid].votingVariants = variants.split(";");
-        var voteMsg = "**Voting variants:**\n"
+        let voteMsg = "**Voting variants:**\n"
         for(var i=0;i<votingVotings[chid].votingVariants.length; i++)
         {
             votingVotings[message.channel.id].votingVariants[i] = votingVotings[chid].votingVariants[i].trim();
@@ -74,7 +74,7 @@ var voting = function(bot, message, args)
     }
     //on "stats" show result
     else
-    if(args.indexOf("stats") != -1)
+    if(args.indexOf("stats") !== -1)
     {
         core.foxylogInfo("--stats--");
         if(!votingVotings[chid].votingInProcess)
@@ -82,12 +82,12 @@ var voting = function(bot, message, args)
             message.channel.send("No votings in this channel! Type **/foxy help voting** to learn how to work with voting.").catch(core.msgSendError);
             return;
         }
-        var votingResultMsg = countVotes(chid);
+        let votingResultMsg = countVotes(chid);
         message.channel.send("**Current voting state**:\n" + votingResultMsg).catch(core.msgSendError);
     }
     //on "stop" abort voting process and show result
     else
-    if((args.indexOf("stop") != -1) || (args.indexOf("end") != -1))
+    if((args.indexOf("stop") !== -1) || (args.indexOf("end") !== -1))
     {
         core.foxylogInfo("--stop--");
         if(!votingVotings[chid].votingInProcess)
@@ -113,7 +113,7 @@ var voting = function(bot, message, args)
             if( (vote > 0) && (vote <= votingVotings[chid].votingVariants.length) )
             {
                 core.foxylogInfo("Vote remembered: " + vote);
-                if(typeof(votingVotings[chid].voters[message.author.id]) != 'undefined')
+                if(typeof(votingVotings[chid].voters[message.author.id]) !== 'undefined')
                     message.react("🔄");//Mark re-voting
                 votingVotings[chid].voters[message.author.id] = (vote - 1);
                 message.react("✅");//Mark vote as accepted

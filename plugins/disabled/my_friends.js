@@ -10,7 +10,7 @@ var echidnasDir = "/home/vitaly/_Bots/echidnabot";
 
 function isGranted(message)
 {
-    return (core.botConfig.myboss.indexOf(message.author.id) != -1) || (message.author.id == "133426635998232577");
+    return (core.botConfig.myboss.indexOf(message.author.id) !== -1) || (message.author.id === "133426635998232577");
 }
 
 var knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
@@ -21,7 +21,7 @@ var knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
         return;
     }
 
-    var linesNumber = (args == "" ? 25 : Number(args));
+    var linesNumber = (args === "" ? 25 : Number(args));
 
     exec('tail', ["-n", linesNumber.toString(), "knuxlog.log"], {cwd: echidnasDir}, function(err, data)
     {
