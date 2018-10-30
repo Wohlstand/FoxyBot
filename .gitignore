@@ -5,3 +5,6 @@ setup.json
 screenlog.*
 votes
 votings
+.idea/*
+package-lock.json
+
