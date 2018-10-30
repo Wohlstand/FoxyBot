@@ -847,7 +847,7 @@ var aboutBot = function(bot, message, args)
     let stats1 = fs.statSync("foxy.js");
     let stats2 = fs.statSync("bot_commands.js");
 
-    let msgtext = "**" + foxyBotVer + "**\nCreated by <@182039820879659008>, built on the Node.JS\n";
+    let msgtext = "**" + foxyBotVer + "**\nCreated by **Wohlstand**, built on the Node.JS\n";
     msgtext += getBotUptime() + "\n";
     msgtext += getLocalTime() + "\n";
     msgtext += "\n";
