@@ -27,7 +27,7 @@ function getJSON(options, onResult)
         //res.send('error: ' + err.message);
     });
     req.end();
-};
+}
 
 function getRandFile(bot, message, fromURL, messageTitle="", messageColor=0xD77D31)
 {
@@ -64,73 +64,73 @@ function getRandFile(bot, message, fromURL, messageTitle="", messageColor=0xD77D
     });
 }
 
-var fox = function(bot, message, args)
+function fox(bot, message, args)
 {
     getRandFile(bot, message, "randomfox.php", ":fox: | **Your random fox:**", 0xD77D31);
 }
 
-var fennec = function(bot, message, args)
+function fennec(bot, message, args)
 {
     getRandFile(bot, message, "randomfennec.php", ":fox: | **Fennec is here:**", 0xF7EAE1);
 }
 
-var wraska = function(bot, message, args)
+function wraska(bot, message, args)
 {
     getRandFile(bot, message, "randomwraska.php", ":fox: | **It's Vraska the snowy fox:**", 0xFFFFFF);
 }
 
-var boxy = function(bot, message, args)
+function boxy(bot, message, args)
 {
     getRandFile(bot, message, "randombox.php", ":card_box: | **Just a box with some:**", 0x946B54);
 }
 
-var boat = function(bot, message, args)
+function boat(bot, message, args)
 {
     getRandFile(bot, message, "randomboat.php", ":rowboat: | **Do you wanna fishing?**", 0xFFFFFF);
 }
 
-var ship = function(bot, message, args)
+function ship(bot, message, args)
 {
     getRandFile(bot, message, "randomship.php", ":ship: | **Ship is here:**", 0xBC987E);
 }
 
-var flower = function(bot, message, args)
+function flower(bot, message, args)
 {
     getRandFile(bot, message, "randomflower.php", ":rose: | **Do you like flowers?**", 0xA52A2A);
 }
 
-var burn = function(bot, message, args)
+function burn(bot, message, args)
 {
     getRandFile(bot, message, "randomburn.php", ":fire: | **It's hot!**", 0xFF7F49);
 }
 
-var money = function(bot, message, args)
+function money(bot, message, args)
 {
     getRandFile(bot, message, "randomoney.php", ":moneybag: | **You are rich!**", 0xB8860B);
 }
 
-var lego = function(bot, message, args)
+function lego(bot, message, args)
 {
     getRandFile(bot, message, "randomlego.php", ":sun_with_face: | **Lego!**", 0x5E2129);
 }
 
-var smile = function(bot, message, args)
+function smile(bot, message, args)
 {
     getRandFile(bot, message, "randomsmile.php");
 }
 
-var facepalm = function(bot, message, args)
+function facepalm(bot, message, args)
 {
     getRandFile(bot, message, "randomfacepalm.php");
 }
 
-var frog = function(bot, message, args)
+function frog(bot, message, args)
 {
     getRandFile(bot, message, "randomfrog.php", ":frog: | **I see fly!**", 0x8CCB5E);
 }
 
 
-var makeMe = function(bot, message, args)
+function makeMe(bot, message, args)
 {
     var argsL = args.toLowerCase();
 
@@ -200,7 +200,7 @@ var makeMe = function(bot, message, args)
         message.reply("Never, you are stupid pervert! You are worst person I know here!").catch(core.msgSendError);
 }
 
-var fart = function(bot, message, args)
+function fart(bot, message, args)
 {
     /* Inside moderator channel, take log file */
     if((message.channel.id === "215662579161235456") && (args === "debuglog"))
@@ -244,18 +244,18 @@ var fart = function(bot, message, args)
     getRandFile(bot, message, "randomfart.php");
 }
 
-var butts = function(bot, message, args)
+function butts(bot, message, args)
 {
     message.delete();
     message.channel.send("`(__|__)`").catch(core.msgSendError);
 }
 
-var burns = function(bot, message, args)
+function burns(bot, message, args)
 {
-    message.channel.send("https://www.youtube.com/watch?v=gSzgNRzpjo8").catch(core.msgSendError);
+    message.channel.send("https://youtube.com/watch?v=gSzgNRzpjo8").catch(core.msgSendError);
 }
 
-var spit = function(bot, message, args)
+function spit(bot, message, args)
 {
     if(args.indexOf("hot fire") !== -1)
     {
@@ -265,27 +265,27 @@ var spit = function(bot, message, args)
     }
 }
 
-var randMsg_messages = [
+let randMsg_messages = [
     "Hey, Knuxy, give to %u something, I forgot that at home...",
     "Sorry, %u, I forgot that at home, ask Knux for that please!",
     "/knux say /luna say %u, ping!"
 ];
 
-var randMsg = function(bot, message, args)
+function randMsg(bot, message, args)
 {
-    var msg = randMsg_messages[Math.floor(Math.random() * randMsg_messages.length)];
+    let msg = randMsg_messages[Math.floor(Math.random() * randMsg_messages.length)];
     message.channel.send(msg.replace(/%u/g, "<@!" + message.author.id + ">")).catch(core.msgSendError);
 }
 
-var randomCommand_available = [
+let randomCommand_available = [
     fox,    fennec,     boxy,       randMsg, burn,    burns,
     smile,  boat,       flower,     randMsg, ship,    fart,
     butts,  randMsg
 ];
 
-var randomCommand = function(bot, message, args)
+function randomCommand(bot, message, args)
 {
-    var cmd = randomCommand_available[Math.floor(Math.random() * randomCommand_available.length)];
+    let cmd = randomCommand_available[Math.floor(Math.random() * randomCommand_available.length)];
     cmd(bot, message, args);
 }
 

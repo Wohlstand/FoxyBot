@@ -111,7 +111,7 @@ function lookUpForKeyMentions(msgLowTrimmed)
     return forMe;
 }
 
-var messageIn = function(mybot, message, allowWrite)
+function messageIn(mybot, message, allowWrite)
 {
     let msgTrimmed      = message.content.trim();
     let msgLow          = message.content.toLowerCase();
@@ -132,7 +132,7 @@ var messageIn = function(mybot, message, allowWrite)
     {
         botCommands.foxylogInfo( "---> " + mentions[i].username + "#" + mentions[i].discriminator);
         wasAsked = (mentions[i].id === mybot.user.id);
-        messageForMe = (mentions[i].id === 182039820879659008) && (message.author.id !== mybot.user.id);
+        messageForMe = (mentions[i].id === "182039820879659008") && (message.author.id !== mybot.user.id);
         messageForMeReact = messageForMe;
     }
 
@@ -158,13 +158,13 @@ var messageIn = function(mybot, message, allowWrite)
 //            else
 //                message.reply("disable notifications please! :hear_no_evil:");
 //        }
-    if(message.author.id === 182039820879659008)//Don't quote me, Foxy!!!
+    if(message.author.id === "182039820879659008")//Don't quote me, Foxy!!!
         messageForMe = false;
 
     if(botCommands.isurl(msgTrimmed))//Also please, don't report me URLs
         messageForMe = false;
 
-    if((message.author.id === 216273975939039235) && messageForMe)
+    if((message.author.id === "216273975939039235") && messageForMe)
     {
         messageForMeReact = false; //Don't react to LunaBot
         if((msgLowTrimmed.indexOf("http://wohlsoft.ru/") === 0) && (msgLowTrimmed.indexOf(" ") === -1))
@@ -183,7 +183,7 @@ var messageIn = function(mybot, message, allowWrite)
 
     if(allowWrite && (wasAsked || message.channel.isPrivate))
     {
-        if(message.author.id === 216688100032643072)//Horikawa Botane
+        if(message.author.id === "216688100032643072")//Horikawa Botane
         {
             if(msgLow.indexOf("dorkatron") !== -1)
             {

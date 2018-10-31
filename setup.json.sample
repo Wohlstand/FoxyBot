@@ -6,12 +6,14 @@
     "defaultChannel" : ["216229325484064768", "218194030662647809"],
     "token" : "<your bot's token here!>",
     "pop" : {
+        "disabled" : true,
         "host" : "mailserver.ru",
         "port" : "110",
         "login" : "mybotmailbox@server.ru",
         "pass" : "superpassword"
     },
     "smtp" : {
+        "disabled" : true,
         "login" : "smtps://mybotmailbox%40server.ru:superpassword@mailserver.ru",
         "from" : "\"FoxyBot on Discord\" <mybotmailbox@server.ru>",
         "to" : "theadmin@server.ru"
@@ -23,5 +25,6 @@
         "user" : "<user>",
         "password" : "<password>"
     },
+    "trdisabled" : true,
     "trkey" : "<API key for Yandex Translator, get it here: https://tech.yandex.ru/translate/ >"
 }

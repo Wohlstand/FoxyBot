@@ -260,6 +260,11 @@ foxyBotCli.on("ready", () =>
     console.log('DONE!\n==========================================================\n\n');
 });
 
+foxyBotCli.on("error", (e) =>
+{
+    console.log('!!HOLY COW!!\n' + e.message + '\n==========================================================\n\n');
+});
+
 foxyBotCli.on('reconnecting', () =>
 {
     botCommands.foxylogInfo('Connection lost, trying to reconnect...');
