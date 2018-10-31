@@ -1,5 +1,3 @@
-const http        = require("http");
-const https       = require("https");
 const fs          = require('fs');
 const nodemailer  = require('nodemailer');
 const escape      = require('escape-html');
@@ -72,6 +70,7 @@ function disconnectMyDb()
     if(my_db_enabled && my_db !== undefined)
     {
         my_db.end(function(err) {
+            console.log("Database disconnect error: " + err.message + "");
             my_db = undefined;
         });
     }
@@ -90,7 +89,7 @@ function errorMyDb(error, results, fields)
 {
     if(error)
     {
-        foxylogInfo("Error happen! " + error);
+        foxylogInfo("Error happen! " + error + "; Results " + results.length + "; Fields: " + fields.length);
         reconnectMyDb();
     }
 }
@@ -99,12 +98,12 @@ connectMyDb();
 
 /* ******************Internal black/white lists ********************************/
 
-var globalBlackList = [216273975939039235];//LunaBot
+//let globalBlackList = [216273975939039235];//LunaBot
 
-var trollTimerBlackList = [216273975939039235];//LunaBot
+//let trollTimerBlackList = [216273975939039235];//LunaBot
 
-var emailBlackList = [];//216273975939039235//LunaBot
-var emailWhiteList = [212297373827727360,//Yoshi021
+//let emailBlackList = [];//216273975939039235//LunaBot
+let emailWhiteList = [212297373827727360,//Yoshi021
                       182039820879659008,//Wohlstand
                       214408564515667968,//Hoeloe
                       215683390211358720,//Rednaxela
@@ -148,7 +147,7 @@ let msgFailedAttempts = 0;
 function loginBot(bot, token)
 {
     authToken = token;
-    bot.login(authToken);
+    bot.login(authToken).catch(msgSendError);
     BotPtr = bot;
 }
 
@@ -156,6 +155,7 @@ function msgSendError(error, message)
 {
     if (error)
     {
+        console.log("Fail to send message: " + message);
         let ErrorText = "Can't send message because: " + error;
         foxylogInfo(ErrorText);
         if(++msgFailedAttempts > 2)
@@ -173,7 +173,8 @@ function msgDeleteError(error, message)
 {
     if (error)
     {
-        var ErrorText = "Can't delete message because: " + error;
+        console.log("Fail to delete message: " + message);
+        let ErrorText = "Can't delete message because: " + error;
         foxylogInfo(ErrorText);
     }
 }
@@ -181,49 +182,47 @@ function msgDeleteError(error, message)
 
 function secondsToTimeDate(time)
 {
-    var days    = parseInt( time/86400, 10);
-    var hours   = parseInt((time/3600)%24, 10);
-    var minutes = parseInt((time/60)%60, 10);
-    var seconds = parseInt( time%60, 10);
+    let days    = parseInt( time/86400, 10);
+    let hours   = parseInt((time/3600)%24, 10);
+    let minutes = parseInt((time/60)%60, 10);
+    let seconds = parseInt( time%60, 10);
 
     minutes = minutes < 10 ? "0" + minutes : minutes;
     seconds = seconds < 10 ? "0" + seconds : seconds;
-    return  (days != 0 ? days + " days, " : "" ) +
-            (hours != 0 ? hours + " hours, " : "" ) +
-            (minutes != "00" ? minutes + " minutes and " : "" ) +
-            (seconds != "00" ? seconds + " seconds!" : "");
+    return  (days !== 0 ? days + " days, " : "" ) +
+            (hours !== 0 ? hours + " hours, " : "" ) +
+            (minutes !== "00" ? minutes + " minutes and " : "" ) +
+            (seconds !== "00" ? seconds + " seconds!" : "");
 }
 
 
-var botStartedAt = new Date().getTime();
+let botStartedAt = new Date().getTime();
 function getBotUptime()
 {
-    var end = new Date().getTime();
-    var time = (end - botStartedAt)/1000;
+    let end = new Date().getTime();
+    let time = (end - botStartedAt)/1000;
 
     return "**I'm working**: " + secondsToTimeDate(time);
 }
 
 function getLocalTime()
 {
-    var currentdate = new Date();
-    var datetime = "**My local time in Moscow is**: "
-                  /*+ currentdate.getFullYear() + "-"
-                    + (currentdate.getMonth()+1)  + "-"
-                    + currentdate.getDate() + " @ " */
-                    + currentdate.getHours() + ":"
-                    + currentdate.getMinutes() + /*":"
-                    + currentdate.getSeconds() +*/ " UTC+3";
-    return datetime;
+    let currentdate = new Date();
+    return "**My local time in Moscow is**: "
+            /*+ currentdate.getFullYear() + "-"
+              + (currentdate.getMonth()+1)  + "-"
+              + currentdate.getDate() + " @ " */
+            + currentdate.getHours() + ":"
+            + currentdate.getMinutes() + /*":" + currentdate.getSeconds() +*/ " UTC+3";
 }
 
 function inList(list, userID)
 {
     if(list.length > 0)
     {
-        for(var i=0; i < list.length; i++)
+        for(let i=0; i < list.length; i++)
         {
-            if(userID == list[i])
+            if(userID === list[i])
             {
                 return true;
             }
@@ -232,13 +231,13 @@ function inList(list, userID)
     return false;
 }
 
-var cachedFiles = {};
+let cachedFiles = {};
 
 function cachedFiles_loadFile(file, alias)
 {
     cachedFiles[alias] = [];
     var userList = fs.readFileSync(__dirname + "/" + file);
-    var userArr = userList.toString().trim().split(/[\n\ ]/g);
+    var userArr = userList.toString().trim().split(/[\n ]/g);
     for(var i = 0; i < userArr.length; i++)
         cachedFiles[alias].push(userArr[i].trim());
 }
@@ -253,16 +252,12 @@ function cachedFiles_init()
 
 function inListFile(file, userID)
 {
-    if(!cachedFiles.hasOwnProperty(file))
-        return false;
-    if(cachedFiles[file].indexOf(userID) == -1)
-        return false;
-    return true;
+    return !((!cachedFiles.hasOwnProperty(file)) || (cachedFiles[file].indexOf(userID) === -1));
 }
 
-var cachedFiles_ReLeload = function(bot, message, args)
+function cachedFiles_ReLeload(bot, message, args)
 {
-    var isMyBoss = (botConfig.myboss.indexOf(message.author.id) != -1);
+    let isMyBoss = (botConfig.myboss.indexOf(message.author.id) !== -1);
     if(!isMyBoss)
     {
         message.reply("You are not granted to reload my built-in lists!", msgSendError);
@@ -276,10 +271,10 @@ var cachedFiles_ReLeload = function(bot, message, args)
     ).catch(msgSendError);
 }
 
-var cachedFiles_Check = function(bot, message, args)
+function cachedFiles_Check(bot, message, args)
 {
-    var keys = args.split(/[\n\ ]/g);
-    if((keys.length==1) && (keys[0].trim()==""))
+    var keys = args.split(/[\n ]/g);
+    if((keys.length === 1) && (keys[0].trim() === ""))
     {
         message.reply("you sent me nothing! I can't check the list! :confused:").catch(msgSendError);
         return;
@@ -302,24 +297,24 @@ function isWritableChannel(channel)
 
 function getArrayRandom(array)
 {
-	if  (array == null)
-		return {index:null, value:null}
+	if(array == null)
+		return {index:null, value:null};
 	else
 	{
-		var id = Math.floor(Math.random() * (array.length));
-		var val = array[id];
+        let id = Math.floor(Math.random() * (array.length));
+        let val = array[id];
 		return {index:id, value:val}
 	}
 }
 
 function getDefaultChannelForGuild(bot, message)
 {
-    var channel = message.channel;
+    let channel = message.channel;
     botConfig.defaultChannel.forEach(function(chanID, i, arr)
     {
         foxylogInfo("Trying to look for channel " + chanID);
-        var chan = bot.channels.get(chanID);
-        if(chan.guild.id == message.guild.id)
+        let chan = bot.channels.get(chanID);
+        if(chan.guild.id === message.guild.id)
             channel = chan;
     });
     return channel;
@@ -329,12 +324,12 @@ function getDefaultChannelForGuild(bot, message)
 *                    API FUNCTIONS                         *
 ***********************************************************/
 
-var test = function(bot, message, args)
+function test(bot, message, args)
 {
     message.reply("Test works!");
 }
 
-var postGreeting = function(bot)
+function postGreeting(bot)
 {
     /*
     botConfig.defaultChannel.forEach(function(chanID, i, arr)
@@ -347,7 +342,7 @@ var postGreeting = function(bot)
     chan.send(getArrayRandom(responses.enter).value).catch(msgSendError);
 }
 
-var isBeepBoop = function(bot, message, args)
+function isBeepBoop(bot, message, args)
 {
     let channel = getDefaultChannelForGuild(bot, message);
     if(channel.id === message.channel.id)
@@ -359,26 +354,26 @@ var isBeepBoop = function(bot, message, args)
 }
 
 
-var sayLogArr = [];
-var say = function(bot, message, args)
+let sayLogArr = [];
+function say(bot, message, args)
 {
-    var chan = message.channel;
-    var attachments = message.attachments.array();
-    var authorname  = message.author.username;
+    let chan = message.channel;
+    let attachments = message.attachments.array();
+    let authorname  = message.author.username;
 
-    if(attachments.length==0)
+    if(attachments.length === 0)
     {
         chan.send(args).then(function(){}, msgSendError).catch(msgSendError);
     }
     else
-    for(var i=0; i < attachments.length; i++)
+    for(let i=0; i < attachments.length; i++)
     {
-        var attachm = attachments[i];
+        let attachm = attachments[i];
         chan.send(args).catch(msgSendError).reject(msgSendError);
         chan.sendFile(attachm.url, attachm.filename).then(function(){}, msgSendError).catch(msgSendError);
     }
 
-    if(attachments.length == 0)
+    if(attachments.length === 0)
         message.delete().then(function(){}, msgDeleteError).catch(msgDeleteError);
 
     sayLogArr.push([authorname, args]);
@@ -386,25 +381,25 @@ var say = function(bot, message, args)
         sayLogArr.shift();
 }
 
-var sayTTS = function(bot, message, args)
+function sayTTS(bot, message, args)
 {
-    var chan = message.channel;
-    var attachments = message.attachments.array();
-    var authorname  = message.author.username;
+    let chan = message.channel;
+    let attachments = message.attachments.array();
+    let authorname  = message.author.username;
 
-    if(attachments.length == 0)
+    if(attachments.length === 0)
     {
         chan.send(args, {"tts" : true}).then(function(){}, msgSendError).catch(msgSendError);
     }
     else
-    for(var i=0; i < attachments.length; i++)
+    for(let i=0; i < attachments.length; i++)
     {
-        var attachm = attachments[i];
+        let attachm = attachments[i];
         chan.send(args, {"tts" : true}).then(function(){}, msgSendError).catch(msgSendError);
         chan.sendFile(attachm.url, attachm.filename).then(function(){}, msgSendError).catch(msgSendError);
     }
 
-    if(attachments.length==0)
+    if(attachments.length === 0)
         message.delete().then(function(){}, msgDeleteError).catch(msgDeleteError);
 
     sayLogArr.push([authorname, args]);
@@ -412,7 +407,7 @@ var sayTTS = function(bot, message, args)
         sayLogArr.shift();
 }
 
-var sayLog = function(bot, message, args)
+function sayLog(bot, message, args)
 {
     if(sayLogArr.length > 0)
     {
@@ -430,10 +425,10 @@ var sayLog = function(bot, message, args)
 function cutWord(str)
 {
     str.orig = str.orig.trim();
-    var space = str.orig.indexOf(' ');
-    if(space == -1)
+    let space = str.orig.indexOf(' ');
+    if(space === -1)
         return "";
-    var word = str.orig.substr(0, space);
+    let word = str.orig.substr(0, space);
     str.res = str.orig.substr(space).trim();
     foxylogInfo("-> Cuted first word \"" + word + "\"");
     return word;
@@ -441,16 +436,16 @@ function cutWord(str)
 
 function getMsFromMsg(bot, message, args)
 {
-    var time = args;
-    var timeInt = 0;
-    var begin = 0;
-    var reg_sec = /([0-9]+)\s*(?:sec(?:ond)?[s]?)/gi;
-    var reg_min = /([0-9]+)\s*(?:min(?:ute)?[s]?)/gi;
-    var reg_hrs = /([0-9]+)\s*(?:hour[s]?)/gi;
-    var reg_day = /([0-9]*)\s*day[s]?/gi;
-    var reg_week = /([0-9]*)\s*week[s]?/gi;
+    let time = args;
+    let timeInt = 0;
+    let begin = 0;
+    let reg_sec = /([0-9]+)\s*(?:sec(?:ond)?[s]?)/gi;
+    let reg_min = /([0-9]+)\s*(?:min(?:ute)?[s]?)/gi;
+    let reg_hrs = /([0-9]+)\s*(?:hour[s]?)/gi;
+    let reg_day = /([0-9]*)\s*day[s]?/gi;
+    let reg_week = /([0-9]*)\s*week[s]?/gi;
 
-    var match = reg_sec.exec(time);
+    let match = reg_sec.exec(time);
     while(match != null)
     {
         timeInt += parseInt(match[0]) * 1000;
@@ -486,13 +481,13 @@ function getMsFromMsg(bot, message, args)
     }
 
 
-    if(timeInt==NaN)
+    if(timeInt == NaN)
     {
         message.reply("Realy? Tell me time again please!", msgSendError);
         return -1;
     }
 
-    if(timeInt == 0)
+    if(timeInt === 0)
     {
         message.reply("I don't know which time unit you meant?!", msgSendError);
         return -1;
@@ -500,7 +495,7 @@ function getMsFromMsg(bot, message, args)
     return timeInt;
 }
 
-var initRemindWatcher = function(bot)
+function initRemindWatcher(bot)
 {
     if(!my_db_enabled)
         return; //Reminder requires DB support. Withot DB, disable reminder completely
@@ -533,7 +528,7 @@ var initRemindWatcher = function(bot)
                         } else { */
                             //var channel = guild.channels.get(results[i].channel_id);
                             var channel = BotPtr.channels.get(results[i].channel_id);
-                            if(channel == undefined)
+                            if(channel === undefined)
                                 foxylogInfo("Error happen! No channel with ID " + results[i].channel_id + "!");
                             else
                             {
@@ -561,7 +556,7 @@ var initRemindWatcher = function(bot)
     }, 60000); //Check the database every minute
 }
 
-let sayDelayd = function(bot, message, args)
+function sayDelayd(bot, message, args)
 {
     if(!my_db_enabled)
     {
@@ -608,7 +603,7 @@ let sayDelayd = function(bot, message, args)
     message.reply("I will say after " + secondsToTimeDate(timeInt/1000) + "!", msgSendError);
 }
 
-var sayDelaydME = function(bot, message, args)
+function sayDelaydME(bot, message, args)
 {
     if(!my_db_enabled)
     {
@@ -653,7 +648,7 @@ var sayDelaydME = function(bot, message, args)
 }
 
 
-var setPlayingGame = function(bot, message, args)
+function setPlayingGame(bot, message, args)
 {
     /*
     if(!inListFile("white_setgame.txt", message.author.id))
@@ -673,10 +668,10 @@ var setPlayingGame = function(bot, message, args)
     });*/
 }
 
-var choose = function(bot, message, args)
+function choose(bot, message, args)
 {
-    var vars = args.split(/,|[\ \n]or[\ \n]/g);
-    if((vars.length==1) && (vars[0].trim()==""))
+    var vars = args.split(/,|[ \n]or[ \n]/g);
+    if((vars.length === 1) && (vars[0].trim() === ""))
     {
         message.reply("you sent me nothing! I can't choose! :confused:").catch(msgSendError);
         return;
@@ -684,57 +679,57 @@ var choose = function(bot, message, args)
     message.channel.send(vars[getRandomInt(0, vars.length-1)].trim()).catch(msgSendError);
 }
 
-var myrand = function(bot, message, args)
+function myrand(bot, message, args)
 {
     message.channel.send(getRandomInt(0, 100)).catch(msgSendError);
 }
 
-var myrandF = function(bot, message, args)
+function myrandF(bot, message, args)
 {
     message.channel.send(Math.random()).catch(msgSendError);
 }
 
-var lunaDocs = function(bot, message, args)
+function lunaDocs(bot, message, args)
 {
     message.channel.send("http://wohlsoft.ru/pgewiki/" + encodeURIComponent(args)).catch(msgSendError);
 }
 
-var lunaSearch = function(bot, message, args)
+function lunaSearch(bot, message, args)
 {
     message.channel.send("http://wohlsoft.ru/wiki/index.php?search=" + encodeURIComponent(args)).catch(msgSendError);
 }
 
-var findInGoogle = function(bot, message, args)
+function findInGoogle(bot, message, args)
 {
     message.channel.send("http://lmgtfy.com/?q=" + encodeURIComponent(args)).catch(msgSendError);
 }
 
-var findInWikipedia = function(bot, message, args)
+function findInWikipedia(bot, message, args)
 {
     message.channel.send("http://wikipedia.lmgtfy.com/?q=" + encodeURIComponent(args)).catch(msgSendError);
 }
 
 var youtube = function(bot, message, args)
 {
-    var videoList = fs.readFileSync(__dirname+"/video_list.txt");
-    var videoArr = videoList.toString().trim().split(/[\n\ ]/g);
-    var oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
+    let videoList = fs.readFileSync(__dirname+"/video_list.txt");
+    let videoArr = videoList.toString().trim().split(/[\n\ ]/g);
+    let oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
     message.channel.send(oneVideo).catch(msgSendError);
 }
 
-var meow = function(bot, message, args)
+function meow(bot, message, args)
 {
-    var videoList = fs.readFileSync(__dirname+"/meow_list.txt");
-    var videoArr = videoList.toString().trim().split(/[\n\ ]/g);
-    var oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
+    let videoList = fs.readFileSync(__dirname+"/meow_list.txt");
+    let videoArr = videoList.toString().trim().split(/[\n\ ]/g);
+    let oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
     message.channel.send(oneVideo).catch(msgSendError);
 }
 
-var woof = function(bot, message, args)
+function woof(bot, message, args)
 {
-    var videoList = fs.readFileSync(__dirname+"/woof_list.txt");
-    var videoArr = videoList.toString().trim().split(/[\n\ ]/g);
-    var oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
+    let videoList = fs.readFileSync(__dirname+"/woof_list.txt");
+    let videoArr = videoList.toString().trim().split(/[\n\ ]/g);
+    let oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
     message.channel.send(oneVideo).catch(msgSendError);
 }
 
@@ -743,12 +738,12 @@ var woof = function(bot, message, args)
 
 
 
-var callBastion = function(bot, message, args)
+function callBastion(bot, message, args)
 {
     message.channel.send("Hey, bastion, tell something!").catch(msgSendError);
 }
 
-var callBotane = function(bot, message, args)
+function callBotane(bot, message, args)
 {
     var chan = getDefaultChannelForGuild(bot, message);
     if(chan.id === message.channel.id)
@@ -773,7 +768,7 @@ var callBotane = function(bot, message, args)
 }
 
 let trollTimerIsBusy = [];
-let trollTimer = function(bot, message, args)
+function trollTimer(bot, message, args)
 {
     if(!inListFile("boop_zone.txt", message.channel.id) && (!message.channel.isPrivate))
         return;
@@ -810,7 +805,7 @@ let trollTimer = function(bot, message, args)
     //args = args.replace(/\<\@\d\>/g, "@"+message.mentions[i].username);
     message.mentions = [];
 
-    var opts = {
+    let opts = {
         disableEveryone: true
     };
 
@@ -832,17 +827,17 @@ let trollTimer = function(bot, message, args)
 
 
 
-var myTime = function(bot, message, args)
+function myTime(bot, message, args)
 {
     message.channel.send(getLocalTime()).catch(msgSendError);
 }
 
-var upTimeBot = function(bot, message, args)
+function upTimeBot(bot, message, args)
 {
     message.channel.send(getBotUptime()).catch(msgSendError);
 }
 
-var aboutBot = function(bot, message, args)
+function aboutBot(bot, message, args)
 {
     let stats1 = fs.statSync("foxy.js");
     let stats2 = fs.statSync("bot_commands.js");
@@ -858,8 +853,8 @@ var aboutBot = function(bot, message, args)
     msgtext += "Channels where I am: **" + bot.channels.size + "**.\n";
     msgtext += "Users I can see: **" + bot.users.size + "**.\n";
     msgtext += "\n";
-    msgtext += "Totally I know **" + Cmds.length + "** commands.\n"
-    msgtext += "Unique are **" + CmdsREAL.length + "** commands.\n"
+    msgtext += "Totally I know **" + Cmds.length + "** commands.\n";
+    msgtext += "Unique are **" + CmdsREAL.length + "** commands.\n";
     msgtext += "\n";
     msgtext += "**Node.js** version " + process.versions['node'] + "\n";
     msgtext += "**V8** version " + process.versions['v8'] + "\n";
@@ -868,14 +863,24 @@ var aboutBot = function(bot, message, args)
     message.channel.send(msgtext).catch(msgSendError);
 }
 
-var sendEmailFile = function(message, args, attachment, doReply)
+function sendEmailFile(message, args, attachment, doReply)
 {
-    var extraFiles = [];
-    var attachments = message.attachments.array();
-
-    for(var i = 0; i < attachments.length; i++)
+    if(botConfig.smtp.disabled !== undefined && botConfig.smtp.disabled)
     {
-        var attachm = attachments[i];
+        console.log("SMTP support is disabled...");
+        if(doReply)
+        {
+            message.channel.send('SMTP support is disabled!').catch(msgSendError);
+        }
+        return;
+    }
+
+    let extraFiles = [];
+    let attachments = message.attachments.array();
+
+    for(let i = 0; i < attachments.length; i++)
+    {
+        let attachm = attachments[i];
         extraFiles[i] = {
                            filename: attachm.filename,
                            path: attachm.url
@@ -890,13 +895,13 @@ var sendEmailFile = function(message, args, attachment, doReply)
     .then(function(gotMember)
     {
         // create reusable transporter object using the default SMTP transport
-        var transporter = nodemailer.createTransport(smtpMailLoginInfo);
+        let transporter = nodemailer.createTransport(smtpMailLoginInfo);
 
-        var usr_nick = (gotMember.nickname == null ? message.author.username : gotMember.nickname);
-        var usr_sign = (message.author.username + "#" + message.author.discriminator);
+        let usr_nick = (gotMember.nickname == null ? message.author.username : gotMember.nickname);
+        let usr_sign = (message.author.username + "#" + message.author.discriminator);
 
         // setup e-mail data with unicode symbols
-        var mailOptions =
+        let mailOptions =
         {
             from: smtpMailFrom, // sender address
             //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
@@ -941,14 +946,24 @@ var sendEmailFile = function(message, args, attachment, doReply)
 }
 
 
-var sendEmailF = function(message, args, doReply)
+function sendEmailF(message, args, doReply)
 {
-    var extraFiles = [];
-    var attachments = message.attachments.array();
-
-    for(var i = 0; i < attachments.length; i++)
+    if(botConfig.smtp.disabled !== undefined && botConfig.smtp.disabled)
     {
-        var attachm = attachments[i];
+        console.log("SMTP support is disabled...");
+        if(doReply)
+        {
+            message.channel.send('SMTP support is disabled!').catch(msgSendError);
+        }
+        return;
+    }
+
+    let extraFiles = [];
+    let attachments = message.attachments.array();
+
+    for(let i = 0; i < attachments.length; i++)
+    {
+        let attachm = attachments[i];
         extraFiles[i] = {
                            filename: attachm.filename,
                            path: attachm.url
@@ -959,13 +974,13 @@ var sendEmailF = function(message, args, doReply)
     .then(function(gotMember)
     {
         // create reusable transporter object using the default SMTP transport
-        var transporter = nodemailer.createTransport(smtpMailLoginInfo);
+        let transporter = nodemailer.createTransport(smtpMailLoginInfo);
 
-        var usr_nick = (gotMember.nickname == null ? message.author.username : gotMember.nickname);
-        var usr_sign = (message.author.username + "#" + message.author.discriminator);
+        let usr_nick = (gotMember.nickname == null ? message.author.username : gotMember.nickname);
+        let usr_sign = (message.author.username + "#" + message.author.discriminator);
 
         // setup e-mail data with unicode symbols
-        var mailOptions =
+        let mailOptions =
         {
             from: smtpMailFrom, // sender address
             //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
@@ -1009,7 +1024,7 @@ var sendEmailF = function(message, args, doReply)
     });
 }
 
-var sendEmail = function(bot, message, args)
+function sendEmail(bot, message, args)
 {
     //if(inList(emailBlackList, message.author.id))
     if(inListFile("black_email.txt", message.author.id))
@@ -1027,15 +1042,15 @@ var sendEmail = function(bot, message, args)
     sendEmailF(message, args, true);
 }
 
-var commandAllowedOnServer = function(Cmd, gd_ext)
+function commandAllowedOnServer(Cmd, gd_ext)
 {
     if(typeof(Cmd[5]) !== 'undefined')
     {
-        var found = false;
+        let found = false;
         Cmd[5].forEach(function(gd)
         {
             console.log("Compare " + gd_ext + " and " + gd + "...");
-            if(gd_ext == gd)
+            if(gd_ext === gd)
                 found = true;
         });
         if(!found)
@@ -1045,12 +1060,12 @@ var commandAllowedOnServer = function(Cmd, gd_ext)
 }
 
 // Command structure: name[0], function(bot,msg,args)[1], help[2], synonims[3], isUseful[4], limitOnGuilds[5]
-var listCmds = function(bot, message, args)
+function listCmds(bot, message, args)
 {
-    var commands = "**Available commands:**\n";
-    var commandsCount = 0;
-    var isGuild = (message.channel.type == "text");
-    for(var i=0; i < Cmds.length; i++)
+    let commands = "**Available commands:**\n";
+    let commandsCount = 0;
+    let isGuild = (message.channel.type === "text");
+    for(let i=0; i < Cmds.length; i++)
     {
         if(!isGuild && (typeof(Cmds[i][5]) !== 'undefined'))
             continue;
@@ -1061,12 +1076,12 @@ var listCmds = function(bot, message, args)
         commands += Cmds[i][0];
         commandsCount++;
     }
-    commands += "\n\nTotally I know **" + Cmds.length + "** commands."
-    commands += "\nUnique are **" + CmdsREAL.length + "** commands."
-    commands += "\nAvailable on this chat server **" + commandsCount + "** commands."
+    commands += "\n\nTotally I know **" + Cmds.length + "** commands.";
+    commands += "\nUnique are **" + CmdsREAL.length + "** commands.";
+    commands += "\nAvailable on this chat server **" + commandsCount + "** commands.";
     commands += "\n";
-    var usefulCount = 0;
-    var usefulCommands = "";
+    let usefulCount = 0;
+    let usefulCommands = "";
     for(k in CmdsREAL)
     {
         if(!isGuild && (typeof(CmdsREAL[k][5]) !== 'undefined'))
@@ -1081,34 +1096,34 @@ var listCmds = function(bot, message, args)
             usefulCommands += CmdsREAL[k][0];
         }
     }
-    commands += "\nUseful of them are **" + usefulCount + "** commands:\n"
+    commands += "\nUseful of them are **" + usefulCount + "** commands:\n";
     commands += usefulCommands;
 
-    commands += "\n\nType __**/foxy help <command>**__ to read detail help for specific command."
+    commands += "\n\nType __**/foxy help <command>**__ to read detail help for specific command.";
     message.channel.send(commands).catch(msgSendError);
 }
 
-var cmdHelp = function(bot, message, args)
+function cmdHelp(bot, message, args)
 {
-    var isGuild = (message.channel.type == "text");
-    if(args.trim() == "")
+    let isGuild = (message.channel.type === "text");
+    if(args.trim() === "")
     {
         message.reply("Sorry, I can't describe you empty space! Please specify command you wanna learn!").catch(msgSendError);
         return;
     }
-    for(var i=0; i < Cmds.length; i++)
+    for(let i=0; i < Cmds.length; i++)
     {
-        if(Cmds[i][0] == args)
+        if(Cmds[i][0] === args)
         {
             if(!isGuild && (typeof(Cmds[i][5]) !== 'undefined'))
                 continue;
             if(isGuild && !commandAllowedOnServer(Cmds[i], message.guild.id))
                 continue;
-            var helpCmd = "\n**" + Cmds[i][0] + "**\n" + Cmds[i][2] + "\n";
+            let helpCmd = "\n**" + Cmds[i][0] + "**\n" + Cmds[i][2] + "\n";
             if(typeof(Cmds[i][3]) !== 'undefined')
             {
-                helpCmd += "\n**Aliases**: "
-                for(var j=0; j<Cmds[i][3].length; j++)
+                helpCmd += "\n**Aliases**: ";
+                for(let j = 0; j < Cmds[i][3].length; j++)
                 {
                     if(j > 0) helpCmd += ", ";
                     helpCmd += Cmds[i][3][j];
@@ -1121,7 +1136,7 @@ var cmdHelp = function(bot, message, args)
     message.reply("Sorry, I don't know this").catch(msgSendError);
 }
 
-var wrongfunction = function(bot, message, args)
+function wrongfunction(bot, message, args)
 {
     produceShit();
 }
@@ -1140,18 +1155,18 @@ function clearCommands()
 
 function addSynonimOf(oldcmd, name, customHelp)
 {
-    if(typeof(customHelp)==='undefined')
+    if(typeof(customHelp) === 'undefined')
         customHelp = "";
 
-    for(var i=0; i < CmdsREAL.length; i++)
+    for(let i = 0; i < CmdsREAL.length; i++)
     {
-        if(CmdsREAL[i][0]==oldcmd)
+        if(CmdsREAL[i][0] === oldcmd)
         {
-            var newI = Cmds.length;
+            let newI = Cmds.length;
             Cmds[newI] = CmdsREAL[i].slice();
             Cmds[newI][0] = name;
 
-            if(customHelp != "")
+            if(customHelp !== "")
                 Cmds[newI][2] = customHelp;
 
             if(typeof(CmdsREAL[i][3])==='undefined')
@@ -1159,7 +1174,7 @@ function addSynonimOf(oldcmd, name, customHelp)
                 CmdsREAL[i][3] = [];
                 CmdsREAL[i][3].push(oldcmd);
             } else {
-                if(CmdsREAL[i][3].length == 0)
+                if(CmdsREAL[i][3].length === 0)
                     CmdsREAL[i][3].push(oldcmd);
             }
             CmdsREAL[i][3].push(name);
@@ -1171,7 +1186,7 @@ function addSynonimOf(oldcmd, name, customHelp)
 
 // Command structure: name[0], function(bot,msg,args)[1], help[2], synonims[3], isUseful[4], limitOnGuilds[5]
 
-var registerCommands = function()
+function registerCommands()
 {
     addCMD(["cmd",       listCmds,        "Prints list of available commands"]);
     addSynonimOf("cmd", "cmds");
@@ -1224,7 +1239,7 @@ var registerCommands = function()
     foxylogInfo( Cmds.length + " command has been registered!");
 }
 
-var callCommand = function(bot, message, command, args)
+function callCommand(bot, message, command, args)
 {
     if(inListFile("black_global.txt", message.author.id))
     {
@@ -1259,17 +1274,17 @@ var callCommand = function(bot, message, command, args)
     }
 }
 
-function output(error, token)
-{
-    if (error)
-    {
-        foxylogInfo('There was an error logging in: ' + error);
-    }
-    else
-    {
-        foxylogInfo('Logged in. Token: ' + token);
-    }
-}
+// function output(error, token)
+// {
+//     if(error)
+//     {
+//         foxylogInfo('There was an error logging in: ' + error);
+//     }
+//     else
+//     {
+//         foxylogInfo('Logged in. Token: ' + token);
+//     }
+// }
 
 module.exports =
 {
