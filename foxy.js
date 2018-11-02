@@ -385,11 +385,10 @@ function getAuthorStr(message)
 
 foxyBotCli.on("messageDelete", function(message)
 {
-    //Ignore messages sent by myself
     if(message.author.id === botUserId)
-        return;
+        return;//Ignore messages sent by myself
 
-    if(message.webhookID !== undefined)
+    if(message.webhookID)
         return;//Reject webhooks!
 
     botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + message.content);
@@ -404,11 +403,10 @@ foxyBotCli.on("messageDelete", function(message)
 
 foxyBotCli.on("messageUpdate", function(messageOld, messageNew)
 {
-    //Ignore messages sent by myself
     if(messageOld.author.id === botUserId)
-        return;
+        return;//Ignore messages sent by myself
 
-    if(messageOld.webhookID !== undefined)
+    if(messageOld.webhookID)
         return;//Reject webhooks!
 
     botCommands.foxylogInfo("*E* "+ getAuthorStr(messageOld) + ":"
@@ -426,9 +424,8 @@ foxyBotCli.on("messageUpdate", function(messageOld, messageNew)
 
 foxyBotCli.on("message", function(message)
 {
-    //Ignore messages sent by myself
     if(message.author.id === botUserId)
-        return;
+        return;//Ignore messages sent by myself
 
     let allowWrite = botCommands.isWritableChannel(message.channel.id);
     allowWrite = allowWrite && botCommands.isWritableGuild(message.guild.id);
@@ -437,10 +434,13 @@ foxyBotCli.on("message", function(message)
     let msgLow          = message.cleanContent.toLowerCase();
     let msgLowTrimmed   = msgLow.trim();
 
-    botCommands.foxylogInfo("*** " + getAuthorStr(message) + ": " + message.content );
-
-    if((message.webhookID !== undefined) && (message.webhookID !== null))
+    if(message.webhookID)
+    {
+        botCommands.foxylogInfo("*** [WebHook] " + message.webhookID + ": " + message.content);
         return;//Reject web hooks!
+    }
+
+    botCommands.foxylogInfo("*** " + getAuthorStr(message) + ": " + message.content );
 
     /* *********Standard command processor********* */
     if((msgLowTrimmed === botPrefix) && (allowWrite))
