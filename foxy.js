@@ -391,7 +391,7 @@ foxyBotCli.on("messageDelete", function(message)
     if(message.webhookID)
         return;//Reject webhooks!
 
-    botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + message.content);
+    botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + botCommands.getMsgText(message));
     let allowWrite = botCommands.isWritableChannel(message.channel.id);
     allowWrite = allowWrite && botCommands.isWritableGuild(message.guild.id);
     foxyPlugins.forEach(function(plugin)
@@ -410,8 +410,8 @@ foxyBotCli.on("messageUpdate", function(messageOld, messageNew)
         return;//Reject webhooks!
 
     botCommands.foxylogInfo("*E* "+ getAuthorStr(messageOld) + ":"
-                            + "\n OLD: " + messageOld.content
-                            + "\n NEW: " + messageNew.content + "\n");
+                            + "\n OLD: " + botCommands.getMsgText(messageOld)
+                            + "\n NEW: " + botCommands.getMsgText(messageNew)+ "\n");
 
     let allowWrite = botCommands.isWritableChannel(messageOld.channel.id);
     allowWrite = allowWrite && botCommands.isWritableGuild(messageOld.guild.id);
@@ -436,7 +436,7 @@ foxyBotCli.on("message", function(message)
 
     if(message.webhookID)
     {
-        botCommands.foxylogInfo("*** [WebHook] " + message.webhookID + ": " + message.content);
+        botCommands.foxylogInfo("*** [WebHook] " + message.webhookID + ": " + botCommands.getMsgText(message));
         return;//Reject web hooks!
     }
 

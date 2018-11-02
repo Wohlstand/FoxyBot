@@ -179,6 +179,45 @@ function msgDeleteError(error, message)
     }
 }
 
+function getMsgText(message)
+{
+    if(message.embeds.length > 0)
+    {
+        let txt = [];
+        message.embeds.forEach(function(kek, i, ar)
+        {
+            let e = {};
+            if(kek.description)
+                e.description = kek.description;
+            if(kek.title)
+                e.title = kek.title;
+            if(kek.url)
+                e.url = kek.url;
+            if(kek.color)
+                e.color = kek.color;
+            if(kek.image)
+            {
+                e.image = {};
+                if(e.image.url)
+                    e.image.url = kek.image.url;
+            }
+            if(kek.footer)
+            {
+                e.footer = {};
+                if(e.footer.iconUrl)
+                    e.footer.iconUrl = kek.footer.iconUrl;
+                if(e.footer.text)
+                    e.footer.text = kek.footer.text;
+            }
+            txt.push(e);
+        });
+        return JSON.stringify({embeds : txt, content: message.content});
+    }
+    else
+    {
+        return message.content;
+    }
+}
 
 function secondsToTimeDate(time)
 {
@@ -1306,6 +1345,7 @@ module.exports =
     msgSendError:     msgSendError,
     msgDeleteError:   msgDeleteError,
     sendErrorMsg:     sendErrorMsg,
+    getMsgText:       getMsgText,
     botConfig:        botConfig,
     my_db:            my_db,
     errorMyDb:        errorMyDb,

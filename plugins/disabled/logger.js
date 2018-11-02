@@ -35,7 +35,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
                             myDb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
                             myDb.escape(isDM || gotMember.nickname == null ?
                                         message.author.username : gotMember.nickname) + ", " +
-                            myDb.escape(message.content) +
+                            myDb.escape(core.getMsgText(message)) +
                             ");";
 
         //channel.send(insertQuery).catch(core.msgSendError);
@@ -69,8 +69,8 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
                             myDb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
                             myDb.escape(isDM || gotMember.nickname == null ?
                                         message.author.username : gotMember.nickname) + ", " +
-                            myDb.escape(message.content) + ", " +
-                            myDb.escape(messageOld.content) +
+                            myDb.escape(core.getMsgText(message)) + ", " +
+                            myDb.escape(core.getMsgText(messageOld)) +
                             ");";
 
         myDb.query(insertQuery, core.errorMyDb);
@@ -113,7 +113,7 @@ function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWr
                             myDb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
                             myDb.escape(isDM || gotMember.nickname == null ?
                                         message.author.username : gotMember.nickname) + ", " +
-                            myDb.escape(message.content) +
+                            myDb.escape(core.getMsgText(message)) +
                             ");";
 
         myDb.query(insertQuery, core.errorMyDb);
