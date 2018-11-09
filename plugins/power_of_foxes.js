@@ -66,67 +66,72 @@ function getRandFile(bot, message, fromURL, messageTitle="", messageColor=0xD77D
 
 function fox(bot, message, args)
 {
-    getRandFile(bot, message, "randomfox.php", ":fox: | **Your random fox:**", 0xD77D31);
+    getRandFile(bot, message, "getRandPic.php?which=foxes,fennecs,vraskafox", ":fox: | **Your random fox:**", 0xD77D31);
+}
+
+function foxart(bot, message, args)
+{
+    getRandFile(bot, message, "getRandPic.php?which=foxarts", ":fox: | **Your random fox art:**", 0xD77D31);
 }
 
 function fennec(bot, message, args)
 {
-    getRandFile(bot, message, "randomfennec.php", ":fox: | **Fennec is here:**", 0xF7EAE1);
+    getRandFile(bot, message, "getRandPic.php?which=fennecs", ":fox: | **Fennec is here:**", 0xF7EAE1);
 }
 
 function wraska(bot, message, args)
 {
-    getRandFile(bot, message, "randomwraska.php", ":fox: | **It's Vraska the snowy fox:**", 0xFFFFFF);
+    getRandFile(bot, message, "getRandPic.php?which=vraskafox", ":fox: | **It's Vraska the snowy fox:**", 0xFFFFFF);
 }
 
 function boxy(bot, message, args)
 {
-    getRandFile(bot, message, "randombox.php", ":card_box: | **Just a box with some:**", 0x946B54);
+    getRandFile(bot, message, "getRandPic.php?which=boxes", ":card_box: | **Just a box with some:**", 0x946B54);
 }
 
 function boat(bot, message, args)
 {
-    getRandFile(bot, message, "randomboat.php", ":rowboat: | **Do you wanna fishing?**", 0xFFFFFF);
+    getRandFile(bot, message, "getRandPic.php?which=boats", ":rowboat: | **Do you wanna fishing?**", 0xFFFFFF);
 }
 
 function ship(bot, message, args)
 {
-    getRandFile(bot, message, "randomship.php", ":ship: | **Ship is here:**", 0xBC987E);
+    getRandFile(bot, message, "getRandPic.php?which=ships", ":ship: | **Ship is here:**", 0xBC987E);
 }
 
 function flower(bot, message, args)
 {
-    getRandFile(bot, message, "randomflower.php", ":rose: | **Do you like flowers?**", 0xA52A2A);
+    getRandFile(bot, message, "getRandPic.php?which=flowers", ":rose: | **Do you like flowers?**", 0xA52A2A);
 }
 
 function burn(bot, message, args)
 {
-    getRandFile(bot, message, "randomburn.php", ":fire: | **It's hot!**", 0xFF7F49);
+    getRandFile(bot, message, "getRandPic.php?which=burn", ":fire: | **It's hot!**", 0xFF7F49);
 }
 
 function money(bot, message, args)
 {
-    getRandFile(bot, message, "randomoney.php", ":moneybag: | **You are rich!**", 0xB8860B);
+    getRandFile(bot, message, "getRandPic.php?which=money", ":moneybag: | **You are rich!**", 0xB8860B);
 }
 
 function lego(bot, message, args)
 {
-    getRandFile(bot, message, "randomlego.php", ":sun_with_face: | **Lego!**", 0x5E2129);
+    getRandFile(bot, message, "getRandPic.php?which=lego", ":sun_with_face: | **Lego!**", 0x5E2129);
 }
 
 function smile(bot, message, args)
 {
-    getRandFile(bot, message, "randomsmile.php");
+    getRandFile(bot, message, "getRandPic.php?which=smiles");
 }
 
 function facepalm(bot, message, args)
 {
-    getRandFile(bot, message, "randomfacepalm.php");
+    getRandFile(bot, message, "getRandPic.php?which=facepalm");
 }
 
 function frog(bot, message, args)
 {
-    getRandFile(bot, message, "randomfrog.php", ":frog: | **I see fly!**", 0x8CCB5E);
+    getRandFile(bot, message, "getRandPic.php?which=frogs", ":frog: | **I see fly!**", 0x8CCB5E);
 }
 
 
@@ -241,7 +246,7 @@ function fart(bot, message, args)
         return;
     }
 
-    getRandFile(bot, message, "randomfart.php");
+    getRandFile(bot, message, "getRandPic.php?which=farts");
 }
 
 function butts(bot, message, args)
@@ -295,6 +300,8 @@ function registerCommands(foxyCore)
     core.addCMD(["fox",      fox,              "Are you fan of the foxes :fox:? Just type \"/foxy fox\"!"]);
     core.addSynonimOf("fox", "foxy");
     core.addSynonimOf("fox", "🦊");
+
+    core.addCMD(["foxart",      foxart,        "Do you like fox arts :fox:? Just type \"/foxy foxart\"!"]);
     core.fox = fox;//Add Fox as function to use in another plugins
 
     core.addCMD(["fennec",      fennec,        "Are you fan of the desert foxes :fox:? Just type \"/foxy fennec\"!"]);
@@ -319,7 +326,7 @@ function registerCommands(foxyCore)
     core.addSynonimOf("boxy", "🗃");
     core.addCMD(["burn",     burn,             "BURN!!!"]);
     core.addCMD(["burns",    burns,            "BURN!!!"]);
-    core.addSynonimOf("burn", "🔥",             "IT'S HOT!!!");
+    core.addSynonimOf("burn", "🔥",              "IT'S HOT!!!");
     core.addSynonimOf("burn", "fire",          "IT'S HOT!!!");
     core.addCMD(["smile",    smile,            "Take a random smile of the PGE Forums"]);
     core.addCMD(["boat",     boat,             "Wanna boat? I'll build it for you!"]);
