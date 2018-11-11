@@ -84,6 +84,11 @@ function wraska(bot, message, args)
     getRandFile(bot, message, "getRandPic.php?which=vraskafox", ":fox: | **It's Vraska the snowy fox:**", 0xFFFFFF);
 }
 
+function paw(bot, message, args)
+{
+    getRandFile(bot, message, "getRandPic.php?which=paws", ":feet:", 0xD77D31);
+}
+
 function boxy(bot, message, args)
 {
     getRandFile(bot, message, "getRandPic.php?which=boxes", ":card_box: | **Just a box with some:**", 0x946B54);
@@ -153,6 +158,9 @@ function makeMe(bot, message, args)
 
     if(argsL.indexOf("fox") !== -1)
         fox(bot, message, args);
+
+    if(argsL.indexOf("paw") !== -1)
+        paw(bot, message, args);
 
     if((argsL.indexOf("vraska") !== -1) || (argsL.indexOf("wraska") !== -1))
         wraska(bot, message, args);
@@ -300,13 +308,16 @@ function registerCommands(foxyCore)
     core.addCMD(["fox",      fox,              "Are you fan of the foxes :fox:? Just type \"/foxy fox\"!"]);
     core.addSynonimOf("fox", "foxy");
     core.addSynonimOf("fox", "🦊");
+    core.fox = fox;//Add Fox as function to use in another plugins
 
     core.addCMD(["foxart",      foxart,        "Do you like fox arts :fox:? Just type \"/foxy foxart\"!"]);
-    core.fox = fox;//Add Fox as function to use in another plugins
 
     core.addCMD(["fennec",      fennec,        "Are you fan of the desert foxes :fox:? Just type \"/foxy fennec\"!"]);
     core.addSynonimOf("fennec", "fenec");
     core.addSynonimOf("fennec", "desertfox");
+
+    core.addCMD(["paws",        paw,           "Do you like paws :feet:? Just type \"/foxy paws\"!"]);
+    core.addSynonimOf("paws",   "paw");
 
     core.addCMD(["wraska",      wraska,        "You still don't know who is a Wraksa the Fox? Just type \"/foxy wraska\"!"]);
     core.addSynonimOf("wraska", "vraska");
