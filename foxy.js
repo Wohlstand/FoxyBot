@@ -248,7 +248,7 @@ foxyBotCli.on("ready", () =>
     foxyBotCli.user.setStatus("online");
     foxyBotCli.user.setActivity(botPrefix + " cmd");
     //console.log('set nick...');
-    //mybot.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
+    //foxyBotCli.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
     //Start Remind watcher!
     botCommands.initRemindWatcher(foxyBotCli);
     if(!greetingSent)
