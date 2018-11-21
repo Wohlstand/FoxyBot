@@ -10,8 +10,8 @@ let schedule = require('node-schedule');
 let htmlToText = require('html-to-text');
 
 // Email client
-const poplib = require('node-poplib-gowhich');
-let Client = poplib.Client;
+const popLib = require('node-poplib-gowhich');
+let Client = popLib.Client;
 
 let bot = undefined;
 
@@ -28,9 +28,9 @@ function isNoPingUser(userId)
 
 function parseMessage(msg)
 {
-    let uid = /UserID: \[(\d+)\]/gi;
-    let gid = /GuildID: \[(\d+)\]/gi;
-    let cid = /ChannelID: \[(\d+)\]/gi;
+    let uid = /UserID: \[(\d+)]/gi;
+    let gid = /GuildID: \[(\d+)]/gi;
+    let cid = /ChannelID: \[(\d+)]/gi;
 
     let uidMatch = uid.exec(msg.text);
     let gidMatch = gid.exec(msg.text);
@@ -50,12 +50,11 @@ function parseMessage(msg)
     }
 }
 
-var client;
+let client;
 
-var mailChecker = function()
+function mailChecker()
 {
     //console.log("Check email now...");
-
     try
     {
         client.connect(function()
@@ -96,7 +95,7 @@ var mailChecker = function()
                                     parseMessage(msgRes);
                                     let outText = "\n" + msgText;
                                     let chan = bot.channels.get(msgRes.cid !== 0 ? msgRes.cid : core.botConfig.defaultChannel[0]);
-                                    let isWritable = core.isWritableChannel(msgRes.cid) && core.isWritableGuild(chan.guild.id);
+                                    let isWritable = core.isWritableChannelId(msgRes.cid) && core.isWritableGuild(chan.guild);
 
                                     if(isWritable)
                                     {
@@ -124,8 +123,10 @@ var mailChecker = function()
                                     }
                                 });
 
+                                /*jslint unparam: true*/
                                 client.deleteAll(function(err, statuses)
                                 {
+                                    /*jslint unparam: false*/
                                     console.log("DEL: err " + err);
                                     client.quit();
                                 });
@@ -152,11 +153,11 @@ var mailChecker = function()
     {
         console.log("EmailReciver: client.connect(function()): FAILED: " + e.name);
     }
-};
+}
 
-var emailSchedule;
 
-var emailChecker;
+
+let emailSchedule;
 
 function unloadPlugin()
 {

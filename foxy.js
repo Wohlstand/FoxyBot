@@ -180,21 +180,21 @@ function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 }
 
 
-function statusError(error)
-{
-    if(error)
-    {
-        botCommands.foxylogInfo('There was an error seting status: ' + error);
-    }
-}
-
-function nickError(error)
-{
-    if(error)
-    {
-        botCommands.foxylogInfo('There was an error seting nick: ' + error);
-    }
-}
+// function statusError(error)
+// {
+//     if(error)
+//     {
+//         botCommands.foxylogInfo('There was an error seting status: ' + error);
+//     }
+// }
+//
+// function nickError(error)
+// {
+//     if(error)
+//     {
+//         botCommands.foxylogInfo('There was an error seting nick: ' + error);
+//     }
+// }
 
 function sleep(milliseconds)
 {
@@ -392,8 +392,8 @@ foxyBotCli.on("messageDelete", function(message)
         return;//Reject webhooks!
 
     botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + botCommands.getMsgText(message));
-    let allowWrite = botCommands.isWritableChannel(message.channel.id);
-    allowWrite = allowWrite && botCommands.isWritableGuild(message.guild.id);
+    let allowWrite = botCommands.isWritableChannel(message.channel);
+    allowWrite = allowWrite && botCommands.isWritableGuild(message.guild);
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.messageDelete) === "function")
@@ -413,8 +413,8 @@ foxyBotCli.on("messageUpdate", function(messageOld, messageNew)
                             + "\n OLD: " + botCommands.getMsgText(messageOld)
                             + "\n NEW: " + botCommands.getMsgText(messageNew)+ "\n");
 
-    let allowWrite = botCommands.isWritableChannel(messageOld.channel.id);
-    allowWrite = allowWrite && botCommands.isWritableGuild(messageOld.guild.id);
+    let allowWrite = botCommands.isWritableChannel(messageOld.channel);
+    allowWrite = allowWrite && botCommands.isWritableGuild(messageOld.guild);
     foxyPlugins.forEach(function(plugin)
     {
         if(typeof(plugin.messageUpdate) === "function")
@@ -427,8 +427,8 @@ foxyBotCli.on("message", function(message)
     if(message.author.id === botUserId)
         return;//Ignore messages sent by myself
 
-    let allowWrite = botCommands.isWritableChannel(message.channel.id);
-    allowWrite = allowWrite && botCommands.isWritableGuild(message.guild.id);
+    let allowWrite = botCommands.isWritableChannel(message.channel);
+    allowWrite = allowWrite && botCommands.isWritableGuild(message.guild);
 
     let msgTrimmed      = message.cleanContent.trim();
     let msgLow          = message.cleanContent.toLowerCase();

@@ -326,12 +326,43 @@ function cachedFiles_Check(bot, message, args)
 
 function isWritableGuild(guild)
 {
-    return !inListFile("readonly_guilds.txt", guild);
+    if(!guild)
+        return true; // If it's DM, allow
+    return !inListFile("readonly_guilds.txt", guild.id);
 }
 
 function isWritableChannel(channel)
 {
-    return !inListFile("readonly_chans.txt", channel);
+    if(channel.type === "dm")
+        return true;//DM is writable!
+
+    let guild = BotPtr.guilds.get(channel.guild.id);
+    let botMember = guild.members.get(BotPtr.user.id);
+    let perms = channel.permissionsFor(botMember);
+    let hasWrite = perms.has('SEND_MESSAGES');
+
+    if(hasWrite === true)
+        return !inListFile("readonly_chans.txt", channel.id);
+    return false;
+}
+
+function isWritableChannelId(channelId)
+{
+    if(!BotPtr)
+        return false;// Bot is not working!
+    let chan = BotPtr.channels.get(channelId);
+    if(!chan)
+    {
+        foxylogError("isWritableChannelId: Can't find channel ID " + channelId);
+        return false;
+    }
+    let guild = BotPtr.guilds.get(chan.guild.id);
+    let botMember = guild.members.get(BotPtr.user.id);
+    let perms = chan.permissionsFor(botMember);
+    let hasWrite = perms.has('SEND_MESSAGES');
+    if(hasWrite === true)
+        return !inListFile("readonly_chans.txt", chan.id);
+    return false;
 }
 
 function getArrayRandom(array)
@@ -477,7 +508,7 @@ function getMsFromMsg(bot, message, args)
 {
     let time = args;
     let timeInt = 0;
-    let begin = 0;
+
     let reg_sec = /([0-9]+)\s*(?:sec(?:ond)?[s]?)/gi;
     let reg_min = /([0-9]+)\s*(?:min(?:ute)?[s]?)/gi;
     let reg_hrs = /([0-9]+)\s*(?:hour[s]?)/gi;
@@ -520,9 +551,9 @@ function getMsFromMsg(bot, message, args)
     }
 
 
-    if(timeInt == NaN)
+    if(isNaN(timeInt))
     {
-        message.reply("Realy? Tell me time again please!", msgSendError);
+        message.reply("Really? Tell me time again please!", msgSendError);
         return -1;
     }
 
@@ -557,7 +588,7 @@ function initRemindWatcher(bot)
                     }
 
                     //foxylogInfo('The solution is: ', results[0].solution);
-                    for(var i = 0; i < results.length; i++)
+                    for(let i = 0; i < results.length; i++)
                     {
                         /*
                         var guild = BotPtr.guilds.get(results[i].guild_id);
@@ -616,7 +647,7 @@ function sayDelayd(bot, message, args)
     if(timeInt === -1)
         return;
 
-    if(timeInt == NaN)
+    if(isNaN(timeInt))
     {
         message.reply("You pissed me off! I'v got NaN...", msgSendError);
         return;
@@ -662,7 +693,7 @@ function sayDelaydME(bot, message, args)
     if(timeInt === -1)
         return;
 
-    if(timeInt == NaN)
+    if(isNaN(timeInt))
     {
         message.reply("You pissed me off! I'v got NaN...", msgSendError);
         return;
@@ -748,18 +779,19 @@ function findInWikipedia(bot, message, args)
     message.channel.send("http://wikipedia.lmgtfy.com/?q=" + encodeURIComponent(args)).catch(msgSendError);
 }
 
-var youtube = function(bot, message, args)
+function youtube(bot, message, args)
 {
     let videoList = fs.readFileSync(__dirname+"/video_list.txt");
-    let videoArr = videoList.toString().trim().split(/[\n\ ]/g);
+    let videoArr = videoList.toString().trim().split(/[\n ]/g);
     let oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
     message.channel.send(oneVideo).catch(msgSendError);
 }
 
 function meow(bot, message, args)
 {
+    /*jslint unparam: true */
     let videoList = fs.readFileSync(__dirname+"/meow_list.txt");
-    let videoArr = videoList.toString().trim().split(/[\n\ ]/g);
+    let videoArr = videoList.toString().trim().split(/[\n ]/g);
     let oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
     message.channel.send(oneVideo).catch(msgSendError);
 }
@@ -767,7 +799,7 @@ function meow(bot, message, args)
 function woof(bot, message, args)
 {
     let videoList = fs.readFileSync(__dirname+"/woof_list.txt");
-    let videoArr = videoList.toString().trim().split(/[\n\ ]/g);
+    let videoArr = videoList.toString().trim().split(/[\n ]/g);
     let oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
     message.channel.send(oneVideo).catch(msgSendError);
 }
@@ -950,13 +982,13 @@ function sendEmailFile(message, args, attachment, doReply)
                       + ' (@' + usr_sign + ")"
                       + ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
             //text: args, //plaintext body
-            html: '<p><img style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0px;" src="' + message.author.avatarURL + '"> '+
+            html: '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + message.author.avatarURL + '"> '+
                     (message.author.bot ?
-                        '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">Bot</span>' :
-                        '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
+                        '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
+                        '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
                   '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
                   '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
-                  '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>' +
+                  '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + escape(args) + '</pre></p>' +
                   '<p><h3>Meta-data</h3></p>' +
                   '<ul>' +
                   '<li> UserID: [' + message.author.id + ']</li>' +
@@ -1029,13 +1061,13 @@ function sendEmailF(message, args, doReply)
                       + ' (@' + message.author.username + "#" + message.author.discriminator + ")"
                       +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
             //text: args, //plaintext body
-            html: '<p><img style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0px;" src="' + message.author.avatarURL + '"> '+
+            html: '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + message.author.avatarURL + '"> '+
                     (message.author.bot ?
-                        '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">Bot</span>' :
-                        '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0px 4px 0px 4px;">User</span>') + ' ' +
+                        '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
+                        '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
                   '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
                   '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
-                  '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0px; padding: 10px;">' + escape(args) + '</pre></p>' +
+                  '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + escape(args) + '</pre></p>' +
                   '<p><h3>Meta-data</h3></p>' +
                   '<ul>' +
                   '<li> UserID: [' + message.author.id + ']</li>' +
@@ -1338,6 +1370,7 @@ module.exports =
     inListFile:       inListFile,
     isWritableGuild:  isWritableGuild,
     isWritableChannel: isWritableChannel,
+    isWritableChannelId: isWritableChannelId,
     sendEmail:        sendEmailF,
     sendEmailFile:    sendEmailFile,
     initRemindWatcher:initRemindWatcher,
