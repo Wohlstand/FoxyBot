@@ -22,6 +22,8 @@ Replace "<put your bot's ID here>" with actual ID of your bot
 Example:
 https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&permissions=67169280
 
+https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&permissions=67169280
+
 0x00000800
 0x00000400
 0x00002000

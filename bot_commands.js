@@ -424,6 +424,15 @@ function isBeepBoop(bot, message, args)
 }
 
 
+function inviteMeLink(bot, message, args)
+{
+    let perms = 130112;
+    let url = "https://discordapp.com/oauth2/authorize?client_id=" + bot.user.id + "&scope=bot&permissions=" + perms;
+    message.author
+        .send("Yim! I'll come to your server if you'll open this link:\n" + url + "\nBe happy! :fox:")
+        .catch(msgSendError);
+}
+
 let sayLogArr = [];
 function say(bot, message, args)
 {
@@ -1264,6 +1273,7 @@ function registerCommands()
     addSynonimOf("cmd", "commands");
 
     addCMD(["test",     test,             "Just a test"]);
+    addCMD(["invite",   inviteMeLink,     "I'll give you invite link to me!", [], true]);
     addCMD(["choose",   choose,           "Randomly chooses one of words from list.\n__*Syntax:*__ choose <word1>, <word2> or <word3>\n\nAllowed separators: \",\", \"or\".", [], true]);
     addCMD(["rand",     myrand,           "Random integer from 0 to 100"]);
     addCMD(["randf",    myrandF,          "Random floating pointer number from 0.0 to 1.0"]);
