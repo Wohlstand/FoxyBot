@@ -1,17 +1,23 @@
 # FoxyBot
-FoxyBot :fox: A funny and functional chat bot for Discord service
+FoxyBot :fox_face: A funny and functional chat bot for Discord service
 
 # Dependencies
-* [Discord.JS library](https://github.com/hydrabolt/discord.js)
-* [NodeMailer](http://nodemailer.com)
-* [Yandex.Translate](https://github.com/nkt/yandex.translate)
-* [MySQL](https://github.com/mysqljs/mysql)
-* [Winston](https://github.com/winstonjs/winston)
+* `libsystemd-dev` on Debian / Ubuntu / Mint / etc.
+* `systemd-devel` on RedHat / CentOS / OpenSUSE, etc.
+* `nodejs` 8+
+* npm install
+* npm update
 
 ## Quick install of dependencies
-
+On CentOS:
 ```bash
 sudo yum install systemd-devel
+npm install
+```
+
+On Ubuntu / Debian / Mint:
+```bash
+sudo apt install libsystemd-dev
 npm install
 ```
 
