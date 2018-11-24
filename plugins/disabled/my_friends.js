@@ -7,13 +7,14 @@ let exec = require('child_process').execFile;
 
 let CODEHAUS_Server = "215661302692052992";
 let echidnasDir = "/home/vitaly/_Bots/echidnabot";
+let minnieDir = "/home/vitaly/_Bots/minnie-marygold";
 
 function isGranted(message)
 {
     return (core.botConfig.myboss.indexOf(message.author.id) !== -1) || (message.author.id === "133426635998232577");
 }
 
-let knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+function knuxLog(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     if(!isGranted(message))
     {
@@ -39,7 +40,7 @@ let knuxLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     });
 }
 
-let knuxFullLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+function knuxFullLog(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     if(!isGranted(message))
     {
@@ -57,7 +58,7 @@ let knuxFullLog = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 
 }
 
-let knuxPoke = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+function pokeBot(bot, message, botPath)
 {
     if(!isGranted(message))
     {
@@ -65,16 +66,85 @@ let knuxPoke = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
         return;
     }
 
-    exec('git', ["pull", "origin", "master"], {cwd: echidnasDir}, function(err, data)
+    exec('git', ["pull", "origin", "master"], {cwd: botPath}, function(err, data)
     {
         if(err == null)
             message.reply("git pull origin master\n```\n" + data.toString() + "\n```\n");
         else
         {
             message.reply("ERROR of git pull origin master```\n" + err + "\n\n" + data.toString() + "\n```\n");
-            exec('git', ["merge", "--abort"], {cwd: echidnasDir}, function(err, data){});
+            exec('git', ["merge", "--abort"], {cwd: botPath}, function(err, data){});
         }
     });
+}
+
+function knuxPoke(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    pokeBot(bot, message, echidnasDir);
+}
+
+function minniePoke(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    pokeBot(bot, message, minnieDir);
+}
+
+
+function systemDofBot(bot, message, botPath, botName, action)
+{
+    if(!isGranted(message))
+    {
+        message.reply("Sorry, I can't help you, you are not allowed to use this command");
+        return;
+    }
+
+    exec('sudo', ["systemctl", action, botName], {cwd: botPath}, function(err, data)
+    {
+        let fullCommand = "systemctl " + action + " " + botName;
+        if(err == null)
+            message.reply(fullCommand + "\n```\n" + data.toString() + "\n```\n");
+        else
+            message.reply("ERROR of " + fullCommand + "```\n" + err + "\n\n" + data.toString() + "\n```\n");
+    });
+}
+
+function minnieStart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, minnieDir, "discord-minnie", "start");
+}
+
+function minnieStop(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, minnieDir, "discord-minnie", "stop");
+}
+
+function minnieRestart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, minnieDir, "discord-minnie", "restart");
+}
+
+function minnieStatus(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, minnieDir, "discord-minnie", "status");
+}
+
+function knuxStart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, minnieDir, "discord-knux", "start");
+}
+
+function knuxStop(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, minnieDir, "discord-knux", "stop");
+}
+
+function knuxRestart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, minnieDir, "discord-knux", "restart");
+}
+
+function knuxStatus(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, minnieDir, "discord-knux", "status");
 }
 
 function registerCommands(foxyCore)
@@ -83,6 +153,17 @@ function registerCommands(foxyCore)
     core.addCMD(["knuxlog",    knuxLog,           "Check out Knux's log tail. Has optional argument - a count of lines to print.", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knuxlogfile",knuxFullLog,       "Get a complete Knux's log file.", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knuxpoke",   knuxPoke,          "Poke Knux if he is asleep", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minniepoke", minniePoke,        "Poke Minnie Marygold if she is asleep", [], true, [CODEHAUS_Server] ]);
+
+    core.addCMD(["knux-start",   knuxStart,   "Start Knuckles", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knux-stop",    knuxStop,    "Stop Knuckles", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knux-restart", knuxRestart, "Restart Knuckles", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knux-status",  knuxStatus,  "Show status of Knuckles", [], true, [CODEHAUS_Server] ]);
+
+    core.addCMD(["minnie-start",   minnieStart,   "Start Minnie Marygold", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-stop",    minnieStop,    "Stop Minnie Marygold", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-restart", minnieRestart, "Restart Minnie Marygold", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-status",  minnieStatus,  "Show status of Minnie Marygold", [], true, [CODEHAUS_Server] ]);
 }
 
 module.exports =
