@@ -6,8 +6,8 @@ let core = undefined;
 let exec = require('child_process').execFile;
 
 let CODEHAUS_Server = "215661302692052992";
-let echidnasDir = "/home/vitaly/_Bots/echidnabot";
-let minnieDir = "/home/vitaly/_Bots/minnie-marygold";
+const echidnasDir = "/home/vitaly/_Bots/echidnabot";
+const minnieDir = "/home/vitaly/_Bots/minnie-marygold";
 
 function isGranted(message)
 {
@@ -26,7 +26,7 @@ function knuxLog(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 
     exec('tail', ["-n", linesNumber.toString(), "knuxlog.log"], {cwd: echidnasDir}, function(err, data)
     {
-        if(err == null)
+        if(!err)
         {
             let s = data.toString();
             if(s.length > 1900)
@@ -50,7 +50,7 @@ function knuxFullLog(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 
     exec('bzip2', ["-fk", echidnasDir + "/knuxlog.log"], {cwd: echidnasDir}, function(err, data)
     {
-        if(err == null)
+        if(!err)
             message.channel.sendFile(echidnasDir + "/knuxlog.log.bz2", "knuxlog.log.bz2").catch(core.msgSendError);
         else
             message.reply("ERROR of bzip2 -fk " + echidnasDir + "/knuxlog.log\n```\n" + err + "\n\n" + data.toString() + "\n```\n");
@@ -68,7 +68,7 @@ function pokeBot(bot, message, botPath)
 
     exec('git', ["pull", "origin", "master"], {cwd: botPath}, function(err, data)
     {
-        if(err == null)
+        if(!err)
             message.reply("git pull origin master\n```\n" + data.toString() + "\n```\n");
         else
         {
@@ -100,7 +100,7 @@ function systemDofBot(bot, message, botPath, botName, action)
     exec('sudo', ["systemctl", action, botName], {cwd: botPath}, function(err, data)
     {
         let fullCommand = "systemctl " + action + " " + botName;
-        if(err == null)
+        if(!err)
             message.reply(fullCommand + "\n```\n" + data.toString() + "\n```\n");
         else
             message.reply("ERROR of " + fullCommand + "```\n" + err + "\n\n" + data.toString() + "\n```\n");
