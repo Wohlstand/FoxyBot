@@ -7,7 +7,7 @@ let exec = require('child_process').execFile;
 
 let CODEHAUS_Server = "215661302692052992";
 const echidnasDir = "/home/vitaly/_Bots/echidnabot";
-const minnieDir = "/home/vitaly/_Bots/minnie-marygold";
+const minnieDir = "/home/vitaly/_Bots/minnie-marigold";
 
 function isGranted(message)
 {
@@ -153,17 +153,18 @@ function registerCommands(foxyCore)
     core.addCMD(["knuxlog",    knuxLog,           "Check out Knux's log tail. Has optional argument - a count of lines to print.", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knuxlogfile",knuxFullLog,       "Get a complete Knux's log file.", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knuxpoke",   knuxPoke,          "Poke Knux if he is asleep", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["minniepoke", minniePoke,        "Poke Minnie Marygold if she is asleep", [], true, [CODEHAUS_Server] ]);
+
+    core.addCMD(["minniepoke", minniePoke,        "Poke Minnie Marigold if she is asleep", [], true, [CODEHAUS_Server] ]);
 
     core.addCMD(["knux-start",   knuxStart,   "Start Knuckles", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knux-stop",    knuxStop,    "Stop Knuckles", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knux-restart", knuxRestart, "Restart Knuckles", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knux-status",  knuxStatus,  "Show status of Knuckles", [], true, [CODEHAUS_Server] ]);
 
-    core.addCMD(["minnie-start",   minnieStart,   "Start Minnie Marygold", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["minnie-stop",    minnieStop,    "Stop Minnie Marygold", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["minnie-restart", minnieRestart, "Restart Minnie Marygold", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["minnie-status",  minnieStatus,  "Show status of Minnie Marygold", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-start",   minnieStart,   "Start Minnie Marigold", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-stop",    minnieStop,    "Stop Minnie Marigold", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-restart", minnieRestart, "Restart Minnie Marigold", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-status",  minnieStatus,  "Show status of Minnie Marigold", [], true, [CODEHAUS_Server] ]);
 }
 
 module.exports =
