@@ -130,7 +130,9 @@ Object.size = function(obj)
 
 function getRandomInt(min, max)
 {
-    return Math.round(Math.random() * (max - min) + min);
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function sendErrorMsg(bot, channel, e)
@@ -367,14 +369,14 @@ function isWritableChannelId(channelId)
 
 function getArrayRandom(array)
 {
-	if(array == null)
-		return {index:null, value:null};
-	else
-	{
-        let id = Math.floor(Math.random() * (array.length));
+    if(array == null)
+        return {index:null, value:null};
+    else
+    {
+        let id = getRandomInt(0, array.length - 1);
         let val = array[id];
-		return {index:id, value:val}
-	}
+        return {index:id, value:val}
+    }
 }
 
 function getDefaultChannelForGuild(bot, message)
@@ -1391,6 +1393,7 @@ module.exports =
     getMsgText:       getMsgText,
     botConfig:        botConfig,
     my_db:            my_db,
+    getRandomInt:     getRandomInt,
     errorMyDb:        errorMyDb,
     foxylogInfo:      foxylogInfo,
     addCMD:           addCMD,

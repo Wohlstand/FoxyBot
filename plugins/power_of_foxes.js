@@ -286,7 +286,7 @@ let randMsg_messages = [
 
 function randMsg(bot, message, args)
 {
-    let msg = randMsg_messages[Math.floor(Math.random() * randMsg_messages.length)];
+    let msg = randMsg_messages[core.getRandomInt(0, randMsg_messages.length - 1)];
     message.channel.send(msg.replace(/%u/g, "<@!" + message.author.id + ">")).catch(core.msgSendError);
 }
 
@@ -298,7 +298,7 @@ let randomCommand_available = [
 
 function randomCommand(bot, message, args)
 {
-    let cmd = randomCommand_available[Math.floor(Math.random() * randomCommand_available.length)];
+    let cmd = randomCommand_available[core.getRandomInt(0, randomCommand_available.length - 1)];
     cmd(bot, message, args);
 }
 
