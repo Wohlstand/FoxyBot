@@ -48,38 +48,42 @@ let roboloeSpeech = [
 
 let sheIsWraska =
 [
-    "I saw this lot of times... Let's enjoy a cute Wraska instead of this!",
-    ".... boring! :expressionless:\nWraska, come here!",
+    "I saw this lot of times... Let's enjoy a cute Wraska!",
+    ".... boring! :expressionless:\n" +
+        "Wraska, come here!",
     "Maybe you will stop to post this anime post again? Wraska, please show your beauty to everyone!",
-    "Hey, Knux, please ask Wraska to come here while I kicking to Roboloe's ass...\nNo? Okay, You better can kick his ass than me.\nAnyway, Wraska is already here!",
-    "Roboloe, do you Wanna a good Anime? Go to Japen!\nOh, hello Wraska :3",
-    "Anime from Luna's collection is not better than Hayao Miyazaki's Anime, Wraska can confirm than :3",
-    ".... Boring and Annoying!\nI better watch something Hayao Miyazaki's together with Wraska!"
+    "Roboloe, do you Wanna a good Anime? Why not to visit Japan!\n" +
+        "Oh, hello Wraska :3"
 ];
 
 let wraskaIsKawaii =
 [
-    "No one anime girl kawaii more than Wraska Snowy Fox",
-    "You are not kawaii, Wraska is kawaii!",
-    "No, you are not kawaii!\nWraska is kawaii!",
-    "No, you are not kawaii!\nWraska can confirm that :3",
-    "Robo, you will never be kawaii!\nWraska is kawaii forever!",
-    "I don't think this is kawaii... Let's see true kawaii - Wraska!"
+    "Wraska is kawaii!",
+    "I'll say that Wraska is really kawaii!",
+    "Let's Wraska review that :3",
+    "Wraska is kawaii forever!",
+    "I think, the true kawaii is Wraska!"
 ];
 
-let myHealfIsFine = ["I'm not broken. You are broken: you have annoyed us with your dumb anime!",
-         "I recently was at my doctor, and he told I'm fine! I suggesting you to do same!",
-         "Why I'm sick? So, you are not a doctor to tell me that I'm sick... Can you check your health instead of mine?",
-         "I was sick some time ago, but now I'm fine! :3",
-         "Broken? You want to say 'sick'? Sorry, but my doctor says I'm fine!"];
+let myHealfIsFine = [
+    "I'm not broken. You are broken: you have annoyed us with your dumb anime!",
+     "I recently was at my doctor, and he told I'm fine! I suggesting you to do same!",
+     "Why I'm sick? So, you aren't a doctor to tell me that I'm sick... " +
+        "Can you check your health instead of mine?",
+     "I was sick some time ago, but now I'm fine! :3",
+     "Broken? You want to say 'sick'? Sorry, but my doctor says I'm fine!"
+];
 
-let furiesAreBest = ["I want to see more furries than anime!",
-                     "Anime is no more actual, Furries are best choice for now!"];
+let furiesAreBest = [
+    "I want to see more furries than anime!",
+     "Anime is no more actual, Furries are best choice for now!"
+];
 
-let obnoxiusRobo = ["Mayby you will stop to post anime?",
-                     "Robo, you are looking more obnoxious than me with that annoying anime!",
-                     "Look to yourself, crazy anime bot!",
-                     "Hey, Knux, please kick that anime bot to his metallic ass!"];
+let obnoxiusRobo = [
+    "Mayby you will stop to post anime?",
+    "Robo, you are looking more obnoxious than me with that annoying anime!",
+    "Look to yourself, crazy anime bot!"
+];
 
 let lunaOffline = [
     "Robo, do you know that Minnie is asleep! Please don't disturb her, stupid machine!",
