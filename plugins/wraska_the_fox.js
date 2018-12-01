@@ -24,21 +24,27 @@ function getArrayRandom(array)
 }
 
 let roboloeSpeech = [
-     "/luna senpai",
-     "/luna sempai",
-     "/luna fart",
-     "/luna farts",
-     "/luna butt",
-     "/luna butts",
-     "/luna dank",
-     "/luna chan",
-     "/luna kun",
-     "/luna tan",
-     "/luna yotsuba",
-     "/luna lewd",
-     "/luna frogsuit",
-     "/luna kawaii"
+    "/minnie anime",
+    "/minnie dance",
+    "/minnie kawaii"
 ];
+
+// let roboloeSpeech = [
+//      "/luna senpai",
+//      "/luna sempai",
+//      "/luna fart",
+//      "/luna farts",
+//      "/luna butt",
+//      "/luna butts",
+//      "/luna dank",
+//      "/luna chan",
+//      "/luna kun",
+//      "/luna tan",
+//      "/luna yotsuba",
+//      "/luna lewd",
+//      "/luna frogsuit",
+//      "/luna kawaii"
+// ];
 
 let sheIsWraska =
 [
@@ -76,12 +82,12 @@ let obnoxiusRobo = ["Mayby you will stop to post anime?",
                      "Hey, Knux, please kick that anime bot to his metallic ass!"];
 
 let lunaOffline = [
-    "Robo, do you know that Luna is asleep! Please don't disturb her, stupid machine!",
-    "Shhh! Don't be loud, Luna is asleep!",
-    "Don't try to disturb sleeping Luna, or I'll bite you!",
-    "Robo, are you blind? Luna is sleeping!",
-    "Oh no, Robo, don't try to disturb Luna, she will be so angry...",
-    "Hoeloe, please explain to this stupid robot that Luna is sleeping, he don't wanna understand this!!!"
+    "Robo, do you know that Minnie is asleep! Please don't disturb her, stupid machine!",
+    "Shhh! Don't be loud, Minnie is asleep!",
+    "Don't try to disturb sleeping Minnie, or I'll bite you!",
+    "Robo, are you blind? Minnie is sleeping!",
+    "Oh no, Robo, don't try to disturb Minnie, she will be so angry...",
+    "Hoeloe, please explain to this stupid robot that Minnie is sleeping, he don't wanna understand this!!!"
 ];
 
 let roboloeTalkTable = [
@@ -103,8 +109,8 @@ let roboloeTalkTable = [
     ],
     ["\" is wasting everyone's time",
         ["Anime posting is also wastes everyone's time!",
-         "You are wasting more time by posting anime things from Luna's outdated collection, why not to post something different than Anime?",
-         "Everyone, does Wraska wastes your time? Or you are prefer to see a boring outdated Luna's anime collection?"]
+         "You are wasting more time by posting anime things from Minnie's outdated collection, why not to post something different than Anime?",
+         "Everyone, does Wraska wastes your time? Or you are prefer to see a boring outdated Minnie's anime collection?"]
     ],
     ["yeah, foxy does or did some stuff",
         [":3"]
@@ -121,8 +127,9 @@ function isLunaHere(mybot, message)
 {
     try
     {
-        let Luna = mybot.users.get("216273975939039235");
-        if(Luna.presence.status === "offline")
+        //let Luna = mybot.users.get("216273975939039235");
+        let minnie = mybot.users.get("411534588251340806");
+        if(minnie.presence.status === "offline")
             return false;
     }
     catch(e)
@@ -133,7 +140,7 @@ function isLunaHere(mybot, message)
     return true;
 }
 
-var wraskaWas = false;
+let wraskaWas = false;
 
 function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message*/ messageNew, /*bool*/ channelIsWritable)
 {
@@ -147,7 +154,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
 
     if(channelIsWritable && (message.author.id === 320247723641012235)) //It's me: 182039820879659008, when I wanna play Roboloe (320247723641012235)
     {
-        if(msgTrimmed === "/luna kawaii")
+        if(msgTrimmed === "/minnie kawaii")
         {
             if(isLunaHere(bot, message))
             {
@@ -183,14 +190,16 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
                         core.wraska(bot, message, "wraska");
                     wraskaWas = true;
                 }, 3500);
-            } else {
+            }
+            else
+            {
                 message.channel.send(getArrayRandom(lunaOffline).value).catch(core.msgSendError);
                 wraskaWas = true;
             }
         }
         else
         {
-            var messageSent = false;
+            let messageSent = false;
 
             if(wraskaWas)
             {
