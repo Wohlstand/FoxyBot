@@ -8,6 +8,7 @@ let exec = require('child_process').execFile;
 let CODEHAUS_Server = "215661302692052992";
 const echidnasDir = "/home/vitaly/_Bots/echidnabot";
 const minnieDir = "/home/vitaly/_Bots/minnie-marigold";
+const bastionDir = "/home/vitaly/_Bots/bastionbot-js";
 
 function isGranted(message)
 {
@@ -88,6 +89,10 @@ function minniePoke(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     pokeBot(bot, message, minnieDir);
 }
 
+function bastionPoke(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    pokeBot(bot, message, bastionDir);
+}
 
 function systemDofBot(bot, message, botPath, botName, action)
 {
@@ -134,17 +139,37 @@ function knuxStart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 
 function knuxStop(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
-    systemDofBot(bot, message, minnieDir, "discord-knux", "stop");
+    systemDofBot(bot, message, echidnasDir, "discord-knux", "stop");
 }
 
 function knuxRestart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
-    systemDofBot(bot, message, minnieDir, "discord-knux", "restart");
+    systemDofBot(bot, message, echidnasDir, "discord-knux", "restart");
 }
 
 function knuxStatus(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
-    systemDofBot(bot, message, minnieDir, "discord-knux", "status");
+    systemDofBot(bot, message, echidnasDir, "discord-knux", "status");
+}
+
+function bastionStart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, bastionDir, "discord-bastion", "start");
+}
+
+function bastionStop(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, bastionDir, "discord-bastion", "stop");
+}
+
+function bastionRestart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, bastionDir, "discord-bastion", "restart");
+}
+
+function bastionStatus(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, bastionDir, "discord-bastion", "status");
 }
 
 function registerCommands(foxyCore)
@@ -153,6 +178,7 @@ function registerCommands(foxyCore)
     core.addCMD(["knuxlog",    knuxLog,           "Check out Knux's log tail. Has optional argument - a count of lines to print.", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knuxlogfile",knuxFullLog,       "Get a complete Knux's log file.", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knuxpoke",   knuxPoke,          "Poke Knux if he is asleep", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["bastionpoke",bastionPoke,       "Poke Bastion if it is asleep", [], true, [CODEHAUS_Server] ]);
 
     core.addCMD(["minniepoke", minniePoke,        "Poke Minnie Marigold if she is asleep", [], true, [CODEHAUS_Server] ]);
 
@@ -165,6 +191,12 @@ function registerCommands(foxyCore)
     core.addCMD(["minnie-stop",    minnieStop,    "Stop Minnie Marigold", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["minnie-restart", minnieRestart, "Restart Minnie Marigold", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["minnie-status",  minnieStatus,  "Show status of Minnie Marigold", [], true, [CODEHAUS_Server] ]);
+
+
+    core.addCMD(["bastion-start",   bastionStart,   "Start BastionBot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["bastion-stop",    bastionStop,    "Stop BastionBot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["bastion-restart", bastionRestart, "Restart BastionBot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["bastion-status",  bastionStatus,  "Show status of BastionBot", [], true, [CODEHAUS_Server] ]);
 }
 
 module.exports =
