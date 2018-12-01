@@ -3,7 +3,7 @@
 */
 
 // Main module of FoxyBot
-var core = undefined;
+let core = undefined;
 
 // Initialize plugin and here you can add custom Foxy's commands
 function registerCommands(/*bot_commands.js module*/ foxyCore)
@@ -13,17 +13,17 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
 
 function getArrayRandom(array)
 {
-	if  (array == null)
-		return {index:null, value:null}
-	else
-	{
-		var id = Math.floor(Math.random() * (array.length));
-		var val = array[id];
-		return {index:id, value:val}
-	}
+    if  (array == null)
+        return {index:null, value:null};
+    else
+    {
+        let id = Math.floor(Math.random() * (array.length));
+        let val = array[id];
+        return {index:id, value:val}
+    }
 }
 
-var roboloeSpeech = [
+let roboloeSpeech = [
      "/luna senpai",
      "/luna sempai",
      "/luna fart",
@@ -40,7 +40,7 @@ var roboloeSpeech = [
      "/luna kawaii"
 ];
 
-var sheIsWraska =
+let sheIsWraska =
 [
     "I saw this lot of times... Let's enjoy a cute Wraska instead of this!",
     ".... boring! :expressionless:\nWraska, come here!",
@@ -51,7 +51,7 @@ var sheIsWraska =
     ".... Boring and Annoying!\nI better watch something Hayao Miyazaki's together with Wraska!"
 ];
 
-var wraskaIsKawaii =
+let wraskaIsKawaii =
 [
     "No one anime girl kawaii more than Wraska Snowy Fox",
     "You are not kawaii, Wraska is kawaii!",
@@ -61,21 +61,21 @@ var wraskaIsKawaii =
     "I don't think this is kawaii... Let's see true kawaii - Wraska!"
 ];
 
-var myHealfIsFine = ["I'm not broken. You are broken: you have annoyed us with your dumb anime!",
+let myHealfIsFine = ["I'm not broken. You are broken: you have annoyed us with your dumb anime!",
          "I recently was at my doctor, and he told I'm fine! I suggesting you to do same!",
          "Why I'm sick? So, you are not a doctor to tell me that I'm sick... Can you check your health instead of mine?",
          "I was sick some time ago, but now I'm fine! :3",
          "Broken? You want to say 'sick'? Sorry, but my doctor says I'm fine!"];
 
-var furiesAreBest = ["I want to see more furries than anime!",
+let furiesAreBest = ["I want to see more furries than anime!",
                      "Anime is no more actual, Furries are best choice for now!"];
 
-var obnoxiusRobo = ["Mayby you will stop to post anime?",
+let obnoxiusRobo = ["Mayby you will stop to post anime?",
                      "Robo, you are looking more obnoxious than me with that annoying anime!",
                      "Look to yourself, crazy anime bot!",
                      "Hey, Knux, please kick that anime bot to his metallic ass!"];
 
-var lunaOffline = [
+let lunaOffline = [
     "Robo, do you know that Luna is asleep! Please don't disturb her, stupid machine!",
     "Shhh! Don't be loud, Luna is asleep!",
     "Don't try to disturb sleeping Luna, or I'll bite you!",
@@ -84,7 +84,7 @@ var lunaOffline = [
     "Hoeloe, please explain to this stupid robot that Luna is sleeping, he don't wanna understand this!!!"
 ];
 
-var roboloeTalkTable = [
+let roboloeTalkTable = [
     ["maybe foxy is actually broken", myHealfIsFine],
     ["Why does foxy occasionally post that?", furiesAreBest],
     ["Why does foxy occasionally post this?", furiesAreBest],
@@ -121,8 +121,8 @@ function isLunaHere(mybot, message)
 {
     try
     {
-        var Luna = mybot.users.get("216273975939039235");
-        if(Luna.presence.status == "offline")
+        let Luna = mybot.users.get("216273975939039235");
+        if(Luna.presence.status === "offline")
             return false;
     }
     catch(e)
@@ -143,11 +143,11 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
 // Catch incoming messages: you can make foxy be more talkative or implement a custom command handler from the raw text
 function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)
 {
-    var msgTrimmed      = message.content.trim();
+    let msgTrimmed      = message.content.trim();
 
-    if(channelIsWritable && (message.author.id == 320247723641012235)) //It's me: 182039820879659008, when I wanna play Roboloe (320247723641012235)
+    if(channelIsWritable && (message.author.id === 320247723641012235)) //It's me: 182039820879659008, when I wanna play Roboloe (320247723641012235)
     {
-        if(msgTrimmed == "/luna kawaii")
+        if(msgTrimmed === "/luna kawaii")
         {
             if(isLunaHere(bot, message))
             {
@@ -168,7 +168,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
             }
         }
         else
-        if(roboloeSpeech.indexOf(msgTrimmed) != -1)
+        if(roboloeSpeech.indexOf(msgTrimmed) !== -1)
         {
             if(isLunaHere(bot, message))
             {
@@ -194,7 +194,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
 
             if(wraskaWas)
             {
-                if(msgTrimmed == "that's firstly not true")
+                if(msgTrimmed === "that's firstly not true")
                 {
                     setTimeout(function()
                     {
@@ -211,7 +211,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
                     messageSent = true;
                 }
 
-                if(msgTrimmed == "thats a bad thing")
+                if(msgTrimmed === "thats a bad thing")
                 {
                     setTimeout(function()
                     {
@@ -220,7 +220,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
                     messageSent = true;
                 }
 
-                if(msgTrimmed == "im kawaii")
+                if(msgTrimmed === "im kawaii")
                 {
                     setTimeout(function()
                     {
@@ -229,7 +229,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
                     messageSent = true;
                 }
 
-                if(msgTrimmed == "yeah")
+                if(msgTrimmed === "yeah")
                 {
                     setTimeout(function()
                     {
@@ -242,10 +242,10 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
             if(!messageSent)
             {
                 //var debug = "";
-                for(var i = 0; i < roboloeTalkTable.length; i++)
+                for(let i = 0; i < roboloeTalkTable.length; i++)
                 {
                     //debug += "'" + msgTrimmed + "' == '" + roboloeTalkTable[i][0] + "' ";
-                    if(msgTrimmed.indexOf(roboloeTalkTable[i][0]) != -1)
+                    if(msgTrimmed.indexOf(roboloeTalkTable[i][0]) !== -1)
                     {
                         setTimeout(function()
                         {
