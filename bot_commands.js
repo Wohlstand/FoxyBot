@@ -1115,11 +1115,11 @@ function clearCommands()
     Cmds = [];
 }
 
-function addSynonimOf(oldСmd, name, customHelp = "")
+function addSynonimOf(oldCmd, name, customHelp = "")
 {
     for(let i = 0; i < CmdsREAL.length; i++)
     {
-        if(CmdsREAL[i].name === oldСmd)
+        if(CmdsREAL[i].name === oldCmd)
         {
             let newI = Cmds.length;
             Cmds[newI] = Object.assign({}, CmdsREAL[i]);
@@ -1129,7 +1129,7 @@ function addSynonimOf(oldСmd, name, customHelp = "")
                 Cmds[newI].help = customHelp;
 
             if(CmdsREAL[i].synonims.length === 0)
-                CmdsREAL[i].synonims.push(oldСmd);
+                CmdsREAL[i].synonims.push(oldCmd);
             CmdsREAL[i].synonims.push(name);
             Cmds[newI].synonims = CmdsREAL[i].synonims;
             break;
@@ -1211,17 +1211,6 @@ function callCommand(bot, message, command, args)
     }
 }
 
-// function output(error, token)
-// {
-//     if(error)
-//     {
-//         foxyLogInfo('There was an error logging in: ' + error);
-//     }
-//     else
-//     {
-//         foxyLogInfo('Logged in. Token: ' + token);
-//     }
-// }
 
 module.exports =
 {
