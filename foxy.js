@@ -66,7 +66,7 @@ let loadPlugins = function(dir)
         if(stat && stat.isDirectory()) {}
         else if(file.endsWith(".js"))
         {
-            botCommands.foxylogInfo('Loading plugin: ' + file);
+            botCommands.foxyLogInfo('Loading plugin: ' + file);
             let pluginPath = file.substring(0, file.length - 3);
             try
             {
@@ -84,7 +84,7 @@ let loadPlugins = function(dir)
                 plugin.pluginName = pluginName;
                 plugin.pluginPath = pluginPath;
                 plugin.pluginStatus = "Failed: [" + e.name + "]" + e.message;
-                botCommands.foxylogInfo("Failed to load plugin " + file + " because of exception: " + e.name + ":\n\n" + e.message);
+                botCommands.foxyLogInfo("Failed to load plugin " + file + " because of exception: " + e.name + ":\n\n" + e.message);
                 foxyPlugins.push(plugin);
             }
         }
@@ -119,7 +119,7 @@ function loadBotCommands()
         catch(e)
         {
             plugin.pluginStatus = "Failed to register commands: [" + e.name + "]" + e.message;
-            botCommands.foxylogInfo("Failed to initialize plugin " + file + " because of exception: " + e.name + ":\n\n" + e.message);
+            botCommands.foxyLogInfo("Failed to initialize plugin " + file + " because of exception: " + e.name + ":\n\n" + e.message);
         }
     });
 }
@@ -186,7 +186,7 @@ function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 // {
 //     if(error)
 //     {
-//         botCommands.foxylogInfo('There was an error seting status: ' + error);
+//         botCommands.foxyLogInfo('There was an error seting status: ' + error);
 //     }
 // }
 //
@@ -194,7 +194,7 @@ function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 // {
 //     if(error)
 //     {
-//         botCommands.foxylogInfo('There was an error seting nick: ' + error);
+//         botCommands.foxyLogInfo('There was an error seting nick: ' + error);
 //     }
 // }
 
@@ -212,23 +212,26 @@ function sleep(milliseconds)
 
 process.on('SIGINT', function()
 {
-    botCommands.foxylogInfo("\n\nCaught interrupt signal\n");
-    foxyBotCli.user.setStatus("idle");
-    foxyBotCli.user.setActivity("Interrupted");
-    //mybot.setPlayingGame("Interrupted", statusError);
-    botCommands.foxylogInfo("Sent \"Away\" status!");
+    botCommands.foxyLogInfo("\n\nCaught interrupt signal\n");
+    foxyBotCli.user.setStatus("dnd")
+        .then(botCommands.foxyLogInfo)
+        .catch(botCommands.foxyLogError);
+    sleep(500);
+    botCommands.foxyLogInfo("Sent \"Away\" status!");
+    foxyBotCli.destroy();
     sleep(1000);
     process.exit();
 });
 
 process.on('SIGHUP', function()
 {
-    botCommands.foxylogInfo("\n\nCaught SIGHUP signal\n");
-    foxyBotCli.user.setStatus("dnd");
-    foxyBotCli.user.setActivity("Screen killed");
-    //mybot.setStatusIdle();
-    //mybot.setPlayingGame("Screen killed", statusError);
-    botCommands.foxylogInfo("Sent \"Away\" status!");
+    botCommands.foxyLogInfo("\n\nCaught SIGHUP signal\n");
+    foxyBotCli.user.setStatus("dnd")
+        .then(botCommands.foxyLogInfo)
+        .catch(botCommands.foxyLogError);
+    sleep(500);
+    botCommands.foxyLogInfo("Sent \"Away\" status!");
+    foxyBotCli.destroy();
     sleep(1000);
     process.exit();
 });
@@ -239,19 +242,21 @@ foxyBotCli.on("ready", () =>
 {
     notify.ready();
     const watchdogInterval = 2800;
-    botCommands.foxylogInfo('Initializing SystemD WatchDog with ' + watchdogInterval + ' millseconds internal ...');
+    botCommands.foxyLogInfo('Initializing SystemD WatchDog with ' + watchdogInterval + ' millseconds internal ...');
     notify.startWatchdogMode(watchdogInterval);
 
     //Get ID of self
     botUserId = foxyBotCli.user.id;
 
-    botCommands.foxylogInfo('set status...');
-    //mybot.setStatusOnline();
-    foxyBotCli.user.setStatus("online");
-    foxyBotCli.user.setActivity(botPrefix + " cmd");
-    //console.log('set nick...');
-    //foxyBotCli.setNickname(mybot.servers[0], "FoxyBot", mybot.user, nickError);
-    //Start Remind watcher!
+    botCommands.foxyLogInfo('set status...');
+    foxyBotCli.user.setStatus("online")
+        .then(botCommands.foxyLogInfo)
+        .catch(botCommands.foxyLogError);
+
+    foxyBotCli.user.setActivity(botPrefix + " cmd")
+        .then(botCommands.foxyLogInfo)
+        .catch(botCommands.foxyLogError);
+
     botCommands.initRemindWatcher(foxyBotCli);
     if(!greetingSent)
     {
@@ -269,7 +274,7 @@ foxyBotCli.on("error", (e) =>
 
 foxyBotCli.on('reconnecting', () =>
 {
-    botCommands.foxylogInfo('Connection lost, trying to reconnect...');
+    botCommands.foxyLogInfo('Connection lost, trying to reconnect...');
 });
 
 foxyBotCli.on("guildMemberAdd", (newUser) =>
@@ -294,7 +299,7 @@ foxyBotCli.on("guildMemberUpdate", (oldUser, newUser) =>
     //Log nick changes
     if(oldUser.nickname !== newUser.nickname)
     {
-        botCommands.foxylogInfo(
+        botCommands.foxyLogInfo(
           "--- "
           + oldUser.user.username + "#" + oldUser.user.discriminator + " changed nick: "
           + (oldUser.user.bot ? "bot" : "user")
@@ -393,7 +398,7 @@ foxyBotCli.on("messageDelete", function(message)
     if(message.webhookID)
         return;//Reject webhooks!
 
-    botCommands.foxylogInfo("*D* " + getAuthorStr(message) + ": " + botCommands.getMsgText(message));
+    botCommands.foxyLogInfo("*D* " + getAuthorStr(message) + ": " + botCommands.getMsgText(message));
     let allowWrite = botCommands.isWritableChannel(message.channel);
     allowWrite = allowWrite && botCommands.isWritableGuild(message.guild);
     foxyPlugins.forEach(function(plugin)
@@ -411,7 +416,7 @@ foxyBotCli.on("messageUpdate", function(messageOld, messageNew)
     if(messageOld.webhookID)
         return;//Reject webhooks!
 
-    botCommands.foxylogInfo("*E* "+ getAuthorStr(messageOld) + ":"
+    botCommands.foxyLogInfo("*E* "+ getAuthorStr(messageOld) + ":"
                             + "\n OLD: " + botCommands.getMsgText(messageOld)
                             + "\n NEW: " + botCommands.getMsgText(messageNew)+ "\n");
 
@@ -438,11 +443,11 @@ foxyBotCli.on("message", function(message)
 
     if(message.webhookID)
     {
-        botCommands.foxylogInfo("*** [WebHook] " + message.webhookID + ": " + botCommands.getMsgText(message));
+        botCommands.foxyLogInfo("*** [WebHook] " + message.webhookID + ": " + botCommands.getMsgText(message));
         return;//Reject web hooks!
     }
 
-    botCommands.foxylogInfo("*** " + getAuthorStr(message) + ": " + message.content );
+    botCommands.foxyLogInfo("*** " + getAuthorStr(message) + ": " + message.content );
 
     /* *********Standard command processor********* */
     if((msgLowTrimmed === botPrefix) && (allowWrite))
@@ -467,7 +472,7 @@ foxyBotCli.on("message", function(message)
     if(allowWrite && msgLowTrimmed.startsWith(botPrefix + " "))
     {
         let botCmd = msgTrimmed.slice(botPrefix.length + 1).trim();
-        botCommands.foxylogInfo("Cmd received: " + botCmd);
+        botCommands.foxyLogInfo("Cmd received: " + botCmd);
 
         let firstSpace = botCmd.indexOf(' ');
         if(firstSpace === -1)
@@ -478,8 +483,8 @@ foxyBotCli.on("message", function(message)
         {
             botCommand = botCmd.slice(0, firstSpace).trim();
             botArgs = botCmd.slice(firstSpace + 1).trim();
-            botCommands.foxylogInfo("->>Cmd: " + botCommand);
-            botCommands.foxylogInfo("->>Arg: " + botArgs);
+            botCommands.foxyLogInfo("->>Cmd: " + botCommand);
+            botCommands.foxyLogInfo("->>Arg: " + botArgs);
         }
         else
             botCommand = botCmd.trim();

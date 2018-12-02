@@ -3,10 +3,10 @@
 */
 
 // Main module of FoxyBot
-var core = undefined;
+let core = undefined;
 
 // Example bot command
-var pingReply = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+function pingReply(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     message.reply("Pong! (" + (Date.now() - message.createdTimestamp) + " ms)");
 }

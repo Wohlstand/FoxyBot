@@ -179,7 +179,7 @@ function registerCommands(foxyCore)
     core.addCMD(["knuxlogfile",knuxFullLog,       "Get a complete Knux's log file.", [], true, [CODEHAUS_Server] ]);
 
     core.addCMD(["knux-poke",   knuxPoke,         "Poke Knux if he is asleep", [], true, [CODEHAUS_Server] ]);
-    core.addSynonimOf("knux-poke", "knuxpoke",    "Poke Knux if he is asleep");
+    core.addSynonimOf("knux-poke", "knuxpoke");
     core.addCMD(["knux-start",   knuxStart,       "Start Knuckles", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knux-stop",    knuxStop,        "Stop Knuckles", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knux-restart", knuxRestart,     "Restart Knuckles", [], true, [CODEHAUS_Server] ]);
@@ -187,13 +187,13 @@ function registerCommands(foxyCore)
 
     core.addCMD(["minnie-poke", minniePoke,       "Poke Minnie Marigold if she is asleep", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["minnie-start",   minnieStart,   "Start Minnie Marigold", [], true, [CODEHAUS_Server] ]);
-    core.addSynonimOf("minnie-poke", "minniepoke","Poke Minnie Marigold if she is asleep");
+    core.addSynonimOf("minnie-poke", "minniepoke");
     core.addCMD(["minnie-stop",    minnieStop,    "Stop Minnie Marigold", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["minnie-restart", minnieRestart, "Restart Minnie Marigold", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["minnie-status",  minnieStatus,  "Show status of Minnie Marigold", [], true, [CODEHAUS_Server] ]);
 
     core.addCMD(["basty-poke",bastionPoke,         "Poke B'astion if it is asleep", [], true, [CODEHAUS_Server] ]);
-    core.addSynonimOf("basty-poke", "bastypoke",   "Poke B'astion if it is asleep");
+    core.addSynonimOf("basty-poke", "bastypoke");
     core.addCMD(["basty-start",   bastionStart,    "Start B'astionBot", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["basty-stop",    bastionStop,     "Stop B'astionBot", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["basty-restart", bastionRestart,  "Restart B'astionBot", [], true, [CODEHAUS_Server] ]);

@@ -6,13 +6,13 @@ let core = undefined;
 
 function getJSON(options, onResult)
 {
-    //foxylogInfo("rest::getJSON");
+    //foxyLogInfo("rest::getJSON");
     var prot = options.port === 443 ? https : http;
     var req = prot.request(options,
     function(res)
     {
         let output = '';
-        //foxylogInfo(options.host + ':' + res.statusCode);
+        //foxyLogInfo(options.host + ':' + res.statusCode);
         res.setEncoding('utf8');
 
         res.on('data', function (chunk) {

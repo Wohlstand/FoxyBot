@@ -31,7 +31,7 @@ var translate = function(bot, message, args)
         else
             arg1 = 'en';
         phraze.res = phraze.orig;
-        core.foxylogInfo("-> Using channel language...");
+        core.foxyLogInfo("-> Using channel language...");
     }
     else
     {
@@ -51,11 +51,11 @@ var translate = function(bot, message, args)
         return;
     }
 
-    core.foxylogInfo("-> Translate into " + arg1 + " the phraze " + phraze.res);
+    core.foxyLogInfo("-> Translate into " + arg1 + " the phraze " + phraze.res);
     translator.translate(phraze.res, arg1)
     .then(function(translation)
     {
-        core.foxylogInfo(translation);
+        core.foxyLogInfo(translation);
         if(message.editable)
         {
             message.edit(translation);

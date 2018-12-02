@@ -1,27 +1,27 @@
 
 let core = undefined;
 
-let testUrl = function(bot, message, args)
+function testUrl(bot, message, args)
 {
     message.channel.send("http://wohlsoft.ru").catch(core.msgSendError);
 }
 
-let lab = function(bot, message, args)
+function lab(bot, message, args)
 {
     message.channel.send("http://wohlsoft.ru/docs/_laboratory/").catch(core.msgSendError);
 }
 
-let smbx2pgeUpdate = function(bot, message, args)
+function smbx2pgeUpdate(bot, message, args)
 {
     message.channel.send("http://wohlsoft.ru/forum/viewtopic.php?f=11&t=1977").catch(core.msgSendError);
 }
 
-let repo = function(bot, message, args)
+function repo(bot, message, args)
 {
     message.channel.send("https://github.com/WohlSoft/PGE-Project").catch(core.msgSendError);
 }
 
-let markup = function(bot, message, args)
+function markup(bot, message, args)
 {
     message.channel.send("https://support.discordapp.com/hc/en-us/articles/210298617").catch(core.msgSendError);
 }
@@ -39,9 +39,29 @@ function isURL(str)
     return pattern.test(str);
 }
 
-let isUrlCheck = function(bot, message, args)
+function isUrlCheck(bot, message, args)
 {
     message.channel.send("Your string [" + args + "] is " + (isURL(args) ? "a valid" : "NOT an" ) + " URL!").catch(core.msgSendError);
+}
+
+function lunaDocs(bot, message, args)
+{
+    message.channel.send("http://wohlsoft.ru/pgewiki/" + encodeURIComponent(args)).catch(core.msgSendError);
+}
+
+function lunaSearch(bot, message, args)
+{
+    message.channel.send("http://wohlsoft.ru/wiki/index.php?search=" + encodeURIComponent(args)).catch(core.msgSendError);
+}
+
+function findInGoogle(bot, message, args)
+{
+    message.channel.send("http://lmgtfy.com/?q=" + encodeURIComponent(args)).catch(core.msgSendError);
+}
+
+function findInWikipedia(bot, message, args)
+{
+    message.channel.send("http://wikipedia.lmgtfy.com/?q=" + encodeURIComponent(args)).catch(core.msgSendError);
 }
 
 
@@ -54,6 +74,12 @@ function registerCommands(foxyCore)
     core.addCMD(["repo",     repo,             "Returns URL to PGE repository on GitHub"]);
     core.addCMD(["markup",   markup,           "Returns URL for a Discord markdown guide"]);
     core.addCMD(["isurl",    isUrlCheck,       "Checks is given string an URL", [], true]);
+
+    core.addCMD(["docs",     lunaDocs,         "Open PGE-Wiki page\n__*Syntax:*__ docs <name of PGE-Wiki page>", [], true]);
+    core.addCMD(["search",   lunaSearch,       "Find something in the PGE-Wiki\n__*Syntax:*__ search <search query>", [], true]);
+    core.addCMD(["find",     findInGoogle,     "Find something in Google\n__*Syntax:*__ find <your question>", [], true]);
+    core.addCMD(["findwiki", findInWikipedia,  "Find something in Wikipedia\n__*Syntax:*__ findwiki <your question>", [], true]);
+
     core.isurl = isURL; //Public this function!
 }
 

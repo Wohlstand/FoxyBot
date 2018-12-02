@@ -1,5 +1,5 @@
 const fs          = require('fs');
-const nodemailer  = require('nodemailer');
+const nodeMailer  = require('nodemailer');
 const escape      = require('escape-html');
 const mysql       = require('mysql');
 const Discord     = require("discord.js");
@@ -24,10 +24,23 @@ let logger = new (winston.Logger)(
     exitOnError: false
 });
 
-function foxylogInfo(outmsg)
+function foxyLogInfo(outmsg)
 {
     logger.info(outmsg);
 }
+
+function foxyLogError(outmsg)
+{
+    logger.error(outmsg);
+}
+
+// Command structure: name[0], function(bot,msg,args)[1], help[2], synonims[3], isUseful[4], limitOnGuilds[5]
+const CMD_NAME = 0;
+const CMD_FUNCTION = 1;
+const CMD_HELPTEXT = 2;
+const CMD_SYNONIMS = 3;
+const CMD_ISUSEFUL = 4;
+const CMD_LIMIT_ON_GUILDS = 5;
 
 //! List of available bot commands
 let Cmds      = [];
@@ -89,7 +102,7 @@ function errorMyDb(error, results, fields)
 {
     if(error)
     {
-        foxylogInfo("Error happen! " + error + "; Results " + results.length + "; Fields: " + fields.length);
+        foxyLogInfo("Error happen! " + error + "; Results " + results.length + "; Fields: " + fields.length);
         reconnectMyDb();
     }
 }
@@ -103,16 +116,17 @@ connectMyDb();
 //let trollTimerBlackList = [216273975939039235];//LunaBot
 
 //let emailBlackList = [];//216273975939039235//LunaBot
-let emailWhiteList = [212297373827727360,//Yoshi021
-                      182039820879659008,//Wohlstand
-                      214408564515667968,//Hoeloe
-                      215683390211358720,//Rednaxela
-                      140164947723288576,//Kevsoft
-                      83200193150844928, //Joey
-                      91682181734211584, //Minna
-                      209072523600461824,//PixelPest
-                      133426635998232577 //RockyTheChao
-                      ];
+let emailWhiteList = [
+    212297373827727360,//Yoshi021
+    182039820879659008,//Wohlstand
+    214408564515667968,//Hoeloe
+    215683390211358720,//Rednaxela
+    140164947723288576,//Kevsoft
+    83200193150844928, //Joey
+    91682181734211584, //Minna
+    209072523600461824,//PixelPest
+    133426635998232577 //RockyTheChao
+];
 /* *****************************************************************************/
 
 /***********************************************************
@@ -159,10 +173,10 @@ function msgSendError(error, message)
     {
         console.log("Fail to send message: " + message);
         let ErrorText = "Can't send message because: " + error;
-        foxylogInfo(ErrorText);
+        foxyLogInfo(ErrorText);
         if(++msgFailedAttempts > 2)
         {
-            foxylogInfo("Trying to relogin...");
+            foxyLogInfo("Trying to relogin...");
             loginBot(BotPtr, authToken);
             msgFailedAttempts = 0;
         }
@@ -177,7 +191,7 @@ function msgDeleteError(error, message)
     {
         console.log("Fail to delete message: " + message);
         let ErrorText = "Can't delete message because: " + error;
-        foxylogInfo(ErrorText);
+        foxyLogInfo(ErrorText);
     }
 }
 
@@ -355,7 +369,7 @@ function isWritableChannelId(channelId)
     let chan = BotPtr.channels.get(channelId);
     if(!chan)
     {
-        foxylogError("isWritableChannelId: Can't find channel ID " + channelId);
+        foxyLogError("isWritableChannelId: Can't find channel ID " + channelId);
         return false;
     }
     let guild = BotPtr.guilds.get(chan.guild.id);
@@ -384,9 +398,9 @@ function getDefaultChannelForGuild(bot, message)
     let channel = message.channel;
     botConfig.defaultChannel.forEach(function(chanID, i, arr)
     {
-        foxylogInfo("Trying to look for channel " + chanID);
+        foxyLogInfo("Trying to look for channel " + chanID);
         let chan = bot.channels.get(chanID);
-        if(chan.guild.id === message.guild.id)
+        if(chan && chan.guild.id === message.guild.id)
             channel = chan;
     });
     return channel;
@@ -511,7 +525,7 @@ function cutWord(str)
         return "";
     let word = str.orig.substr(0, space);
     str.res = str.orig.substr(space).trim();
-    foxylogInfo("-> Cuted first word \"" + word + "\"");
+    foxyLogInfo("-> Cuted first word \"" + word + "\"");
     return word;
 }
 
@@ -594,26 +608,26 @@ function initRemindWatcher(bot)
                 {
                     if(error)
                     {
-                        foxylogInfo("Error happen! " + error);
+                        foxyLogInfo("Error happen! " + error);
                         return;
                     }
 
-                    //foxylogInfo('The solution is: ', results[0].solution);
+                    //foxyLogInfo('The solution is: ', results[0].solution);
                     for(let i = 0; i < results.length; i++)
                     {
                         /*
                         var guild = BotPtr.guilds.get(results[i].guild_id);
                         if(guild == undefined)
                         {
-                            foxylogInfo("Error happen! No guild with ID " + results[i].guild_id + "!");
+                            foxyLogInfo("Error happen! No guild with ID " + results[i].guild_id + "!");
                         } else { */
                             //var channel = guild.channels.get(results[i].channel_id);
                             var channel = BotPtr.channels.get(results[i].channel_id);
                             if(channel === undefined)
-                                foxylogInfo("Error happen! No channel with ID " + results[i].channel_id + "!");
+                                foxyLogInfo("Error happen! No channel with ID " + results[i].channel_id + "!");
                             else
                             {
-                                foxylogInfo("Foxy's remind: " + results[i].message);
+                                foxyLogInfo("Foxy's remind: " + results[i].message);
                                 channel.send(results[i].message).catch(msgSendError);
                             }
                         /*}*/
@@ -629,7 +643,7 @@ function initRemindWatcher(bot)
         }
         catch(e)
         {
-            foxylogInfo("Error happen! " + e.name + ":" + e.message);
+            foxyLogInfo("Error happen! " + e.name + ":" + e.message);
             //Try to reconnect MySQL
             reconnectMyDb();
         }
@@ -668,13 +682,13 @@ function sayDelayd(bot, message, args)
     let guild_id = (message.channel.type === 'dm') ? 0 : message.channel.guild.id;
     let chan_id  = message.channel.id;
     let waitTime = my_db.escape(timeInt/1000);
-    //foxylogInfo("Remind: Wait " + (timeInt/1000) + " vs " +  waitTime + " seconds!");
+    //foxyLogInfo("Remind: Wait " + (timeInt/1000) + " vs " +  waitTime + " seconds!");
     let insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
                         "values ((NOW() + INTERVAL " + waitTime + " SECOND), " +
                         my_db.escape(some.toString()) + ", " +
                         my_db.escape(guild_id) + ", " +
                         my_db.escape(chan_id) + ");";
-    //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + my_db.escape(guild_id) + " Query is: " + insertQuery);
+    //foxyLogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + my_db.escape(guild_id) + " Query is: " + insertQuery);
     my_db.query(insertQuery, errorMyDb);
     //
     // setTimeout(function()
@@ -719,7 +733,7 @@ function sayDelaydME(bot, message, args)
                         my_db.escape(some.toString()) + ", " +
                         my_db.escape(guild_id) + ", " +
                         my_db.escape(chan_id) + ");";
-    //foxylogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + my_db.escape(guild_id) + " Query is: " + insertQuery);
+    //foxyLogInfo(typeof(guild_id) + ", " + typeof(chan_id) + " " + my_db.escape(guild_id) + " Query is: " + insertQuery);
     my_db.query(insertQuery, errorMyDb);
     // setTimeout(function()
     // {
@@ -743,169 +757,12 @@ function setPlayingGame(bot, message, args)
         if(err)
         {
             var msg = "Error of setting game: " + err;
-            foxylogInfo(msg);
+            foxyLogInfo(msg);
             message.channel.send(msg).catch(msgSendError);
         }
     });*/
 }
 
-function choose(bot, message, args)
-{
-    var vars = args.split(/,|[ \n]or[ \n]/g);
-    if((vars.length === 1) && (vars[0].trim() === ""))
-    {
-        message.reply("you sent me nothing! I can't choose! :confused:").catch(msgSendError);
-        return;
-    }
-    message.channel.send(vars[getRandomInt(0, vars.length-1)].trim()).catch(msgSendError);
-}
-
-function myrand(bot, message, args)
-{
-    message.channel.send(getRandomInt(0, 100)).catch(msgSendError);
-}
-
-function myrandF(bot, message, args)
-{
-    message.channel.send(Math.random()).catch(msgSendError);
-}
-
-function lunaDocs(bot, message, args)
-{
-    message.channel.send("http://wohlsoft.ru/pgewiki/" + encodeURIComponent(args)).catch(msgSendError);
-}
-
-function lunaSearch(bot, message, args)
-{
-    message.channel.send("http://wohlsoft.ru/wiki/index.php?search=" + encodeURIComponent(args)).catch(msgSendError);
-}
-
-function findInGoogle(bot, message, args)
-{
-    message.channel.send("http://lmgtfy.com/?q=" + encodeURIComponent(args)).catch(msgSendError);
-}
-
-function findInWikipedia(bot, message, args)
-{
-    message.channel.send("http://wikipedia.lmgtfy.com/?q=" + encodeURIComponent(args)).catch(msgSendError);
-}
-
-function youtube(bot, message, args)
-{
-    let videoList = fs.readFileSync(__dirname+"/video_list.txt");
-    let videoArr = videoList.toString().trim().split(/[\n ]/g);
-    let oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
-    message.channel.send(oneVideo).catch(msgSendError);
-}
-
-function meow(bot, message, args)
-{
-    /*jslint unparam: true */
-    let videoList = fs.readFileSync(__dirname+"/meow_list.txt");
-    let videoArr = videoList.toString().trim().split(/[\n ]/g);
-    let oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
-    message.channel.send(oneVideo).catch(msgSendError);
-}
-
-function woof(bot, message, args)
-{
-    let videoList = fs.readFileSync(__dirname+"/woof_list.txt");
-    let videoArr = videoList.toString().trim().split(/[\n ]/g);
-    let oneVideo = videoArr[getRandomInt(0, videoArr.length-1)];
-    message.channel.send(oneVideo).catch(msgSendError);
-}
-
-
-
-
-
-
-function callBastion(bot, message, args)
-{
-    message.channel.send("Hey, bastion, tell something!").catch(msgSendError);
-}
-
-function callBotane(bot, message, args)
-{
-    var chan = getDefaultChannelForGuild(bot, message);
-    if(chan.id === message.channel.id)
-    {
-        message.reply("Don't play with Botane on this server!").catch(msgSendError);
-        return;
-    }
-
-    //Check is botane offline
-    var Botane = bot.users.get("216688100032643072");
-    if(Botane.presence.status === "offline")
-    {
-        message.reply("Botane is dead! Let's play with another bot :smirk:").catch(msgSendError);
-        return;
-    }
-
-    if(!inListFile("boop_zone.txt", message.channel.id))//"beep-boop"
-    {
-        message.channel.send("Go to <#" + channel.id +"> to enjoy the show :wink: ").catch(msgSendError);
-    }
-    chan.send("What is Horikawa?").catch(msgSendError);
-}
-
-let trollTimerIsBusy = [];
-function trollTimer(bot, message, args)
-{
-    if(!inListFile("boop_zone.txt", message.channel.id) && (!message.channel.isPrivate))
-        return;
-
-    if(trollTimerIsBusy[message.author.id])
-    {
-        message.reply("I'm busy!!! trolltimer possible use onence every 2 minutes!").catch(msgSendError);
-        return;
-    }
-
-    //if(inList(trollTimerBlackList, message.author.id))
-    if(inListFile("black_trolltimer.txt", message.author.id))
-    {
-        message.reply("I dont want!").catch(msgSendError);
-        return;
-    }
-
-    if(args.indexOf("@everyone") !== -1)
-    {
-        message.reply("Hey, troll everyone yourself! :angry:").catch(msgSendError);
-        return;
-    }
-    if(args.indexOf("@here") !== -1)
-    {
-        message.reply("Hey, troll everyone yourself! :angry:").catch(msgSendError);
-        return;
-    }
-
-    for(let i = 0; i < message.mentions.length; i++)
-    {
-        args = args.replace("<@"+message.mentions[i].id+">", "@"+message.mentions[i].username);
-    }
-
-    //args = args.replace(/\<\@\d\>/g, "@"+message.mentions[i].username);
-    message.mentions = [];
-
-    let opts = {
-        disableEveryone: true
-    };
-
-    message.channel.send("Starting trolling by "+message.author.username +
-                         "... (every second 5 times will be printed same message)", opts).catch(msgSendError);
-
-    trollTimerIsBusy[message.author.id] = true;
-    let i = 5;
-    setTimeout(function run()
-    {
-        message.channel.send(args).catch(msgSendError);
-        i--;
-        if(i>0)
-            setTimeout(run, 1000);
-    },  1000);
-
-    setTimeout(function unbusy(){ trollTimerIsBusy[message.author.id]=false; }, 120000);
-}
 
 
 
@@ -924,25 +781,25 @@ function aboutBot(bot, message, args)
     let stats1 = fs.statSync("foxy.js");
     let stats2 = fs.statSync("bot_commands.js");
 
-    let msgtext = "**" + foxyBotVer + "**\nCreated by **Wohlstand**, built on the Node.JS\n";
-    msgtext += getBotUptime() + "\n";
-    msgtext += getLocalTime() + "\n";
-    msgtext += "\n";
-    msgtext += "**Kernel** __*(foxy.js)*__ - updated " + stats1["mtime"] + "\n";
-    msgtext += "**Functions** __*(bot_commands.js)*__ - updated " + stats2["mtime"] + "\n";
-    msgtext += "\n";
-    msgtext += "Guilds where I am: **" + bot.guilds.size + "**.\n";
-    msgtext += "Channels where I am: **" + bot.channels.size + "**.\n";
-    msgtext += "Users I can see: **" + bot.users.size + "**.\n";
-    msgtext += "\n";
-    msgtext += "Totally I know **" + Cmds.length + "** commands.\n";
-    msgtext += "Unique are **" + CmdsREAL.length + "** commands.\n";
-    msgtext += "\n";
-    msgtext += "**Node.js** version " + process.versions['node'] + "\n";
-    msgtext += "**V8** version " + process.versions['v8'] + "\n";
-    msgtext += "**Discord.js API** version " + Discord.version + "\n";
-    msgtext += "\n";
-    message.channel.send(msgtext).catch(msgSendError);
+    let t = "**" + foxyBotVer + "**\nCreated by **Wohlstand**, built on the Node.JS\n";
+    t += getBotUptime() + "\n";
+    t += getLocalTime() + "\n";
+    t += "\n";
+    t += "**Kernel** __*(foxy.js)*__ - updated " + stats1["mtime"] + "\n";
+    t += "**Functions** __*(bot_commands.js)*__ - updated " + stats2["mtime"] + "\n";
+    t += "\n";
+    t += "Guilds where I am: **" + bot.guilds.size + "**.\n";
+    t += "Channels where I am: **" + bot.channels.size + "**.\n";
+    t += "Users I can see: **" + bot.users.size + "**.\n";
+    t += "\n";
+    t += "Totally I know **" + Cmds.length + "** commands.\n";
+    t += "Unique are **" + CmdsREAL.length + "** commands.\n";
+    t += "\n";
+    t += "**Node.js** version " + process.versions['node'] + "\n";
+    t += "**V8** version " + process.versions['v8'] + "\n";
+    t += "**Discord.js API** version " + Discord.version + "\n";
+    t += "\n";
+    message.channel.send(t).catch(msgSendError);
 }
 
 function sendEmailFile(message, args, attachment, doReply)
@@ -977,7 +834,7 @@ function sendEmailFile(message, args, attachment, doReply)
     .then(function(gotMember)
     {
         // create reusable transporter object using the default SMTP transport
-        let transporter = nodemailer.createTransport(smtpMailLoginInfo);
+        let transporter = nodeMailer.createTransport(smtpMailLoginInfo);
 
         let usr_nick = (gotMember.nickname == null ? message.author.username : gotMember.nickname);
         let usr_sign = (message.author.username + "#" + message.author.discriminator);
@@ -1056,7 +913,7 @@ function sendEmailF(message, args, doReply)
     .then(function(gotMember)
     {
         // create reusable transporter object using the default SMTP transport
-        let transporter = nodemailer.createTransport(smtpMailLoginInfo);
+        let transporter = nodeMailer.createTransport(smtpMailLoginInfo);
 
         let usr_nick = (gotMember.nickname == null ? message.author.username : gotMember.nickname);
         let usr_sign = (message.author.username + "#" + message.author.discriminator);
@@ -1115,7 +972,7 @@ function sendEmail(bot, message, args)
         return;
     }
 
-    if( (emailWhiteList.length>0) && !inList(emailWhiteList, message.author.id))
+    if( (emailWhiteList.length > 0) && !inList(emailWhiteList, message.author.id))
     {
         message.channel.send("Sorry, " + message.author.toString() + ", emailing is forbidden for you! (you are not in white list!) :cop:").catch(msgSendError);
         return;
@@ -1126,10 +983,10 @@ function sendEmail(bot, message, args)
 
 function commandAllowedOnServer(Cmd, gd_ext)
 {
-    if(typeof(Cmd[5]) !== 'undefined')
+    if(Cmd.guildsLimit.length > 0)
     {
         let found = false;
-        Cmd[5].forEach(function(gd)
+        Cmd.guildsLimit.forEach(function(gd)
         {
             console.log("Compare " + gd_ext + " and " + gd + "...");
             if(gd_ext === gd)
@@ -1141,21 +998,20 @@ function commandAllowedOnServer(Cmd, gd_ext)
     return true;
 }
 
-// Command structure: name[0], function(bot,msg,args)[1], help[2], synonims[3], isUseful[4], limitOnGuilds[5]
 function listCmds(bot, message, args)
 {
     let commands = "**Available commands:**\n";
     let commandsCount = 0;
     let isGuild = (message.channel.type === "text");
-    for(let i=0; i < Cmds.length; i++)
+    for(const cmdK of Cmds)
     {
-        if(!isGuild && (typeof(Cmds[i][5]) !== 'undefined'))
+        if(!isGuild && (cmdK.guildsLimit.length > 0))
             continue;
-        if(isGuild && !commandAllowedOnServer(Cmds[i], message.guild.id))
+        if(isGuild && !commandAllowedOnServer(cmdK, message.guild.id))
             continue;
-        if(i > 0)
+        if(commandsCount > 0)
             commands += ", ";
-        commands += Cmds[i][0];
+        commands += cmdK.name;
         commandsCount++;
     }
     commands += "\n\nTotally I know **" + Cmds.length + "** commands.";
@@ -1164,18 +1020,18 @@ function listCmds(bot, message, args)
     commands += "\n";
     let usefulCount = 0;
     let usefulCommands = "";
-    for(k in CmdsREAL)
+    for(const cmdK of CmdsREAL)
     {
-        if(!isGuild && (typeof(CmdsREAL[k][5]) !== 'undefined'))
+        if(!isGuild && (cmdK.guildsLimit > 0))
             continue;
-        if(isGuild && !commandAllowedOnServer(CmdsREAL[k], message.guild.id))
+        if(isGuild && !commandAllowedOnServer(cmdK, message.guild.id))
             continue;
-        if(typeof(CmdsREAL[k][4]) !== 'undefined')
+        if(cmdK.isUseful)
         {
             if(usefulCount > 0)
                 usefulCommands += ", ";
             usefulCount++;
-            usefulCommands += CmdsREAL[k][0];
+            usefulCommands += cmdK.name;
         }
     }
     commands += "\nUseful of them are **" + usefulCount + "** commands:\n";
@@ -1190,25 +1046,25 @@ function cmdHelp(bot, message, args)
     let isGuild = (message.channel.type === "text");
     if(args.trim() === "")
     {
-        message.reply("Sorry, I can't describe you empty space! Please specify command you wanna learn!").catch(msgSendError);
+        listCmds(bot, message, args);
         return;
     }
-    for(let i=0; i < Cmds.length; i++)
+    for(const cmdK of Cmds)
     {
-        if(Cmds[i][0] === args)
+        if(cmdK.name === args)
         {
-            if(!isGuild && (typeof(Cmds[i][5]) !== 'undefined'))
+            if(!isGuild && (cmdK.guildsLimit.length > 0))
                 continue;
-            if(isGuild && !commandAllowedOnServer(Cmds[i], message.guild.id))
+            if(isGuild && !commandAllowedOnServer(cmdK, message.guild.id))
                 continue;
-            let helpCmd = "\n**" + Cmds[i][0] + "**\n" + Cmds[i][2] + "\n";
-            if(typeof(Cmds[i][3]) !== 'undefined')
+            let helpCmd = "\n**" + cmdK.name + "**\n" + cmdK.help + "\n";
+            if(cmdK.synonims.length > 0)
             {
                 helpCmd += "\n**Aliases**: ";
-                for(let j = 0; j < Cmds[i][3].length; j++)
+                for(let j = 0; j < cmdK.synonims.length; j++)
                 {
                     if(j > 0) helpCmd += ", ";
-                    helpCmd += Cmds[i][3][j];
+                    helpCmd += cmdK.synonims[j];
                 }
             }
             message.reply(helpCmd).catch(msgSendError);
@@ -1218,15 +1074,39 @@ function cmdHelp(bot, message, args)
     message.reply("Sorry, I don't know this").catch(msgSendError);
 }
 
-function wrongfunction(bot, message, args)
+function wrongFunction(bot, message, args)
 {
     produceShit();
 }
 
 function addCMD(cmd)
 {
-    CmdsREAL.push(cmd);
-    Cmds.push(cmd);
+    let cmdEntry = {};
+    cmdEntry.name = cmd[CMD_NAME];
+    cmdEntry.call = cmd[CMD_FUNCTION];
+
+    if(typeof(cmd[CMD_HELPTEXT]) === 'undefined')
+        cmdEntry.help = "<No description>";
+    else
+        cmdEntry.help = cmd[CMD_HELPTEXT];
+
+    if(typeof(cmd[CMD_SYNONIMS]) === 'undefined')
+        cmdEntry.synonims = [];
+    else
+        cmdEntry.synonims = cmd[CMD_SYNONIMS];
+
+    if(typeof(cmd[CMD_ISUSEFUL]) === 'undefined')
+        cmdEntry.isUseful = false;
+    else
+        cmdEntry.isUseful = cmd[CMD_ISUSEFUL];
+
+    if (typeof (cmd[CMD_LIMIT_ON_GUILDS]) === 'undefined')
+        cmdEntry.guildsLimit = [];
+    else
+        cmdEntry.guildsLimit = cmd[CMD_LIMIT_ON_GUILDS];
+
+    CmdsREAL.push(cmdEntry);
+    Cmds.push(cmdEntry);
 }
 
 function clearCommands()
@@ -1235,32 +1115,23 @@ function clearCommands()
     Cmds = [];
 }
 
-function addSynonimOf(oldcmd, name, customHelp)
+function addSynonimOf(oldСmd, name, customHelp = "")
 {
-    if(typeof(customHelp) === 'undefined')
-        customHelp = "";
-
     for(let i = 0; i < CmdsREAL.length; i++)
     {
-        if(CmdsREAL[i][0] === oldcmd)
+        if(CmdsREAL[i].name === oldСmd)
         {
             let newI = Cmds.length;
-            Cmds[newI] = CmdsREAL[i].slice();
-            Cmds[newI][0] = name;
+            Cmds[newI] = Object.assign({}, CmdsREAL[i]);
+            Cmds[newI].name = name;
 
             if(customHelp !== "")
-                Cmds[newI][2] = customHelp;
+                Cmds[newI].help = customHelp;
 
-            if(typeof(CmdsREAL[i][3])==='undefined')
-            {
-                CmdsREAL[i][3] = [];
-                CmdsREAL[i][3].push(oldcmd);
-            } else {
-                if(CmdsREAL[i][3].length === 0)
-                    CmdsREAL[i][3].push(oldcmd);
-            }
-            CmdsREAL[i][3].push(name);
-            Cmds[newI][3] = CmdsREAL[i][3];
+            if(CmdsREAL[i].synonims.length === 0)
+                CmdsREAL[i].synonims.push(oldСmd);
+            CmdsREAL[i].synonims.push(name);
+            Cmds[newI].synonims = CmdsREAL[i].synonims;
             break;
         }
     }
@@ -1276,14 +1147,6 @@ function registerCommands()
 
     addCMD(["test",     test,             "Just a test"]);
     addCMD(["invite",   inviteMeLink,     "I'll give you invite link to me!", [], true]);
-    addCMD(["choose",   choose,           "Randomly chooses one of words from list.\n__*Syntax:*__ choose <word1>, <word2> or <word3>\n\nAllowed separators: \",\", \"or\".", [], true]);
-    addCMD(["rand",     myrand,           "Random integer from 0 to 100"]);
-    addCMD(["randf",    myrandF,          "Random floating pointer number from 0.0 to 1.0"]);
-
-    addCMD(["docs",     lunaDocs,         "Open PGE-Wiki page\n__*Syntax:*__ docs <name of PGE-Wiki page>", [], true]);
-    addCMD(["search",   lunaSearch,       "Find something in the PGE-Wiki\n__*Syntax:*__ search <search query>", [], true]);
-    addCMD(["find",     findInGoogle,     "Find something in Google\n__*Syntax:*__ find <your question>", [], true]);
-    addCMD(["findwiki", findInWikipedia,  "Find something in Wikipedia\n__*Syntax:*__ findwiki <your question>", [], true]);
 
     addCMD(["say",      say,              "I'll say some instead you! (attachments also supported!)\n__*Syntax:*__ say <any your text>"]);
     addCMD(["saytts",   sayTTS,           "I'll help to pronuncate you some!\n__*Syntax:*__ saytts <any your text>"]);
@@ -1292,15 +1155,7 @@ function registerCommands()
     addCMD(["remind",   sayDelayd,        ":information_desk_person: I'll remeber a thing you request me!\n__*Syntax:*__ remind <any your text> after <time> <seconds, minutes, hours>\n", [], true]);
     addCMD(["remindme", sayDelaydME,      ":information_desk_person: I'll remeber you personally a thing you request me!\n__*Syntax:*__ remindMe <any your text> after <time> <seconds, minutes, hours>\n", [], true]);
 
-    addCMD(["youtube",  youtube,          "Take random youtube video which I know"]);
-    addCMD(["meow",     meow,             ":cat:"]);
-    addCMD(["woof",     woof,             ":dog:"]);
-
-    addCMD(["trollbasty", callBastion,    "I'll troll some dumb bot which can speak only idiotic sounds, for you!"]);
-    addCMD(["trollbotane", callBotane,    "That bot is very trolling, I'll troll it until it will get offline!\n\n**NOTE:** Working only in the #beep-boop room!"]);
-    addCMD(["trolltimer", trollTimer,     "Don't use this command until you inside beep-boop zone!"]);
-
-    addCMD(["err",      wrongfunction,    "It hurts me..."]);
+    addCMD(["err",      wrongFunction,    "It hurts me..."]);
 
     addCMD(["isbeepboop",isBeepBoop,      "Check is this server has a beep-boop channel"]);
     addSynonimOf("isbeepboop","isfun",    "Check is this server has a beep-boop/fun channel");
@@ -1319,29 +1174,28 @@ function registerCommands()
     addCMD(["reload-lists", cachedFiles_ReLeload, "<Owner-Only> Reload built-in lists", [], true]);
 
 
-    foxylogInfo( Cmds.length + " command has been registered!");
+    foxyLogInfo( Cmds.length + " command has been registered!");
 }
+
 
 function callCommand(bot, message, command, args)
 {
     if(inListFile("black_global.txt", message.author.id))
-    {
         return;
-    }
 
     let isDM = (message.channel.type !== "text");
     let found=false;
-    for(let i=0; i < Cmds.length; i++)
+    for(const cmdK of Cmds)
     {
-        if(Cmds[i][0] === command)
+        if(cmdK.name === command)
         {
-            if(isDM && (typeof(Cmds[i][5]) !== 'undefined'))
+            if(isDM && (cmdK.guildsLimit.length > 0))
                 continue;
-            if(!isDM && !commandAllowedOnServer(Cmds[i], message.guild.id))
+            if(!isDM && !commandAllowedOnServer(cmdK, message.guild.id))
                 continue;
             try{
-                found=true;
-                Cmds[i][1](bot, message, args);
+                found = true;
+                cmdK.call(bot, message, args);
             }
             catch(e)
             {
@@ -1361,11 +1215,11 @@ function callCommand(bot, message, command, args)
 // {
 //     if(error)
 //     {
-//         foxylogInfo('There was an error logging in: ' + error);
+//         foxyLogInfo('There was an error logging in: ' + error);
 //     }
 //     else
 //     {
-//         foxylogInfo('Logged in. Token: ' + token);
+//         foxyLogInfo('Logged in. Token: ' + token);
 //     }
 // }
 
@@ -1383,6 +1237,7 @@ module.exports =
     isWritableGuild:  isWritableGuild,
     isWritableChannel: isWritableChannel,
     isWritableChannelId: isWritableChannelId,
+    getDefaultChannelForGuild: getDefaultChannelForGuild,
     sendEmail:        sendEmailF,
     sendEmailFile:    sendEmailFile,
     initRemindWatcher:initRemindWatcher,
@@ -1395,7 +1250,8 @@ module.exports =
     my_db:            my_db,
     getRandomInt:     getRandomInt,
     errorMyDb:        errorMyDb,
-    foxylogInfo:      foxylogInfo,
+    foxyLogInfo:      foxyLogInfo,
+    foxyLogError:     foxyLogError,
     addCMD:           addCMD,
     addSynonimOf:     addSynonimOf,
     clearCommands:    clearCommands

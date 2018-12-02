@@ -130,7 +130,7 @@ function messageIn(mybot, message, allowWrite)
 
     for(let i = 0; i < mentions.length; i++)
     {
-        botCommands.foxylogInfo( "---> " + mentions[i].username + "#" + mentions[i].discriminator);
+        botCommands.foxyLogInfo( "---> " + mentions[i].username + "#" + mentions[i].discriminator);
         wasAsked = (mentions[i].id === mybot.user.id);
         messageForMe = (mentions[i].id === "182039820879659008") && (message.author.id !== mybot.user.id);
         messageForMeReact = messageForMe;

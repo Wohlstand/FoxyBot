@@ -42,11 +42,11 @@ var voting = function(bot, message, args)
         votingVotings[chid] = [];
         votingVotings[chid].votingInProcess = false;
     }
-    core.foxylogInfo("====Voting mechanism====");
+    core.foxyLogInfo("====Voting mechanism====");
     //on "start <variants>" begin vote counts
     if(args.indexOf("start ") !== -1)
     {
-        core.foxylogInfo("--start--");
+        core.foxyLogInfo("--start--");
         if(votingVotings[chid].votingInProcess)
         {
             message.reply("Another voting in process! Finish this voting and then you will be able to start new one!", core.msgSendError);
@@ -76,7 +76,7 @@ var voting = function(bot, message, args)
     else
     if(args.indexOf("stats") !== -1)
     {
-        core.foxylogInfo("--stats--");
+        core.foxyLogInfo("--stats--");
         if(!votingVotings[chid].votingInProcess)
         {
             message.channel.send("No votings in this channel! Type **/foxy help voting** to learn how to work with voting.").catch(core.msgSendError);
@@ -89,7 +89,7 @@ var voting = function(bot, message, args)
     else
     if((args.indexOf("stop") !== -1) || (args.indexOf("end") !== -1))
     {
-        core.foxylogInfo("--stop--");
+        core.foxyLogInfo("--stop--");
         if(!votingVotings[chid].votingInProcess)
         {
             message.reply("No voting in this channel to stop!", core.msgSendError);
@@ -100,19 +100,19 @@ var voting = function(bot, message, args)
         message.channel.send("**Voting stopped!**\n" + votingResultMsg).catch(core.msgSendError);
     } else {
     //on "<number of variant>" add voter
-        core.foxylogInfo("--vote--");
+        core.foxyLogInfo("--vote--");
         if(!votingVotings[chid].votingInProcess)
         {
             message.reply("No votings to vote! Type **/foxy help voting** to learn how to work with voting.", core.msgSendError);
             return;
         }
-        core.foxylogInfo("Got vote: " + args.trim() );
+        core.foxyLogInfo("Got vote: " + args.trim() );
         var vote = parseInt(args.trim(), 10);
         if( (vote != NaN) )
         {
             if( (vote > 0) && (vote <= votingVotings[chid].votingVariants.length) )
             {
-                core.foxylogInfo("Vote remembered: " + vote);
+                core.foxyLogInfo("Vote remembered: " + vote);
                 if(typeof(votingVotings[chid].voters[message.author.id]) !== 'undefined')
                     message.react("🔄");//Mark re-voting
                 votingVotings[chid].voters[message.author.id] = (vote - 1);
@@ -121,7 +121,7 @@ var voting = function(bot, message, args)
                 message.reply("Out of range!, Vote variant from 1 to " + (votingVotings[chid].votingVariants.length), core.msgSendError);
             }
         } else {
-            //foxylogInfo("Vote invalid: " + vote);
+            //foxyLogInfo("Vote invalid: " + vote);
             message.reply("Unknown command! Accepted commands are **start**, **stats**, **stop**, or integer of the variant!", core.msgSendError);
         }
     }
