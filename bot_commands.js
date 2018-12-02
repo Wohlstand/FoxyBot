@@ -745,25 +745,40 @@ function sayDelaydME(bot, message, args)
 
 function setPlayingGame(bot, message, args)
 {
-    /*
-    if(!inListFile("white_setgame.txt", message.author.id))
-    {
-        message.reply("Sorry, I can't, you not granted to do this :cop:!", msgSendError);
-        return;
-    }*/
-    bot.user.setActivity(args);
-    /*, function(err)
-    {
-        if(err)
-        {
-            var msg = "Error of setting game: " + err;
-            foxyLogInfo(msg);
-            message.channel.send(msg).catch(msgSendError);
-        }
-    });*/
+    bot.user.setActivity(args, {
+        type: "PLAYING"
+    })
+        .then(presence => foxyLogInfo(`Playing game set to ${presence.game ? presence.game.name : 'none'}`))
+        .catch(foxyLogError);
 }
 
+function setWatchingVideo(bot, message, args)
+{
+    bot.user.setActivity(args, {
+        type: "WATCHING"
+    })
+        .then(presence => foxyLogInfo(`Watching set to ${presence.game ? presence.game.name : 'none'}`))
+        .catch(foxyLogError);
+}
 
+function setListeningMusic(bot, message, args)
+{
+    bot.user.setActivity(args, {
+        type: "LISTENING"
+    })
+        .then(presence => foxyLogInfo(`Listening set to ${presence.game ? presence.game.name : 'none'}`))
+        .catch(foxyLogError);
+}
+
+function setStreaming(bot, message, args)
+{
+    bot.user.setActivity(args, {
+        url: "http://github.com/",
+        type: "STREAMING"
+    })
+        .then(presence => foxyLogInfo(`Streaming set to ${presence.game ? presence.game.name : 'none'}`))
+        .catch(foxyLogError);
+}
 
 
 function myTime(bot, message, args)
@@ -1151,7 +1166,15 @@ function registerCommands()
     addCMD(["say",      say,              "I'll say some instead you! (attachments also supported!)\n__*Syntax:*__ say <any your text>"]);
     addCMD(["saytts",   sayTTS,           "I'll help to pronuncate you some!\n__*Syntax:*__ saytts <any your text>"]);
     addCMD(["whosaid",  sayLog,           ":spy: Shsh! I'll leak you secret - who asked me to say (5 last messages)\n"]);
-    addCMD(["setgame",  setPlayingGame,   "I'll play any game you suggesting me!\n__*Syntax:*__ setgame <any your text>\n\n**NOTE:** Only permited users can use this command!"]);
+    addCMD(["setgame",  setPlayingGame,   "I'll play any game you suggesting me!\n" +
+                                                "__*Syntax:*__ setgame <any your text>\n\n**NOTE:** Only permited users can use this command!"]);
+    addCMD(["setmusic", setListeningMusic,"I'll listen any music you suggesting me!\n" +
+                                          "__*Syntax:*__ setmusic <any your text>\n\n**NOTE:** Only permited users can use this command!"]);
+    addCMD(["setvideo", setWatchingVideo, "I'll watch any video suggesting me!\n" +
+                                          "__*Syntax:*__ setvideo <any your text>\n\n**NOTE:** Only permited users can use this command!"]);
+    addCMD(["setstream",setStreaming,     "I'll stream anything you ask me!\n" +
+                                          "__*Syntax:*__ setstream <any your text>\n\n**NOTE:** Only permited users can use this command!"]);
+
     addCMD(["remind",   sayDelayd,        ":information_desk_person: I'll remeber a thing you request me!\n__*Syntax:*__ remind <any your text> after <time> <seconds, minutes, hours>\n", [], true]);
     addCMD(["remindme", sayDelaydME,      ":information_desk_person: I'll remeber you personally a thing you request me!\n__*Syntax:*__ remindMe <any your text> after <time> <seconds, minutes, hours>\n", [], true]);
 
