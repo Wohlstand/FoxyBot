@@ -227,7 +227,18 @@ function fart(bot, message, args)
     if(isMyBoss && (args.indexOf("viva-systemd") !== -1))
     {
         message.reply("I'll be back!", core.msgSendError);
-        bot.setTimeout(function() { process.exit(1); }, 100);
+        bot.user.setStatus("idle")
+            .catch(core.foxyLogError);
+        bot.user.setActivity("Shuting down...")
+            .catch(core.foxyLogError);
+        setTimeout(function()
+        {
+            bot.destroy().catch(core.foxyLogError);
+            setTimeout(function()
+            {
+                process.exit(1);
+            }, 1000);
+        }, 1000);
         return;
     }
 

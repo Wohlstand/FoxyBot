@@ -181,59 +181,36 @@ function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     message.channel.send(pluginsInfo).catch(botCommands.msgSendError);
 }
 
-
-// function statusError(error)
-// {
-//     if(error)
-//     {
-//         botCommands.foxyLogInfo('There was an error seting status: ' + error);
-//     }
-// }
-//
-// function nickError(error)
-// {
-//     if(error)
-//     {
-//         botCommands.foxyLogInfo('There was an error seting nick: ' + error);
-//     }
-// }
-
-function sleep(milliseconds)
+function closeBot()
 {
-    let start = new Date().getTime();
-    for(let i = 0; i < 1e7; i++)
+    foxyBotCli.user.setStatus("dnd")
+        .catch(botCommands.foxyLogError);
+    foxyBotCli.user.setActivity("Shuting down...")
+        .catch(botCommands.foxyLogError);
+    setTimeout(function ()
     {
-        if ((new Date().getTime() - start) > milliseconds)
+        botCommands.foxyLogInfo("Sent \"Away\" status!");
+        setTimeout(function ()
         {
-            break;
-        }
-    }
+            foxyBotCli.destroy().catch(k => botCommands.msgSendError("Error of Destroy :-P"));
+            setTimeout(function ()
+            {
+                process.exit();
+            }, 2000);
+        }, 1000);
+    }, 1000);
 }
 
 process.on('SIGINT', function()
 {
     botCommands.foxyLogInfo("\n\nCaught interrupt signal\n");
-    foxyBotCli.user.setStatus("dnd")
-        .then(botCommands.foxyLogInfo)
-        .catch(botCommands.foxyLogError);
-    sleep(500);
-    botCommands.foxyLogInfo("Sent \"Away\" status!");
-    foxyBotCli.destroy();
-    sleep(1000);
-    process.exit();
+    closeBot();
 });
 
 process.on('SIGHUP', function()
 {
     botCommands.foxyLogInfo("\n\nCaught SIGHUP signal\n");
-    foxyBotCli.user.setStatus("dnd")
-        .then(botCommands.foxyLogInfo)
-        .catch(botCommands.foxyLogError);
-    sleep(500);
-    botCommands.foxyLogInfo("Sent \"Away\" status!");
-    foxyBotCli.destroy();
-    sleep(1000);
-    process.exit();
+    closeBot();
 });
 
 let greetingSent = false;
@@ -250,11 +227,9 @@ foxyBotCli.on("ready", () =>
 
     botCommands.foxyLogInfo('set status...');
     foxyBotCli.user.setStatus("online")
-        .then(botCommands.foxyLogInfo)
         .catch(botCommands.foxyLogError);
 
     foxyBotCli.user.setActivity(botPrefix + " cmd")
-        .then(botCommands.foxyLogInfo)
         .catch(botCommands.foxyLogError);
 
     botCommands.initRemindWatcher(foxyBotCli);

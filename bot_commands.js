@@ -173,10 +173,10 @@ function msgSendError(error, message)
     {
         console.log("Fail to send message: " + message);
         let ErrorText = "Can't send message because: " + error;
-        foxyLogInfo(ErrorText);
+        foxyLogError(ErrorText);
         if(++msgFailedAttempts > 2)
         {
-            foxyLogInfo("Trying to relogin...");
+            foxyLogError("Trying to relogin...");
             loginBot(BotPtr, authToken);
             msgFailedAttempts = 0;
         }
