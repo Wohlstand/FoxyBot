@@ -79,17 +79,17 @@ function pokeBot(bot, message, botPath)
     });
 }
 
-function knuxPoke(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+function knuxPull(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     pokeBot(bot, message, echidnasDir);
 }
 
-function minniePoke(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+function minniePull(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     pokeBot(bot, message, minnieDir);
 }
 
-function bastionPoke(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+function bastionPull(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     pokeBot(bot, message, bastionDir);
 }
@@ -178,26 +178,29 @@ function registerCommands(foxyCore)
     core.addCMD(["knuxlog",    knuxLog,           "Check out Knux's log tail. Has optional argument - a count of lines to print.", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knuxlogfile",knuxFullLog,       "Get a complete Knux's log file.", [], true, [CODEHAUS_Server] ]);
 
-    core.addCMD(["knux-poke",   knuxPoke,         "Poke Knux if he is asleep", [], true, [CODEHAUS_Server] ]);
-    core.addSynonimOf("knux-poke", "knuxpoke");
+    core.addCMD(["knux-pull",   knuxPull,         "Pull fresh changes of Knux", [], true, [CODEHAUS_Server] ]);
+    core.addSynonimOf("knux-pull", "knux-poke");
+    core.addSynonimOf("knux-pull", "knuxpoke");
     core.addCMD(["knux-start",   knuxStart,       "Start Knuckles", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knux-stop",    knuxStop,        "Stop Knuckles", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knux-restart", knuxRestart,     "Restart Knuckles", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["knux-status",  knuxStatus,      "Show status of Knuckles", [], true, [CODEHAUS_Server] ]);
 
-    core.addCMD(["minnie-poke", minniePoke,       "Poke Minnie Marigold if she is asleep", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-pull", minniePull,       "Pull fresh changes of Minnie Marigold", [], true, [CODEHAUS_Server] ]);
+    core.addSynonimOf("minnie-pull", "minnie-poke");
+    core.addSynonimOf("minnie-pull", "minniepoke");
     core.addCMD(["minnie-start",   minnieStart,   "Start Minnie Marigold", [], true, [CODEHAUS_Server] ]);
-    core.addSynonimOf("minnie-poke", "minniepoke");
     core.addCMD(["minnie-stop",    minnieStop,    "Stop Minnie Marigold", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["minnie-restart", minnieRestart, "Restart Minnie Marigold", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["minnie-status",  minnieStatus,  "Show status of Minnie Marigold", [], true, [CODEHAUS_Server] ]);
 
-    core.addCMD(["basty-poke",bastionPoke,         "Poke B'astion if it is asleep", [], true, [CODEHAUS_Server] ]);
-    core.addSynonimOf("basty-poke", "bastypoke");
-    core.addCMD(["basty-start",   bastionStart,    "Start B'astionBot", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["basty-stop",    bastionStop,     "Stop B'astionBot", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["basty-restart", bastionRestart,  "Restart B'astionBot", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["basty-status",  bastionStatus,   "Show status of B'astionBot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["basty-pull",     bastionPull,   "Pull fresh changes of B'astion", [], true, [CODEHAUS_Server] ]);
+    core.addSynonimOf("basty-pull", "basty-poke");
+    core.addSynonimOf("basty-pull", "bastypoke");
+    core.addCMD(["basty-start",   bastionStart,   "Start B'astionBot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["basty-stop",    bastionStop,    "Stop B'astionBot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["basty-restart", bastionRestart, "Restart B'astionBot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["basty-status",  bastionStatus,  "Show status of B'astionBot", [], true, [CODEHAUS_Server] ]);
 }
 
 module.exports =
