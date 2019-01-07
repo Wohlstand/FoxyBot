@@ -834,10 +834,10 @@ function sendEmailFile(message, args, attachment, doReply)
 
     for(let i = 0; i < attachments.length; i++)
     {
-        let attachm = attachments[i];
+        let attachment = attachments[i];
         extraFiles[i] = {
-                           filename: attachm.filename,
-                           path: attachm.url
+                           filename: attachment.filename,
+                           path: attachment.url
                         };
     }
 
@@ -895,7 +895,7 @@ function sendEmailFile(message, args, attachment, doReply)
             }
         });
     }).catch(function(err){
-        message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+        sendEmailRaw(BotPtr, message,"Something weird happen! I have caught an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
@@ -917,10 +917,10 @@ function sendEmailF(message, args, doReply)
 
     for(let i = 0; i < attachments.length; i++)
     {
-        let attachm = attachments[i];
+        let attachment = attachments[i];
         extraFiles[i] = {
-                           filename: attachm.filename,
-                           path: attachm.url
+                           filename: attachment.filename,
+                           path: attachment.url
                         };
     }
 
@@ -974,9 +974,68 @@ function sendEmailF(message, args, doReply)
             }
         });
     }).catch(function(err){
-        message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+        sendEmailRaw(BotPtr, message,"Something weird happen! I have caught an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
+
+function sendEmailRaw(bot, message, messageText)
+{
+    if(botConfig.smtp.disabled !== undefined && botConfig.smtp.disabled)
+    {
+        foxyLogInfo("SMTP support is disabled...");
+        return;
+    }
+
+    let extraFiles = [];
+    let attachments = message.attachments.array();
+
+    for(let i = 0; i < attachments.length; i++)
+    {
+        let attachment = attachments[i];
+        extraFiles[i] = {
+            filename: attachment.filename,
+            path: attachment.url
+        };
+    }
+
+    let transporter = nodeMailer.createTransport(smtpMailLoginInfo);
+
+    let usr_nick = (bot.nickname == null ? bot.user.username : bot.nickname);
+    let usr_sign = (bot.user.username + "#" + bot.user.discriminator);
+
+    // setup e-mail data with unicode symbols
+    let mailOptions =
+    {
+        from: smtpMailFrom, // sender address
+        //to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
+        to: smtpMailTo, // list of receivers
+        subject: 'Message from ' + (bot.user.bot ? "bot" : "user")
+            + " " + (bot.nickname == null ? bot.user.username : bot.nickname)
+            + ' (@' + bot.user.username + "#" + bot.user.discriminator + ")"
+            +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
+        //text: args, //plaintext body
+        html: '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + bot.user.avatarURL + '"> '+
+            (bot.user.bot ?
+                '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
+                '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
+            '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
+            '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
+            '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + escape(messageText) + '</pre></p>' +
+            '<li> GuildID: [' + message.guild.id + ']</li>' +
+            '<li> ChannelID: [' + message.channel.id + ']</li>',  //html body
+        attachments: extraFiles
+    };
+
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, function(error, info)
+    {
+        if(error)
+            foxyLogError("Letter sent! Error: " + error + "; info: " + info);
+        else
+            foxyLogInfo("Letter sent! Info: " + info);
+    });
+}
+
 
 function sendEmail(bot, message, args)
 {
@@ -1252,6 +1311,7 @@ module.exports =
     getDefaultChannelForGuild: getDefaultChannelForGuild,
     sendEmail:        sendEmailF,
     sendEmailFile:    sendEmailFile,
+    sendEmailRaw:     sendEmailRaw,
     initRemindWatcher:initRemindWatcher,
     postGreeting:     postGreeting,
     msgSendError:     msgSendError,

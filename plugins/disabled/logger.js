@@ -42,8 +42,7 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
 
         myDb.query(insertQuery, core.errorMyDb);
     }).catch(function(err) {
-        if(channelIsWritable)
-            message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+        core.sendEmailRaw(bot, message, "Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
@@ -75,8 +74,7 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
 
         myDb.query(insertQuery, core.errorMyDb);
     }).catch(function(err) {
-        if(channelIsWritable)
-            message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+        core.sendEmailRaw(bot, message, "Something weird happen! I have caught an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
@@ -118,8 +116,7 @@ function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWr
 
         myDb.query(insertQuery, core.errorMyDb);
     }).catch(function(err){
-        if(channelIsWritable)
-            message.reply("Something weird happen! I have catched an error at myself! (error is [" + err +"])", core.msgSendError);
+        core.sendEmailRaw(bot, message, "Something weird happen! I have caught an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 

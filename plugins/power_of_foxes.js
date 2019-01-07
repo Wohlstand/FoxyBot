@@ -242,6 +242,12 @@ function fart(bot, message, args)
         return;
     }
 
+    if(isMyBoss && (args.indexOf("mailtest") !== -1))
+    {
+        core.sendEmailRaw(bot, message, message.content);
+        return;
+    }
+
     /* Post a log file by email */
     if(isMyBoss && (args.indexOf("maillog") !== -1))
     {

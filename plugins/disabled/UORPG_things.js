@@ -53,7 +53,7 @@ function cleanRoles(bot, message, args, newRole)
                 member.addRole(newRole);
         });
     }).catch(function(err){
-        message.reply("Something weird happen! I can't clean-up old roles! (error is [" + err +"])", core.msgSendError);
+        core.sendEmailRaw(bot, message,"Something weird happen! I can't clean-up old roles! (error is [" + err +"])", core.msgSendError);
     });
 }
 
