@@ -2,13 +2,13 @@
     A small plugin made for especially for UORPG chat server
 */
 
-var core = undefined;
+let core = undefined;
 
-var UORPG_Server = "177730395352072192";
+let UORPG_Server = "177730395352072192";
 
-var Chan_RUS = "203294045689217024";
-var Chan_ENG = "199908461549584384";
-var Chan_LAT = "369616743200456715";
+let Chan_RUS = "203294045689217024";
+let Chan_ENG = "199908461549584384";
+let Chan_LAT = "369616743200456715";
 
 function isRussian(chan)
 {
@@ -30,17 +30,17 @@ function getRenegades(guild)
     return guild.roles.find('name', 'Renegades');
 }
 
-var getKeys = function(obj)
+function getKeys(obj)
 {
     let keys = "";
-    for(var key in obj)
+    for(let key in obj)
     {
         keys += key + "; ";
     }
     return keys;
 }
 
-var cleanRoles = function(bot, message, args, newRole)
+function cleanRoles(bot, message, args, newRole)
 {
     message.guild.fetchMember(message.author)
     .then(function(gotMember) {
@@ -57,28 +57,28 @@ var cleanRoles = function(bot, message, args, newRole)
     });
 }
 
-var joinOrder = function(bot, message, args)
+function joinOrder(bot, message, args)
 {
     let order = getOrder(message.guild);
     cleanRoles(bot, message, args, order);
     message.reply("Welcome to Order!", core.msgSendError);
 }
 
-var joinChaos = function(bot, message, args)
+function joinChaos(bot, message, args)
 {
     let chaos = getChaos(message.guild);
     cleanRoles(bot, message, args, chaos);
     message.reply("Welcome to Chaos!", core.msgSendError);
 }
 
-var joinRenegades = function(bot, message, args)
+function joinRenegades(bot, message, args)
 {
     let renegades = getRenegades(message.guild);
     cleanRoles(bot, message, args, renegades);
     message.reply("Welcome to Renegades!", core.msgSendError);
 }
 
-var crystalPhase = function(bot, message, args)
+function crystalPhase(bot, message, args)
 {
     let oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
     let firstDate = new Date(2017,11,2);//Точка отсчёта чётности
