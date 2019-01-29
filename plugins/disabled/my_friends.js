@@ -9,6 +9,7 @@ let CODEHAUS_Server = "215661302692052992";
 const echidnasDir = "/home/vitaly/_Bots/echidnabot";
 const minnieDir = "/home/vitaly/_Bots/minnie-marigold";
 const bastionDir = "/home/vitaly/_Bots/bastionbot-js";
+const roboloeDir = "/home/vitaly/_Bots/roboloe";
 
 function isGranted(message)
 {
@@ -94,6 +95,11 @@ function bastionPull(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     pokeBot(bot, message, bastionDir);
 }
 
+function roboloePull(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    pokeBot(bot, message, roboloeDir);
+}
+
 function systemDofBot(bot, message, botPath, botName, action)
 {
     if(!isGranted(message))
@@ -112,6 +118,7 @@ function systemDofBot(bot, message, botPath, botName, action)
     });
 }
 
+ /* -------- Minnie -------- */
 function minnieStart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     systemDofBot(bot, message, minnieDir, "discord-minnie", "start");
@@ -132,6 +139,7 @@ function minnieStatus(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     systemDofBot(bot, message, minnieDir, "discord-minnie", "status");
 }
 
+/* -------- Knux -------- */
 function knuxStart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     systemDofBot(bot, message, minnieDir, "discord-knux", "start");
@@ -152,6 +160,7 @@ function knuxStatus(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     systemDofBot(bot, message, echidnasDir, "discord-knux", "status");
 }
 
+/* -------- Bastion -------- */
 function bastionStart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     systemDofBot(bot, message, bastionDir, "discord-bastion", "start");
@@ -171,6 +180,28 @@ function bastionStatus(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     systemDofBot(bot, message, bastionDir, "discord-bastion", "status");
 }
+
+/* -------- Roboloe -------- */
+function roboloeStart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, bastionDir, "discord-roboloe", "start");
+}
+
+function roboloeStop(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, bastionDir, "discord-roboloe", "stop");
+}
+
+function roboloeRestart(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, bastionDir, "discord-roboloe", "restart");
+}
+
+function roboloeStatus(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    systemDofBot(bot, message, bastionDir, "discord-roboloe", "status");
+}
+
 
 function registerCommands(foxyCore)
 {
@@ -201,6 +232,14 @@ function registerCommands(foxyCore)
     core.addCMD(["basty-stop",    bastionStop,    "Stop B'astionBot", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["basty-restart", bastionRestart, "Restart B'astionBot", [], true, [CODEHAUS_Server] ]);
     core.addCMD(["basty-status",  bastionStatus,  "Show status of B'astionBot", [], true, [CODEHAUS_Server] ]);
+
+    core.addCMD(["roboloe-pull",     roboloePull,   "Pull fresh changes of Roboloe Bot", [], true, [CODEHAUS_Server] ]);
+    core.addSynonimOf("roboloe-pull", "roboloe-poke");
+    core.addSynonimOf("roboloe-pull", "roboloepoke");
+    core.addCMD(["roboloe-start",   roboloeStart,   "Start R'oboloe Bot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["roboloe-stop",    roboloeStop,    "Stop R'oboloe Bot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["roboloe-restart", roboloeRestart, "Restart R'oboloe Bot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["roboloe-status",  roboloeStatus,  "Show status of R'oboloe Bot", [], true, [CODEHAUS_Server] ]);
 }
 
 module.exports =
