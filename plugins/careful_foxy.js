@@ -8,7 +8,7 @@ let botCommands = undefined;
 String.prototype.regexIndexOf = function(regex, startpos) {
     let indexOf = this.substring(startpos || 0).search(regex);
     return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
-}
+};
 
 function hasReg(msg, word)
 {
@@ -66,7 +66,7 @@ function lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite)
 }
 */
 
-var keyPrefix = [
+let keyPrefix = [
     "wohl",
     "wohlstand",
     "wholstand"
@@ -86,7 +86,7 @@ function lookUpForKeyPrefix(msgLowTrimmed)
     return forMe;
 }
 
-var keyMentions = [
+let keyMentions = [
     "pge",
     "wohl",
     "wohlstand",
