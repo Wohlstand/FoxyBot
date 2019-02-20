@@ -117,6 +117,13 @@ function messageIn(mybot, message, allowWrite)
     let msgLow          = message.content.toLowerCase();
     let msgLowTrimmed   = msgLow.trim();
 
+    let urlMask         = /(https?:\/\/wohlsoft.ru\/?[A-Za-z%0-9().\-_\/&?=]*)/g;
+
+    // Remove any wohlsoft URLs from the text
+    msgTrimmed          = msgTrimmed.replace(urlMask, "[url]");
+    msgLow              = msgLow.replace(urlMask, "[url]");
+    msgLowTrimmed       = msgLowTrimmed.replace(urlMask, "[url]");
+
     /*
     if(lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite))
         return;
