@@ -452,6 +452,13 @@ function inviteMeLink(bot, message, args)
 let sayLogArr = [];
 function say(bot, message, args)
 {
+    let isMyBoss = (botConfig.myboss.indexOf(message.author.id) !== -1);
+    if(!isMyBoss)
+    {
+        message.reply("You are not granted to speak as me!", msgSendError);
+        return;
+    }
+
     let chan = message.channel;
     let attachments = message.attachments.array();
     let authorname  = message.author.username;
@@ -478,6 +485,13 @@ function say(bot, message, args)
 
 function sayTTS(bot, message, args)
 {
+    let isMyBoss = (botConfig.myboss.indexOf(message.author.id) !== -1);
+    if(!isMyBoss)
+    {
+        message.reply("You are not granted to speak as me!", msgSendError);
+        return;
+    }
+
     let chan = message.channel;
     let attachments = message.attachments.array();
     let authorname  = message.author.username;
