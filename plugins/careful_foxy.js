@@ -96,7 +96,7 @@ let keyMentions = [
     "wolh",
     "wohlstand",
     "wholstand",
-    "wolhstand"
+    "wolhstand",
     "moondust",
     "adlmidi",
     "opnmidi",
