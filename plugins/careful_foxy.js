@@ -68,8 +68,11 @@ function lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite)
 
 let keyPrefix = [
     "wohl",
+    "whol",
+    "wolh",
     "wohlstand",
-    "wholstand"
+    "wholstand",
+    "wolhstand"
 ];
 
 function lookUpForKeyPrefix(msgLowTrimmed)
@@ -89,8 +92,11 @@ function lookUpForKeyPrefix(msgLowTrimmed)
 let keyMentions = [
     "pge",
     "wohl",
+    "whol",
+    "wolh",
     "wohlstand",
     "wholstand",
+    "wolhstand"
     "moondust",
     "adlmidi",
     "opnmidi",
