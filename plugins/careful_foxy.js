@@ -89,20 +89,28 @@ function lookUpForKeyPrefix(msgLowTrimmed)
     return forMe;
 }
 
-let keyMentions = [
-    "pge",
-    "wohl",
-    "whol",
-    "wolh",
-    "wohlstand",
-    "wholstand",
-    "wolhstand",
-    "moondust",
-    "adlmidi",
-    "opnmidi",
-    "sdl",
-    "midi"
+// [ \-_+=\\/!@#$%^&*():;'".,?|`~]
+
+const keyMentions = [
+    /\b(?:p[ \-_+=\\/!@#$%^&*():;'".,?|`~]*g[ \-_+=\\/!@#$%^&*():;'".,?|`~]*e)\b/gi,
+    /\b(?:w[ \-_+=\\/!@#$%^&*():;'".,?|`~]*o[ \-_+=\\/!@#$%^&*():;'".,?|`~]*h[ \-_+=\\/!@#$%^&*():;'".,?|`~]*l)\b/gi,
+    /\b(?:w[ \-_+=\\/!@#$%^&*():;'".,?|`~]*h[ \-_+=\\/!@#$%^&*():;'".,?|`~]*o[ \-_+=\\/!@#$%^&*():;'".,?|`~]*l)\b/gi,
+    /\b(?:w[ \-_+=\\/!@#$%^&*():;'".,?|`~]*o[ \-_+=\\/!@#$%^&*():;'".,?|`~]*l[ \-_+=\\/!@#$%^&*():;'".,?|`~]*h)\b/gi,
+    /w(ohl|hol|olh)e?stand/gi,
+    /\b(?:moon[ \-_+=\\/!@#$%^&*():;'".,?|`~]*dust)\b/gi,
+    /\b(?:adl[ \-_+=\\/!@#$%^&*():;'".,?|`~]*midi)\b/gi,
+    /\b(?:opn[ \-_+=\\/!@#$%^&*():;'".,?|`~]*midi)\b/gi,
+    /\b(?:sdl2?)\b/gi,
+    /\b(?:sdl2?[ \-_+=\\/!@#$%^&*():;'".,?|`~]*mixer[ \-_+=\\/!@#$%^&*():;'".,?|`~]*?e?x?t?)\b/gi,
+    /\b(?:mixer[ \-_+=\\/!@#$%^&*():;'".,?|`~]*x)\b/gi,
+    /\b(?:midi)\b/gi
 ];
+
+function hasMatches(text, reg)
+{
+    let m = text.match(reg);
+    return m && m.length > 0;
+}
 
 function lookUpForKeyMentions(msgLowTrimmed)
 {
@@ -110,8 +118,11 @@ function lookUpForKeyMentions(msgLowTrimmed)
 
     for(let i = 0; i < keyMentions.length; i++)
     {
-        if(msgLowTrimmed.indexOf(keyMentions[i]) !== -1)
+        if(hasMatches(msgLowTrimmed, keyMentions[i]))
+        {
+            botCommands.foxyLogInfo("== Caught a mention of " + keyMentions[i] + "! ==");
             forMe = true;
+        }
     }
 
     return forMe;
