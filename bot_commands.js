@@ -277,7 +277,7 @@ function inList(list, userID)
     {
         for(let i=0; i < list.length; i++)
         {
-            if(userID === list[i])
+            if(parseInt(userID, 10) === list[i])
             {
                 return true;
             }
@@ -831,6 +831,44 @@ function aboutBot(bot, message, args)
     message.channel.send(t).catch(msgSendError);
 }
 
+
+function toEmailHtml(inText)
+{
+    return escape(inText).replace(/(?:\r\n|\r|\n)/g, '<br>');
+}
+
+function emailFormatLetter(message, args, usr_nick, usr_sign)
+{
+    return '' +
+        '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + message.author.avatarURL + '"> '+
+        (message.author.bot ?
+            '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
+            '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
+        '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
+        '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
+        '<p><div style="font-family: Monospaced; border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + toEmailHtml(args) + '</div></p>' +
+        '<p><h3>Meta-data</h3></p>' +
+        '<ul>' +
+        '<li> UserID: [' + message.author.id + ']</li>' +
+        '<li> GuildID: [' + message.guild.id + ']</li>' +
+        '<li> ChannelID: [' + message.channel.id + ']</li>' +
+        '</ul>';
+}
+
+function emailFormatLetterFromSelf(bot, message, messageText, usr_nick, usr_sign)
+{
+    return '' +
+        '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + bot.user.avatarURL + '"> '+
+        (bot.user.bot ?
+            '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
+            '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
+        '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
+        '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
+        '<p><div style="font-family: Monospaced; border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + toEmailHtml(messageText) + '</div></p>' +
+        '<li> GuildID: [' + message.guild.id + ']</li>' +
+        '<li> ChannelID: [' + message.channel.id + ']</li>';
+}
+
 function sendEmailFile(message, args, attachment, doReply)
 {
     if(botConfig.smtp.disabled !== undefined && botConfig.smtp.disabled)
@@ -879,19 +917,7 @@ function sendEmailFile(message, args, attachment, doReply)
                       + ' (@' + usr_sign + ")"
                       + ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
             //text: args, //plaintext body
-            html: '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + message.author.avatarURL + '"> '+
-                    (message.author.bot ?
-                        '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
-                        '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
-                  '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
-                  '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
-                  '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + escape(args) + '</pre></p>' +
-                  '<p><h3>Meta-data</h3></p>' +
-                  '<ul>' +
-                  '<li> UserID: [' + message.author.id + ']</li>' +
-                  '<li> GuildID: [' + message.guild.id + ']</li>' +
-                  '<li> ChannelID: [' + message.channel.id + ']</li>' +
-                  '</ul>',  //html body
+            html: emailFormatLetter(message, args, usr_nick, usr_sign),  //html body
             attachments: extraFiles
         };
 
@@ -958,19 +984,7 @@ function sendEmailF(message, args, doReply)
                       + ' (@' + message.author.username + "#" + message.author.discriminator + ")"
                       +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
             //text: args, //plaintext body
-            html: '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + message.author.avatarURL + '"> '+
-                    (message.author.bot ?
-                        '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
-                        '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
-                  '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
-                  '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
-                  '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + escape(args) + '</pre></p>' +
-                  '<p><h3>Meta-data</h3></p>' +
-                  '<ul>' +
-                  '<li> UserID: [' + message.author.id + ']</li>' +
-                  '<li> GuildID: [' + message.guild.id + ']</li>' +
-                  '<li> ChannelID: [' + message.channel.id + ']</li>' +
-                  '</ul>',  //html body
+            html: emailFormatLetter(message, args, usr_nick, usr_sign),  //html body
             attachments: extraFiles
         };
 
@@ -988,7 +1002,7 @@ function sendEmailF(message, args, doReply)
             }
         });
     }).catch(function(err){
-        sendEmailRaw(BotPtr, message,"Something weird happen! I have caught an error at myself! (error is [" + err +"])", core.msgSendError);
+        sendEmailRaw(BotPtr, message,"Something weird happen! I have caught an error at myself! (error is [" + err +"])", msgSendError);
     });
 }
 
@@ -1028,15 +1042,7 @@ function sendEmailRaw(bot, message, messageText)
             + ' (@' + bot.user.username + "#" + bot.user.discriminator + ")"
             +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
         //text: args, //plaintext body
-        html: '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + bot.user.avatarURL + '"> '+
-            (bot.user.bot ?
-                '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
-                '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
-            '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
-            '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
-            '<p><pre style="border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + escape(messageText) + '</pre></p>' +
-            '<li> GuildID: [' + message.guild.id + ']</li>' +
-            '<li> ChannelID: [' + message.channel.id + ']</li>',  //html body
+        html: emailFormatLetterFromSelf(bot, message, messageText, usr_nick, usr_sign),  //html body
         attachments: extraFiles
     };
 
