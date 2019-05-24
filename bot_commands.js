@@ -847,6 +847,7 @@ function emailFormatLetter(message, args, usr_nick, usr_sign)
         '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
         '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
         '<p><div style="font-family: Monospaced; border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + toEmailHtml(args) + '</div></p>' +
+        '<p><a href="' + message.url + '">Jump to message</a></p>' +
         '<p><h3>Meta-data</h3></p>' +
         '<ul>' +
         '<li> UserID: [' + message.author.id + ']</li>' +
