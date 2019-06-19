@@ -261,7 +261,16 @@ function fart(bot, message, args)
         exec('git', ["pull", "origin", "master"], {cwd: "."}, function(err, data)
         {
             if(err == null)
+            {
                 message.reply("git pull origin master\n```\n" + data.toString() + "\n```\n");
+                exec('npm', ["install"], {cwd: "."}, function(err, data)
+                {
+                    if(err)
+                        message.reply("ERROR of npm install```\n" + err + "\n\n" + data.toString() + "\n```\n");
+                    else
+                        message.reply("npm install\n```\n" + data.toString() + "\n```\n");
+                });
+            }
             else
             {
                 message.reply("ERROR of git pull origin master```\n" + err + "\n\n" + data.toString() + "\n```\n");

@@ -70,12 +70,21 @@ function pokeBot(bot, message, botPath)
 
     exec('git', ["pull", "origin", "master"], {cwd: botPath}, function(err, data)
     {
-        if(!err)
-            message.reply("git pull origin master\n```\n" + data.toString() + "\n```\n");
-        else
+        if(err)
         {
             message.reply("ERROR of git pull origin master```\n" + err + "\n\n" + data.toString() + "\n```\n");
             exec('git', ["merge", "--abort"], {cwd: botPath}, function(err, data){});
+        }
+        else
+        {
+            message.reply("git pull origin master\n```\n" + data.toString() + "\n```\n");
+            exec('npm', ["install"], {cwd: botPath}, function(err, data)
+            {
+                if(err)
+                    message.reply("ERROR of npm install```\n" + err + "\n\n" + data.toString() + "\n```\n");
+                else
+                    message.reply("npm install\n```\n" + data.toString() + "\n```\n");
+            });
         }
     });
 }
