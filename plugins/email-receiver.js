@@ -93,6 +93,8 @@ function mailChecker()
                                     let msgText = (typeof(message.text) !== "undefined" ? message.text : htmlToText.fromString(message.html));
                                     let msgRes = {text: msgText, uid: 0, gid: 0, cid: 0};
                                     parseMessage(msgRes);
+                                    msgText = msgText.replace(/^>.*\n?/mg, '');
+                                    msgText = msgText.replace(/^\d\d\.\d\d\.\d\d\d\d \d?\d:\d\d, FoxyBot on Discord .*:\n?/mg, '');
                                     let outText = "\n" + msgText;
                                     let chan = bot.channels.get(msgRes.cid !== 0 ? msgRes.cid : core.botConfig.defaultChannel[0]);
                                     let isWritable = core.isWritableChannelId(msgRes.cid) && core.isWritableGuild(chan.guild);
