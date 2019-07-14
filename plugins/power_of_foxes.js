@@ -280,6 +280,34 @@ function fart(bot, message, args)
         return;
     }
 
+    if(isMyBoss && (args.indexOf("quitguild") !== -1))
+    {
+        let qArgs = args.split(" ");
+        if(qArgs.length < 2)
+        {
+            message.reply("Too few arguments!");
+            return;
+        }
+
+        let guild = bot.guilds.get(qArgs[1]);
+        if(guild)
+        {
+            guild.leave().then(function()
+            {
+                message.reply("Going to quit this [" + guild.name + "] scary place away...");
+            }).catch(function(e)
+            {
+                message.reply("Whoops, can't quit this [" + guild.name + "] scary place away because of: " + e);
+            });
+        }
+        else
+        {
+            message.reply("Guild " + qArgs[1] + " not found!");
+        }
+
+        return;
+    }
+
     getRandFile(bot, message, "getRandPic.php?which=farts");
 }
 
