@@ -11,7 +11,7 @@ let foxyBotVer  = foxyBotPackage.name + " v" + foxyBotPackage.version;
 
 let winston = require('winston');
 
-let logger = new (winston.Logger)(
+let logger = winston.createLogger(
 {
     transports: [
         new (winston.transports.Console)({ json: false, timestamp: true }),
