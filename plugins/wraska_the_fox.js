@@ -13,7 +13,7 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
 
 function getArrayRandom(array)
 {
-    if  (array == null)
+    if(array == null)
         return {index:null, value:null};
     else
     {
