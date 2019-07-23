@@ -21,12 +21,12 @@ function countVotes(chid)
             votingResult[i].title = votingVotings[chid].votingVariants[i];
             votingResult[i].votes = 0;
         }
-        for(v in voters)
+        for(let v in voters)
         {
-            var voteTo = voters[v];
+            let voteTo = voters[v];
             votingResult[voteTo].votes += 1;
         }
-        for(i in votingResult)
+        for(let i in votingResult)
         {
             votingResultMsg += (parseInt(i, 10)+1) + ") " + votingResult[i].title + " --> **" + votingResult[i].votes + "**\n";
         }
@@ -34,9 +34,9 @@ function countVotes(chid)
     return votingResultMsg;
 }
 
-var voting = function(bot, message, args)
+function voting(bot, message, args)
 {
-    var chid = message.channel.id;
+    let chid = message.channel.id;
     if(typeof(votingVotings[message.channel.id])==='undefined')
     {
         votingVotings[chid] = [];
@@ -60,14 +60,14 @@ var voting = function(bot, message, args)
         }
         votingVotings[chid].voters = [];//If user is here - ignore next votes. Revoting is not allowed
         votingVotings[chid].votingVariants = variants.split(";");
-        let voteMsg = "**Voting variants:**\n"
+        let voteMsg = "**Voting variants:**\n";
         for(var i=0;i<votingVotings[chid].votingVariants.length; i++)
         {
             votingVotings[message.channel.id].votingVariants[i] = votingVotings[chid].votingVariants[i].trim();
             voteMsg += " **" + (i+1) + ")** " + votingVotings[chid].votingVariants[i] + "\n";
         }
 
-        voteMsg += "\nTo vote type __/foxy vote **N**__. N is a number of variant. Re-voting is allowed."
+        voteMsg += "\nTo vote type __/foxy vote **N**__. N is a number of variant. Re-voting is allowed.";
 
         votingVotings[chid].votingInProcess = true;
         message.channel.send("Voting started!\n\n" + voteMsg).catch(core.msgSendError);
@@ -107,8 +107,8 @@ var voting = function(bot, message, args)
             return;
         }
         core.foxyLogInfo("Got vote: " + args.trim() );
-        var vote = parseInt(args.trim(), 10);
-        if( (vote != NaN) )
+        let vote = parseInt(args.trim(), 10);
+        if(vote !== undefined && vote !== null)
         {
             if( (vote > 0) && (vote <= votingVotings[chid].votingVariants.length) )
             {

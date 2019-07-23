@@ -7,8 +7,8 @@ let core = undefined;
 function getJSON(options, onResult)
 {
     //foxyLogInfo("rest::getJSON");
-    var prot = options.port === 443 ? https : http;
-    var req = prot.request(options,
+    let port = options.port === 443 ? https : http;
+    let req = port.request(options,
     function(res)
     {
         let output = '';
@@ -142,7 +142,7 @@ function frog(bot, message, args)
 
 function makeMe(bot, message, args)
 {
-    var argsL = args.toLowerCase();
+    let argsL = args.toLowerCase();
 
     if(args.trim() === "")
         message.reply("Sorry, I can't: you wasn't told what I must do!", core.msgSendError);
@@ -335,7 +335,8 @@ function spit(bot, message, args)
 let randMsg_messages = [
     "Hey, Knuxy, give to %u something, I forgot that at home...",
     "Sorry, %u, I forgot that at home, ask Knux for that please!",
-    "/knux say /luna say %u, ping!"
+    "/knux say /luna say %u, ping!",
+    "/knux say \"no way!\" please!"
 ];
 
 function randMsg(bot, message, args)

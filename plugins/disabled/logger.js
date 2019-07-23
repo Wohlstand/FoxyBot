@@ -18,6 +18,9 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
     if(core.my_db === undefined)
         return;
 
+    if(!message.guild)
+        return;
+
     message.guild.fetchMember(message.author)
     .then(function(gotMember)
     {

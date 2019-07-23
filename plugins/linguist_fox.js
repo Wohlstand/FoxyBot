@@ -2,13 +2,13 @@
     Foxy can speak any language and can help you spean with anyone!
  */
 
-var YandexTranslator = require('yandex.translate');
+let YandexTranslator = require('yandex.translate');
 
 // Translator instance
-var translator = undefined;
+let translator = undefined;
 
 // Main module of FoxyBot
-var core = undefined;
+let core = undefined;
 
 //var langReg = new RegExp("/^\[([a-z]){2-8}\&]/ig", "ig");
 function isLanguage(word)
@@ -16,27 +16,27 @@ function isLanguage(word)
     return /^\[([a-z]){2,8}]$/ig.test(word.trim());
 }
 
-var langChannels = require("./linguist_fox_channel_langs.json");
+let langChannels = require("./linguist_fox_channel_langs.json");
 
-var translate = function(bot, message, args)
+function translate(bot, message, args)
 {
-    var phraze = { orig: args, res: "..."};
-    var arg1 = core.cutWord(phraze);
+    let phrase = { orig: args, res: "..."};
+    let arg1 = core.cutWord(phrase);
     if(!isLanguage(arg1))
     {
         //Detect channel specific language
-        var chID = message.channel.id;
+        let chID = message.channel.id;
         if(langChannels[chID] !== undefined)
             arg1 = langChannels[chID];
         else
             arg1 = 'en';
-        phraze.res = phraze.orig;
+        phrase.res = phrase.orig;
         core.foxyLogInfo("-> Using channel language...");
     }
     else
     {
-        var re = /^\[([a-z]{2,8})]$/ig;
-        var m;
+        let re = /^\[([a-z]{2,8})]$/ig;
+        let m;
         while ((m = re.exec(arg1)) !== null)
         {
             if (m.index === re.lastIndex)
@@ -45,14 +45,14 @@ var translate = function(bot, message, args)
         }
     }
 
-    if(phraze.res === "")
+    if(phrase.res === "")
     {
         message.reply("Can't translate nothing!");
         return;
     }
 
-    core.foxyLogInfo("-> Translate into " + arg1 + " the phraze " + phraze.res);
-    translator.translate(phraze.res, arg1)
+    core.foxyLogInfo("-> Translate into " + arg1 + " the phraze " + phrase.res);
+    translator.translate(phrase.res, arg1)
     .then(function(translation)
     {
         core.foxyLogInfo(translation);
@@ -60,8 +60,8 @@ var translate = function(bot, message, args)
         {
             message.edit(translation);
         } else {
-            var msgText = "\n" + translation;
-            var title = message.author.username + "#" + message.author.discriminator;
+            let msgText = "\n" + translation;
+            let title = message.author.username + "#" + message.author.discriminator;
             message.channel.send("",
             {
                 embed:{
