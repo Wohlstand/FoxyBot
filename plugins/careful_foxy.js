@@ -185,6 +185,9 @@ function messageIn(mybot, message, allowWrite)
     if(message.author.id === "182039820879659008")//Don't quote me, Foxy!!!
         messageForMe = false;
 
+    if(message.author.id === "303661490114789391")//Don't disturb me, Yappy Bot
+        messageForMe = false;
+
     if(botCommands.isurl(msgTrimmed))//Also please, don't report me URLs
         messageForMe = false;
 
