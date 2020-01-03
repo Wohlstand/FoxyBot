@@ -303,6 +303,7 @@ function cachedFiles_init()
     cachedFiles_loadFile("lists/boop_zone.txt", "boop_zone.txt");
     cachedFiles_loadFile("lists/readonly_chans.txt", "readonly_chans.txt");
     cachedFiles_loadFile("lists/readonly_guilds.txt", "readonly_guilds.txt");
+    cachedFiles_loadFile("lists/setgame_trusted.txt", "setgame_trusted.txt");
 }
 
 function inListFile(file, userID)
@@ -759,6 +760,12 @@ function sayDelaydME(bot, message, args)
 
 function setPlayingGame(bot, message, args)
 {
+    if(!inListFile("setgame_trusted.txt", message.author.id))
+    {
+        message.channel.send("Sorry, " + message.author.toString() + ", you can't :cop:").catch(msgSendError);
+        return;
+    }
+
     bot.user.setActivity(args, {
         type: "PLAYING"
     })
@@ -768,6 +775,12 @@ function setPlayingGame(bot, message, args)
 
 function setWatchingVideo(bot, message, args)
 {
+    if(!inListFile("setgame_trusted.txt", message.author.id))
+    {
+        message.channel.send("Sorry, " + message.author.toString() + ", you can't :cop:").catch(msgSendError);
+        return;
+    }
+
     bot.user.setActivity(args, {
         type: "WATCHING"
     })
@@ -777,6 +790,12 @@ function setWatchingVideo(bot, message, args)
 
 function setListeningMusic(bot, message, args)
 {
+    if(!inListFile("setgame_trusted.txt", message.author.id))
+    {
+        message.channel.send("Sorry, " + message.author.toString() + ", you can't :cop:").catch(msgSendError);
+        return;
+    }
+
     bot.user.setActivity(args, {
         type: "LISTENING"
     })
@@ -786,6 +805,12 @@ function setListeningMusic(bot, message, args)
 
 function setStreaming(bot, message, args)
 {
+    if(!inListFile("setgame_trusted.txt", message.author.id))
+    {
+        message.channel.send("Sorry, " + message.author.toString() + ", you can't :cop:").catch(msgSendError);
+        return;
+    }
+
     bot.user.setActivity(args, {
         url: "http://github.com/",
         type: "STREAMING"
