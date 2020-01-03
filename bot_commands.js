@@ -291,9 +291,16 @@ let cachedFiles = {};
 function cachedFiles_loadFile(file, alias)
 {
     cachedFiles[alias] = [];
-    var userList = fs.readFileSync(__dirname + "/" + file);
-    var userArr = userList.toString().trim().split(/[\n ]/g);
-    for(var i = 0; i < userArr.length; i++)
+    let listFile = __dirname + "/" + file;
+    if(!fs.existsSync(listFile))
+    {
+        // Can't load list which doesn't exist, so, creating blank file(s)
+        fs.closeSync(fs.openSync(listFile, 'w'));
+    }
+
+    let userList = fs.readFileSync(__dirname + "/" + file);
+    let userArr = userList.toString().trim().split(/[\n ]/g);
+    for(let i = 0; i < userArr.length; i++)
         cachedFiles[alias].push(userArr[i].trim());
 }
 
