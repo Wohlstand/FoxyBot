@@ -199,8 +199,8 @@ function messageIn(mybot, message, allowWrite)
     }
 
     //Check is botane offline, and reply on attempt call her
-    let Botane = mybot.users.get("216688100032643072");
-    if(allowWrite && (Botane !== undefined) && (Botane.presence.status === "offline"))
+    let Botane = mybot.users.resolve("216688100032643072");
+    if(allowWrite && Botane && (Botane.presence.status === "offline"))
     {
         if(msgLowTrimmed === "what is horikawa?")
         {

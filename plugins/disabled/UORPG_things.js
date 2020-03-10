@@ -17,17 +17,17 @@ function isRussian(chan)
 
 function getChaos(guild)
 {
-    return guild.roles.find('name', 'Chaos');
+    return guild.roles.cache.find('name', 'Chaos');
 }
 
 function getOrder(guild)
 {
-    return guild.roles.find('name', 'Order');
+    return guild.roles.cache.find('name', 'Order');
 }
 
 function getRenegades(guild)
 {
-    return guild.roles.find('name', 'Renegades');
+    return guild.roles.cache.find('name', 'Renegades');
 }
 
 function getKeys(obj)
@@ -42,7 +42,7 @@ function getKeys(obj)
 
 function cleanRoles(bot, message, args, newRole)
 {
-    message.guild.fetchMember(message.author)
+    message.guild.members.fetch(message.author)
     .then(function(gotMember) {
         let chaos = getChaos(message.guild);
         let order = getOrder(message.guild);
@@ -53,7 +53,7 @@ function cleanRoles(bot, message, args, newRole)
                 member.addRole(newRole);
         });
     }).catch(function(err){
-        core.sendEmailRaw(bot, message,"Something weird happen! I can't clean-up old roles! (error is [" + err +"])", core.msgSendError);
+        // core.sendEmailRaw(bot, message,"Something weird happen! I can't clean-up old roles! (error is [" + err +"])", core.msgSendError);
     });
 }
 
@@ -86,8 +86,8 @@ function crystalPhase(bot, message, args)
 
     let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 
-    let rus = bot.channels.get(Chan_RUS);
-    let lat = bot.channels.get(Chan_LAT);
+    let rus = bot.channels.resolve(Chan_RUS);
+    let lat = bot.channels.resolve(Chan_LAT);
     //var eng = bot.channels.get(Chan_ENG);
 
     let crystal_peace;
@@ -131,8 +131,8 @@ function guildMemberAdd(bot, guildMember)
     // " на серваке " + guildMember.guild.id + " == " + UORPG_Server);
     if(guildMember.guild.id === UORPG_Server)
     {
-        let ru = bot.channels.get(Chan_RUS);
-        let en = bot.channels.get(Chan_ENG);
+        let ru = bot.channels.resolve(Chan_RUS);
+        let en = bot.channels.resolve(Chan_ENG);
 
         let message_ru =
             "<@" + guildMember.user.id +">, Приветствуем вас на сервере Ultima Online - UORPG.net!\n\n" +

@@ -131,9 +131,9 @@ function isLunaHere(mybot, message)
 {
     try
     {
-        //let Luna = mybot.users.get("216273975939039235");
-        let minnie = mybot.users.get("411534588251340806");
-        if(minnie.presence.status === "offline")
+        //let Luna = mybot.users.resolve("216273975939039235");
+        let minnie = mybot.users.resolve("411534588251340806");
+        if(minnie && minnie.presence.status === "offline")
             return false;
     }
     catch(e)

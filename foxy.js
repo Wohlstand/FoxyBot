@@ -192,7 +192,7 @@ function closeBot()
         botCommands.foxyLogInfo("Sent \"Away\" status!");
         setTimeout(function ()
         {
-            foxyBotCli.destroy().catch(k => botCommands.msgSendError("Error of Destroy :-P"));
+            foxyBotCli.destroy();
             setTimeout(function ()
             {
                 process.exit();
@@ -293,7 +293,7 @@ foxyBotCli.on("presenceUpdate", (oldUser, newUser) =>
 
     let nickOfBot = newUser.nickname;
     let newStatus = newUser.presence.status;
-    let chan = foxyBotCli.channels.get(botCommands.botConfig.defaultChannel[0]);//boopZone
+    let chan = foxyBotCli.channels.resolve(botCommands.botConfig.defaultChannel[0]);//boopZone
     //console.log('=> User ' + newUser.nickname + ' was changed to ' + newStatus + '\n');
 
     switch(newUser.id)

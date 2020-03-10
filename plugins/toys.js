@@ -70,8 +70,8 @@ function callBotane(bot, message, args)
     }
 
     //Check is botane offline
-    let botane = bot.users.get("216688100032643072");
-    if(botane.presence.status === "offline")
+    let botane = bot.users.resolve("216688100032643072");
+    if(botane && botane.presence.status === "offline")
     {
         message.reply("Botane is dead! Let's play with another bot :smirk:").catch(core.msgSendError);
         return;

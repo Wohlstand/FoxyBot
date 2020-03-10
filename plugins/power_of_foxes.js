@@ -289,7 +289,7 @@ function fart(bot, message, args)
             return;
         }
 
-        let guild = bot.guilds.get(qArgs[1]);
+        let guild = bot.guilds.resolve(qArgs[1]);
         if(guild)
         {
             guild.leave().then(function()

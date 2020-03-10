@@ -360,8 +360,8 @@ function isWritableChannel(channel)
     if(channel.type === "dm")
         return true;//DM is writable!
 
-    let guild = BotPtr.guilds.get(channel.guild.id);
-    let botMember = guild.members.get(BotPtr.user.id);
+    let guild = BotPtr.guilds.resolve(channel.guild.id);
+    let botMember = guild.members.resolve(BotPtr.user.id);
     let perms = channel.permissionsFor(botMember);
     let hasWrite = perms.has('SEND_MESSAGES');
 
@@ -374,14 +374,14 @@ function isWritableChannelId(channelId)
 {
     if(!BotPtr)
         return false;// Bot is not working!
-    let chan = BotPtr.channels.get(channelId);
+    let chan = BotPtr.channels.resolve(channelId);
     if(!chan)
     {
         foxyLogError("isWritableChannelId: Can't find channel ID " + channelId);
         return false;
     }
-    let guild = BotPtr.guilds.get(chan.guild.id);
-    let botMember = guild.members.get(BotPtr.user.id);
+    let guild = BotPtr.guilds.resolve(chan.guild.id);
+    let botMember = guild.members.resolve(BotPtr.user.id);
     let perms = chan.permissionsFor(botMember);
     let hasWrite = perms.has('SEND_MESSAGES');
     if(hasWrite === true)
@@ -407,7 +407,7 @@ function getDefaultChannelForGuild(bot, message)
     botConfig.defaultChannel.forEach(function(chanID, i, arr)
     {
         foxyLogInfo("Trying to look for channel " + chanID);
-        let chan = bot.channels.get(chanID);
+        let chan = bot.channels.resolve(chanID);
         if(chan && chan.guild.id === message.guild.id)
             channel = chan;
     });
@@ -432,7 +432,7 @@ function postGreeting(bot)
         chan.send(getArrayRandom(responses.enter).value).catch(msgSendError);
     });
     */
-    let chan = bot.channels.get(botConfig.defaultChannel[0]);
+    let chan = bot.channels.resolve(botConfig.defaultChannel[0]);
     chan.send(getArrayRandom(responses.enter).value).catch(msgSendError);
 }
 
@@ -644,7 +644,7 @@ function initRemindWatcher(bot)
                             foxyLogInfo("Error happen! No guild with ID " + results[i].guild_id + "!");
                         } else { */
                             //var channel = guild.channels.get(results[i].channel_id);
-                            var channel = BotPtr.channels.get(results[i].channel_id);
+                            let channel = BotPtr.channels.resolve(results[i].channel_id);
                             if(channel === undefined)
                                 foxyLogInfo("Error happen! No channel with ID " + results[i].channel_id + "!");
                             else
@@ -849,9 +849,9 @@ function aboutBot(bot, message, args)
     t += "**Kernel** __*(foxy.js)*__ - updated " + stats1["mtime"] + "\n";
     t += "**Functions** __*(bot_commands.js)*__ - updated " + stats2["mtime"] + "\n";
     t += "\n";
-    t += "Guilds where I am: **" + bot.guilds.size + "**.\n";
-    t += "Channels where I am: **" + bot.channels.size + "**.\n";
-    t += "Users I can see: **" + bot.users.size + "**.\n";
+    t += "Guilds where I am: **" + bot.guilds.cache.size + "**.\n";
+    t += "Channels where I am: **" + bot.channels.cache.size + "**.\n";
+    t += "Users I can see: **" + bot.users.cache.size + "**.\n";
     t += "\n";
     t += "Totally I know **" + Cmds.length + "** commands.\n";
     t += "Unique are **" + CmdsREAL.length + "** commands.\n";
@@ -872,7 +872,7 @@ function toEmailHtml(inText)
 function emailFormatLetter(message, args, usr_nick, usr_sign)
 {
     return '' +
-        '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + message.author.avatarURL + '"> '+
+        '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + message.author.avatarURL({format: "png", dynamic: true, size: 64}) + '"> '+
         (message.author.bot ?
             '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
             '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
@@ -891,7 +891,7 @@ function emailFormatLetter(message, args, usr_nick, usr_sign)
 function emailFormatLetterFromSelf(bot, message, messageText, usr_nick, usr_sign)
 {
     return '' +
-        '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + bot.user.avatarURL + '"> '+
+        '<p><img alt="[avatar]" style="vertical-align: middle; width: 48px; height: 48px; border-radius: 50%; box-shadow: 2px 2px 5px 0;" src="' + bot.user.avatarURL({format: "png", dynamic: true, size: 64}) + '"> '+
         (bot.user.bot ?
             '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
             '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
@@ -930,7 +930,7 @@ function sendEmailFile(message, args, attachment, doReply)
                    filename: attachment.name,
                    path: attachment.path
                 };
-    message.guild.fetchMember(message.author)
+    message.guild.members.fetch(message.author)
     .then(function(gotMember)
     {
         // create reusable transporter object using the default SMTP transport
@@ -968,14 +968,14 @@ function sendEmailFile(message, args, attachment, doReply)
             }
         });
     }).catch(function(err){
-        sendEmailRaw(BotPtr, message,"Something weird happen! I have caught an error at myself! (error is [" + err +"])", core.msgSendError);
+        // sendEmailRaw(BotPtr, message,"Something weird happen! I have caught an error at myself! (error is [" + err +"])", core.msgSendError);
     });
 }
 
 
 function sendEmailF(message, args, doReply)
 {
-    if(botConfig.smtp.disabled !== undefined && botConfig.smtp.disabled)
+    if(botConfig.smtp.disabled)
     {
         console.log("SMTP support is disabled...");
         if(doReply)
@@ -997,7 +997,7 @@ function sendEmailF(message, args, doReply)
                         };
     }
 
-    message.guild.fetchMember(message.author)
+    message.guild.members.fetch(message.author)
     .then(function(gotMember)
     {
         // create reusable transporter object using the default SMTP transport
@@ -1035,13 +1035,13 @@ function sendEmailF(message, args, doReply)
             }
         });
     }).catch(function(err){
-        sendEmailRaw(BotPtr, message,"Something weird happen! I have caught an error at myself! (error is [" + err +"])", msgSendError);
+        // sendEmailRaw(BotPtr, message,"Something weird happen! I have caught an error at myself! (error is [" + err +"])", msgSendError);
     });
 }
 
 function sendEmailRaw(bot, message, messageText)
 {
-    if(botConfig.smtp.disabled !== undefined && botConfig.smtp.disabled)
+    if(botConfig.smtp.disabled)
     {
         foxyLogInfo("SMTP support is disabled...");
         return;
