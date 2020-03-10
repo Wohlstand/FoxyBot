@@ -1116,7 +1116,7 @@ function commandAllowedOnServer(Cmd, gd_ext)
         Cmd.guildsLimit.forEach(function(gd)
         {
             console.log("Compare " + gd_ext + " and " + gd + "...");
-            if(gd_ext.toString() === gd.toString())
+            if(gd_ext === gd)
                 found = true;
         });
         if(!found)
