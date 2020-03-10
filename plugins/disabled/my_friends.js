@@ -6,6 +6,7 @@ let core = undefined;
 let exec = require('child_process').execFile;
 
 let CODEHAUS_Server = "215661302692052992";
+let TEST_SERVER = "506558672130801665";
 const echidnasDir = "/home/vitaly/_Bots/echidnabot";
 const minnieDir = "/home/vitaly/_Bots/minnie-marigold";
 const bastionDir = "/home/vitaly/_Bots/bastionbot-js";
@@ -215,40 +216,40 @@ function roboloeStatus(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 function registerCommands(foxyCore)
 {
     core = foxyCore;
-    core.addCMD(["knuxlog",    knuxLog,           "Check out Knux's log tail. Has optional argument - a count of lines to print.", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["knuxlogfile",knuxFullLog,       "Get a complete Knux's log file.", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knuxlog",    knuxLog,           "Check out Knux's log tail. Has optional argument - a count of lines to print.", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["knuxlogfile",knuxFullLog,       "Get a complete Knux's log file.", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
 
-    core.addCMD(["knux-pull",   knuxPull,         "Pull fresh changes of Knux", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knux-pull",   knuxPull,         "Pull fresh changes of Knux", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
     core.addSynonimOf("knux-pull", "knux-poke");
     core.addSynonimOf("knux-pull", "knuxpoke");
-    core.addCMD(["knux-start",   knuxStart,       "Start Knuckles", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["knux-stop",    knuxStop,        "Stop Knuckles", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["knux-restart", knuxRestart,     "Restart Knuckles", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["knux-status",  knuxStatus,      "Show status of Knuckles", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["knux-start",   knuxStart,       "Start Knuckles", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["knux-stop",    knuxStop,        "Stop Knuckles", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["knux-restart", knuxRestart,     "Restart Knuckles", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["knux-status",  knuxStatus,      "Show status of Knuckles", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
 
-    core.addCMD(["minnie-pull", minniePull,       "Pull fresh changes of Minnie Marigold", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-pull", minniePull,       "Pull fresh changes of Minnie Marigold", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
     core.addSynonimOf("minnie-pull", "minnie-poke");
     core.addSynonimOf("minnie-pull", "minniepoke");
-    core.addCMD(["minnie-start",   minnieStart,   "Start Minnie Marigold", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["minnie-stop",    minnieStop,    "Stop Minnie Marigold", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["minnie-restart", minnieRestart, "Restart Minnie Marigold", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["minnie-status",  minnieStatus,  "Show status of Minnie Marigold", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["minnie-start",   minnieStart,   "Start Minnie Marigold", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["minnie-stop",    minnieStop,    "Stop Minnie Marigold", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["minnie-restart", minnieRestart, "Restart Minnie Marigold", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["minnie-status",  minnieStatus,  "Show status of Minnie Marigold", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
 
-    core.addCMD(["basty-pull",     bastionPull,   "Pull fresh changes of B'astion", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["basty-pull",     bastionPull,   "Pull fresh changes of B'astion", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
     core.addSynonimOf("basty-pull", "basty-poke");
     core.addSynonimOf("basty-pull", "bastypoke");
-    core.addCMD(["basty-start",   bastionStart,   "Start B'astionBot", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["basty-stop",    bastionStop,    "Stop B'astionBot", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["basty-restart", bastionRestart, "Restart B'astionBot", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["basty-status",  bastionStatus,  "Show status of B'astionBot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["basty-start",   bastionStart,   "Start B'astionBot", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["basty-stop",    bastionStop,    "Stop B'astionBot", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["basty-restart", bastionRestart, "Restart B'astionBot", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["basty-status",  bastionStatus,  "Show status of B'astionBot", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
 
-    core.addCMD(["roboloe-pull",     roboloePull,   "Pull fresh changes of Roboloe Bot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["roboloe-pull",     roboloePull,   "Pull fresh changes of Roboloe Bot", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
     core.addSynonimOf("roboloe-pull", "roboloe-poke");
     core.addSynonimOf("roboloe-pull", "roboloepoke");
-    core.addCMD(["roboloe-start",   roboloeStart,   "Start R'oboloe Bot", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["roboloe-stop",    roboloeStop,    "Stop R'oboloe Bot", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["roboloe-restart", roboloeRestart, "Restart R'oboloe Bot", [], true, [CODEHAUS_Server] ]);
-    core.addCMD(["roboloe-status",  roboloeStatus,  "Show status of R'oboloe Bot", [], true, [CODEHAUS_Server] ]);
+    core.addCMD(["roboloe-start",   roboloeStart,   "Start R'oboloe Bot", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["roboloe-stop",    roboloeStop,    "Stop R'oboloe Bot", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["roboloe-restart", roboloeRestart, "Restart R'oboloe Bot", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
+    core.addCMD(["roboloe-status",  roboloeStatus,  "Show status of R'oboloe Bot", [], true, [CODEHAUS_Server, TEST_SERVER] ]);
 }
 
 module.exports =
