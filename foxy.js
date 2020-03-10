@@ -255,7 +255,7 @@ foxyBotCli.on('reconnecting', () =>
 foxyBotCli.on("guildMemberAdd", (newUser) =>
 {
     //Fetch new-became user
-    newUser.guild.fetchMember(newUser).catch(botCommands.msgSendError);
+    newUser.guild.members.fetch(newUser).catch(botCommands.msgSendError);
 
     foxyPlugins.forEach(function(plugin)
     {

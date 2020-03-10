@@ -69,7 +69,7 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
     if(core.my_db === undefined)
         return;
 
-    message.guild.fetchMember(message.author)
+    message.guild.members.fetch(message.author)
     .then(function(gotMember)
     {
         let isDM = message.channel.type !== "text";
@@ -99,7 +99,7 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
 // Catch the newbie joining
 function guildMemberAdd(/*Client*/ bot, /*GuildMember*/ guildMember)
 {
-    guildMember.guild.fetchMember(guildMember.user)
+    guildMember.guild.members.fetch(guildMember.user)
     .catch(function(err)
     {
         //if(channelIsWritable)
@@ -112,7 +112,7 @@ function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWr
     if(core.my_db === undefined)
         return;
 
-    message.guild.fetchMember(message.author)
+    message.guild.members.fetch(message.author)
     .then(function(gotMember)
     {
         let isDM = message.channel.type !== "text";
