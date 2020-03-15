@@ -17,17 +17,17 @@ function isRussian(chan)
 
 function getChaos(guild)
 {
-    return guild.roles.cache.find('name', 'Chaos');
+    return '290542721343422465';
 }
 
 function getOrder(guild)
 {
-    return guild.roles.cache.find('name', 'Order');
+    return '290542870681616385';
 }
 
 function getRenegades(guild)
 {
-    return guild.roles.cache.find('name', 'Renegades');
+    return '402507919167455243';
 }
 
 function getKeys(obj)
@@ -48,9 +48,11 @@ function cleanRoles(bot, message, args, newRole)
         let order = getOrder(message.guild);
         let renegades = getRenegades(message.guild);
         let member = gotMember;
-        member.removeRoles([order, chaos, renegades]).then(function(e) {
-                //message.channel.send("DEBUG [" + e +"]").catch(core.msgSendError);
-                member.addRole(newRole);
+        member.roles.remove([chaos, order, renegades])
+        .then(function(e)
+        {
+            //message.channel.send("DEBUG [" + e +"]").catch(core.msgSendError);
+            member.roles.add(newRole);
         });
     }).catch(function(err){
         // core.sendEmailRaw(bot, message,"Something weird happen! I can't clean-up old roles! (error is [" + err +"])", core.msgSendError);
