@@ -63,21 +63,33 @@ function joinOrder(bot, message, args)
 {
     let order = getOrder(message.guild);
     cleanRoles(bot, message, args, order);
-    message.reply("Welcome to Order!", core.msgSendError);
+    let rus = bot.channels.resolve(Chan_RUS);
+    if(message.channel.id === rus.id)
+        message.reply("Добро пожаловать в Альянс Порядка!", core.msgSendError);
+    else
+        message.reply("Welcome to Order!", core.msgSendError);
 }
 
 function joinChaos(bot, message, args)
 {
     let chaos = getChaos(message.guild);
     cleanRoles(bot, message, args, chaos);
-    message.reply("Welcome to Chaos!", core.msgSendError);
+    let rus = bot.channels.resolve(Chan_RUS);
+    if(message.channel.id === rus.id)
+        message.reply("Добро пожаловать в Альянс Хаоса!", core.msgSendError);
+    else
+        message.reply("Welcome to Chaos!", core.msgSendError);
 }
 
 function joinRenegades(bot, message, args)
 {
     let renegades = getRenegades(message.guild);
     cleanRoles(bot, message, args, renegades);
-    message.reply("Welcome to Renegades!", core.msgSendError);
+    let rus = bot.channels.resolve(Chan_RUS);
+    if(message.channel.id === rus.id)
+        message.reply("Добро пожаловать в общество Ренегатов!", core.msgSendError);
+    else
+        message.reply("Welcome to Renegades!", core.msgSendError);
 }
 
 function crystalPhase(bot, message, args)
