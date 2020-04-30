@@ -222,7 +222,7 @@ function fart(bot, message, args)
         return;
     }
 
-    let isMyBoss = (core.botConfig.myboss.indexOf(message.author.id) !== -1) || message.member.cache.has(core.botConfig.modsRole);
+    let isMyBoss = (core.botConfig.myboss.indexOf(message.author.id) !== -1) || message.member.roles.cache.has(core.botConfig.modsRole);
 
     if(isMyBoss && (args.indexOf("viva-systemd") !== -1))
     {
