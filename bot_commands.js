@@ -622,7 +622,7 @@ function initRemindWatcher(bot)
     //Check for remind every minute
     setInterval(function()
     {
-        let chan = botConfig.defaultChannel.first()
+        let chan = botConfig.defaultChannel[0];
         try
         {
             my_db.query('SELECT * FROM foxy_reminds WHERE dest_date <= NOW();',
