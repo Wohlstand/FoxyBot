@@ -622,6 +622,7 @@ function initRemindWatcher(bot)
     //Check for remind every minute
     setInterval(function()
     {
+        let chan = botConfig.defaultChannel.first()
         try
         {
             my_db.query('SELECT * FROM foxy_reminds WHERE dest_date <= NOW();',
@@ -646,6 +647,7 @@ function initRemindWatcher(bot)
                         } else { */
                             //var channel = guild.channels.get(results[i].channel_id);
                             let channel = BotPtr.channels.resolve(results[i].channel_id);
+                            chan = channel;
                             if(channel === undefined)
                                 foxyLogInfo("Error happen! No channel with ID " + results[i].channel_id + "!");
                             else
@@ -660,7 +662,7 @@ function initRemindWatcher(bot)
                 }
                 catch(e)
                 {
-                    sendErrorMsg(bot, message.channel, e);
+                    sendErrorMsg(bot, chan, e);
                 }
             });
         }
