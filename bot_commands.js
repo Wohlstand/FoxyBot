@@ -433,7 +433,8 @@ function postGreeting(bot)
     });
     */
     let chan = bot.channels.resolve(botConfig.defaultChannel[0]);
-    chan.send(getArrayRandom(responses.enter).value).catch(msgSendError);
+    // chan.send(getArrayRandom(responses.enter).value).catch(msgSendError);
+    sendEmailRaw(bot, null, getArrayRandom(responses.enter).value, msgSendError);
 }
 
 function isBeepBoop(bot, message, args)
@@ -896,10 +897,10 @@ function emailFormatLetterFromSelf(bot, message, messageText, usr_nick, usr_sign
             '<span style="background-color: #00004F; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">Bot</span>' :
             '<span style="background-color: #004F00; color: #FFFFFF; border-radius: 5px; padding: 0 4px 0 4px;">User</span>') + ' ' +
         '<b>' + usr_nick + '</b> <small>(' + usr_sign + ')</small></p>' +
-        '<p><b><u>#' + message.channel.name + '</u></b>@' + message.guild.name + '</p>' +
+        '<p><b><u>#' + (message ? message.channel.name + '</u></b>@' + message.guild.name : "-empty-</u></b>") + '</p>' +
         '<p><div style="font-family: Monospaced; border-width: 1px; border-color: #000000; border-style: solid; border-radius: 8px; box-shadow: 2px 2px 5px 0; padding: 10px;">' + toEmailHtml(messageText) + '</div></p>' +
-        '<li> GuildID: [' + message.guild.id + ']</li>' +
-        '<li> ChannelID: [' + message.channel.id + ']</li>';
+        '<li> GuildID: [' + (message ? message.guild.id : "unknown") + ']</li>' +
+        '<li> ChannelID: [' + (message ? message.channel.id : "unknown") + ']</li>';
 }
 
 function sendEmailFile(message, args, attachment, doReply)
@@ -1048,7 +1049,7 @@ function sendEmailRaw(bot, message, messageText)
     }
 
     let extraFiles = [];
-    let attachments = message.attachments.array();
+    let attachments = message ? message.attachments.array() : [];
 
     for(let i = 0; i < attachments.length; i++)
     {
@@ -1073,7 +1074,7 @@ function sendEmailRaw(bot, message, messageText)
         subject: 'Message from ' + (bot.user.bot ? "bot" : "user")
             + " " + (bot.nickname == null ? bot.user.username : bot.nickname)
             + ' (@' + bot.user.username + "#" + bot.user.discriminator + ")"
-            +  ' in the channel #' + message.channel.name + '@' + message.guild.name, // Subject line
+            +  ' in the channel #' + (message ? message.channel.name + '@' + message.guild.name : "-empty-"), // Subject line
         //text: args, //plaintext body
         html: emailFormatLetterFromSelf(bot, message, messageText, usr_nick, usr_sign),  //html body
         attachments: extraFiles
