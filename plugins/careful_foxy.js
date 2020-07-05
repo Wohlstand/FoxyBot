@@ -278,12 +278,32 @@ function messageIn(mybot, message, allowWrite)
     }
     else
     {
-        if(messageForMe)
+        if(messageForMe && message.guild)
         {
-            console.log("Sending email...");
-            botCommands.sendEmail(message, message.content, false);
-            if(messageForMeReact)
-                message.react("📧");//Mark message as reported
+            // Check if Me is on this guild
+            message.guild.members.fetch("182039820879659008").then(function (gotMember)
+            {
+                // Check if Me can see this channel
+                if(message.channel.permissionsFor(gotMember).has('VIEW_CHANNEL'))
+                {
+                    console.log("Sending email...");
+                    botCommands.sendEmail(message, message.content, false);
+                    if(messageForMeReact)
+                    {
+                        message.react("📧").then(function (q)
+                        {
+                            console.log("Reaction was set");
+                        });//Mark message as reported
+                    }
+                }
+                else
+                {
+                    console.log("Got a keyword mention from inaccessible channel");
+                }
+            }).catch(function(err)
+            {
+                console.log("Got a keyword mention from inaccessible guild");
+            });
         }
 
         if(allowWrite)
