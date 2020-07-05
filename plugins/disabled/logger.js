@@ -133,8 +133,26 @@ function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWr
                             ");";
 
         myDb.query(insertQuery, core.errorMyDb);
-    }).catch(function(err){
-        core.sendEmailRaw(bot, message, "Something weird happen! I have caught an error at myself! (error is [" + err +"])", core.msgSendError);
+    }).catch(function(err)
+    {
+        // core.sendEmailRaw(bot, message, "Something weird happen! I have caught an error at myself! (error is [" + err +"])", core.msgSendError);
+        let isDM = message.channel.type !== "text";
+        let myDb = core.my_db;
+        let insertQuery =   "INSERT INTO foxy_message_log (guild_id, room_id, guild_name, room_name, event, author_id, is_bot, author_name, author_nick, message) "+
+            "values (" +
+            (isDM ? '0' : message.guild.id.toString()) + ", " +
+            message.channel.id.toString() + ", " +
+            myDb.escape(isDM ? message.channel.type : message.guild.name) + ", " +
+            myDb.escape(isDM ? "DM" : message.channel.name) + ", " +
+            2 + ", " +
+            message.author.id.toString() + ", " +
+            (message.author.bot ? 1 : 0) + ", " +
+            myDb.escape(message.author.username + "#" + message.author.discriminator) + ", " +
+            myDb.escape(message.author.username) + ", " +
+            myDb.escape(core.getMsgText(message)) +
+            ");";
+
+        myDb.query(insertQuery, core.errorMyDb);
     });
 }
 
