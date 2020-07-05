@@ -10,12 +10,12 @@
         "escape-html": "^1.0.3",
         "html-to-text": "^5.1.1",
         "mysql": "^2.18.1",
-        "nexe": "^3.3.2",
+        "nexe": "^3.3.7",
         "node-poplib-gowhich": "^1.0.2",
         "node-schedule": "^1.3.2",
-        "nodemailer": "^6.4.6",
+        "nodemailer": "^6.4.10",
         "sd-notify": "^2.8.0",
-        "winston": "^3.2.1",
+        "winston": "^3.3.3",
         "yandex.translate": "^1.0.1"
     },
     "repository": {

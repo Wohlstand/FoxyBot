@@ -233,7 +233,7 @@ function fart(bot, message, args)
             .catch(core.foxyLogError);
         setTimeout(function()
         {
-            bot.destroy().catch(core.foxyLogError);
+            bot.destroy();
             setTimeout(function()
             {
                 process.exit(1);
