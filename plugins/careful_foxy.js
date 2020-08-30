@@ -20,22 +20,22 @@ function hasStr(msg, word)
     return msg.indexOf(word) !== -1;
 }
 
-/*
-var eggCommands = [
-    "!color",
-    "!commander",
-    "!egg",
-    "!hatch",
-    "!ping",
-    "!prefix",
-    "!quote",
-    "!role",
-    "!spam",
-    "!tag",
-    "!talk",
-    "!cmd",
-    "!help",
-    "!rps"
+let eggCommands = [
+    "$color",
+    "$commander",
+    "$egg",
+    "$hatch",
+    "$ping",
+    "$prefix",
+    "$role",
+    "$tag",
+    "$hang",
+    "$cmd",
+    "$help",
+    "$rps",
+    "$quote", // Dead commands
+    "$talk",
+    "$spam"
 ];
 
 
@@ -46,12 +46,12 @@ function lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite)
     if(!allowWrite)
         return false;
 
-    if(eggCommands.indexOf(msgLowTrimmed) != -1)
+    if(eggCommands.indexOf(msgLowTrimmed) !== -1)
     {
         try
         {
-            var Egg = mybot.users.get("247080657182785546");
-            if(Egg.presence.status == "offline")
+            let egg = mybot.users.resolve("247080657182785546");
+            if(egg && egg.presence.status === "offline")
             {
                 message.reply("Sorry, egg is offline... :cooking:", botCommands.msgSendError);
             }
@@ -64,7 +64,6 @@ function lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite)
     }
     return false;
 }
-*/
 
 let keyPrefix = [
     "wohl",
@@ -141,10 +140,8 @@ function messageIn(mybot, message, allowWrite)
     msgLow              = msgLow.replace(urlMask, "[url]");
     msgLowTrimmed       = msgLowTrimmed.replace(urlMask, "[url]");
 
-    /*
     if(lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite))
         return;
-    */
 
     /* *********Auto-replying for some conditions********* */
     let wasAsked = false;
