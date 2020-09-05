@@ -51,7 +51,7 @@ function lookUpForEgg(myBot, message, msgLowTrimmed, allowWrite)
 
     for(let i = 0; i < eggCommands.length; ++i)
     {
-        if(msgLowTrimmed.startsWith(eggCommands[i]) !== -1)
+        if(msgLowTrimmed.startsWith(eggCommands[i]))
         {
             try
             {
