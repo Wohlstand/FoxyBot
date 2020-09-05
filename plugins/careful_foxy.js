@@ -41,26 +41,32 @@ let eggCommands = [
 
 // Check out is Yoshi021's Egg bot online, if not - notify user
 // that Egg is "eaten" :-P
-function lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite)
+function lookUpForEgg(myBot, message, msgLowTrimmed, allowWrite)
 {
     if(!allowWrite)
         return false;
 
-    if(eggCommands.indexOf(msgLowTrimmed) !== -1)
+    if(message.guildID !== "692079249594515607")
+        return false; // Don't check egg bot out of a home server
+
+    for(let i = 0; i < eggCommands.length; ++i)
     {
-        try
+        if(msgLowTrimmed.startsWith(eggCommands[i]) !== -1)
         {
-            let egg = mybot.users.resolve("247080657182785546");
-            if(egg && egg.presence.status === "offline")
+            try
             {
-                message.reply("Sorry, egg is offline... :cooking:", botCommands.msgSendError);
+                let egg = myBot.users.resolve("247080657182785546");
+                if(egg && egg.presence.status === "offline")
+                {
+                    message.reply("Sorry, egg is offline... :cooking:", botCommands.msgSendError);
+                }
             }
+            catch (e)
+            {
+                botCommands.sendErrorMsg(myBot, message.channel, e);
+            }
+            return true;
         }
-        catch(e)
-        {
-            botCommands.sendErrorMsg(mybot, message.channel, e);
-        }
-        return true;
     }
     return false;
 }
