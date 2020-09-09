@@ -46,7 +46,7 @@ function lookUpForEgg(myBot, message, msgLowTrimmed, allowWrite)
     if(!allowWrite)
         return false;
 
-    if(message.channel.guild.id !== "692079249594515607")
+    if(!message.channel || !message.channel.guild || message.channel.guild.id !== "692079249594515607")
         return false; // Don't check egg bot out of a home server
 
     for(let i = 0; i < eggCommands.length; ++i)
