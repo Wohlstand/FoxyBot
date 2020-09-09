@@ -18,8 +18,8 @@ function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritab
     if(core.my_db === undefined)
         return;
 
-    if(!message.guild)
-        return;
+    if(!message.guild || !message.guild.members)
+        return; // Unknown guild, can't read members list
 
     message.guild.members.fetch(message.author)
     .then(function(gotMember)
@@ -69,6 +69,9 @@ function messageUpdate(/*Client*/ bot, /*Old Message*/ messageOld, /*New Message
     if(core.my_db === undefined)
         return;
 
+    if(!message.guild || !message.guild.members)
+        return; // Unknown guild, can't read members list
+
     message.guild.members.fetch(message.author)
     .then(function(gotMember)
     {
@@ -111,6 +114,9 @@ function messageDelete(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWr
 {
     if(core.my_db === undefined)
         return;
+
+    if(!message.guild || !message.guild.members)
+        return; // Unknown guild, can't read members list
 
     message.guild.members.fetch(message.author)
     .then(function(gotMember)
