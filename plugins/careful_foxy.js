@@ -146,8 +146,8 @@ function messageIn(mybot, message, allowWrite)
     msgLow              = msgLow.replace(urlMask, "[url]");
     msgLowTrimmed       = msgLowTrimmed.replace(urlMask, "[url]");
 
-    if(lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite))
-        return;
+    // if(lookUpForEgg(mybot, message, msgLowTrimmed, allowWrite))
+    //     return;
 
     /* *********Auto-replying for some conditions********* */
     let wasAsked = false;
