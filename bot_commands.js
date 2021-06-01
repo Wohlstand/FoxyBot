@@ -83,7 +83,7 @@ function disconnectMyDb()
     if(my_db_enabled && my_db !== undefined)
     {
         my_db.end(function(err) {
-            console.log("Database disconnect error: " + err.message + "");
+            console.log("Database disconnect error: " + (err ? err.message : "<unknown>") + "");
             my_db = undefined;
         });
     }
@@ -102,7 +102,7 @@ function errorMyDb(error, results, fields)
 {
     if(error)
     {
-        foxyLogInfo("Error happen! " + error + "; Results " + results.length + "; Fields: " + fields.length);
+        foxyLogInfo("Error happen! " + error + "; Results " + (results ? results.length : "<none>") + "; Fields: " + (fields ? fields.length : "<none>"));
         reconnectMyDb();
     }
 }
@@ -1384,4 +1384,3 @@ module.exports =
     addSynonimOf:     addSynonimOf,
     clearCommands:    clearCommands
 };
-
