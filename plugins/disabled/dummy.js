@@ -3,10 +3,10 @@
 */
 
 // Main module of FoxyBot
-var core = undefined;
+let core = undefined;
 
 // Example bot command
-var dummyPlugTest = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+let dummyPlugTest = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     message.reply("Dummy plugin is works!");
 }
@@ -33,6 +33,10 @@ function guildMemberAdd(/*Client*/ bot, /*GuildMember*/ guildMember)
 function messageIn(/*Client*/ bot, /*Message*/ message, /*bool*/ channelIsWritable)
 {}
 
+// Emitted whenever a channel is updated - e.g. name change, topic change, channel type change.
+function channelUpdate(/*Client*/ bot, /*GuildChannel*/ oldChannel, /*GuildChannel*/ newChannel)
+{}
+
 module.exports =
 {
     // Initialize plugin and here you can add custom Foxy's commands
@@ -40,6 +44,7 @@ module.exports =
     // Catch the newbie joining
     guildMemberAdd:     guildMemberAdd,
     // Catch incoming messages: you can make foxy be more talkative or implement a custom command handler from the raw text
-    messageIn:          messageIn
+    messageIn:          messageIn,
+    // Emitted whenever a channel is updated - e.g. name change, topic change, channel type change.
+    channelUpdate:      channelUpdate
 };
-

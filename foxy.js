@@ -264,6 +264,22 @@ foxyBotCli.on("guildMemberAdd", (newUser) =>
     });
 });
 
+foxyBotCli.on("channelUpdate", (oldChannel, newChannel) =>
+{
+    if(newChannel.guild === undefined || newChannel.guild == null)
+        return;
+
+    if(oldChannel.name !== newChannel.name)
+        botCommands.foxyLogInfo('Channel renamed: ' + oldChannel.name + ' -> ' + newChannel.name);
+
+    foxyPlugins.forEach(function(plugin)
+    {
+        if(typeof(plugin.channelUpdate) === "function")
+            plugin.channelUpdate(foxyBotCli, oldChannel, newChannel);
+    });
+});
+
+
 foxyBotCli.on("guildMemberUpdate", (oldUser, newUser) =>
 {
     if(newUser.user.username == null)
@@ -488,4 +504,3 @@ setInterval(function()
     }
     console.log('Memory usage:', process.memoryUsage());
 }, 1800000); //Every half of hour
-
