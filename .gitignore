@@ -9,3 +9,5 @@ votings
 .idea/*
 package-lock.json
 
+# Symbolic links
+/plugins/enabled_*.js
