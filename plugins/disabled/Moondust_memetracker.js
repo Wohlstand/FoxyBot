@@ -51,13 +51,13 @@ function listMemes(bot, message, args)
                     switch(doShowHel)
                     {
                     case 0:
-                        memesLog += "\n喝了这 :funnycat:"
+                        memesLog += "\n喝了这 <:funnycat:733437086111236116>"
                         break;
                     case 1:
-                        memesLog += "\nFunnyFace won :hel:"
+                        memesLog += "\nFunnyFace won <:hel:722902842557464656>"
                         break;
                     case 2:
-                        memesLog += "\nMeme man won, Viktori! :weegee:"
+                        memesLog += "\nMeme man won, Viktori! <:weegee:832596990730829845>"
                         break;
                     }
 
