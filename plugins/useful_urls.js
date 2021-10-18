@@ -3,7 +3,7 @@ let core = undefined;
 
 function testUrl(bot, message, args)
 {
-    message.channel.send("http://wohlsoft.ru").catch(core.msgSendError);
+    message.channel.send("https://wohlsoft.ru/").catch(core.msgSendError);
 }
 
 function lab(bot, message, args)
@@ -46,22 +46,22 @@ function isUrlCheck(bot, message, args)
 
 function lunaDocs(bot, message, args)
 {
-    message.channel.send("http://wohlsoft.ru/pgewiki/" + encodeURIComponent(args)).catch(core.msgSendError);
+    message.channel.send("https://wohlsoft.ru/pgewiki/" + encodeURIComponent(args)).catch(core.msgSendError);
 }
 
 function lunaSearch(bot, message, args)
 {
-    message.channel.send("http://wohlsoft.ru/wiki/index.php?search=" + encodeURIComponent(args)).catch(core.msgSendError);
+    message.channel.send("https://wohlsoft.ru/wiki/index.php?search=" + encodeURIComponent(args)).catch(core.msgSendError);
 }
 
 function findInGoogle(bot, message, args)
 {
-    message.channel.send("http://lmgtfy.com/?q=" + encodeURIComponent(args)).catch(core.msgSendError);
+    message.channel.send("https://lmgtfy.com/?q=" + encodeURIComponent(args)).catch(core.msgSendError);
 }
 
 function findInWikipedia(bot, message, args)
 {
-    message.channel.send("http://wikipedia.lmgtfy.com/?q=" + encodeURIComponent(args)).catch(core.msgSendError);
+    message.channel.send("https://wikipedia.lmgtfy.com/?q=" + encodeURIComponent(args)).catch(core.msgSendError);
 }
 
 
