@@ -8,7 +8,7 @@ function testUrl(bot, message, args)
 
 function lab(bot, message, args)
 {
-    message.channel.send("http://wohlsoft.ru/docs/_laboratory/").catch(core.msgSendError);
+    message.channel.send("http://wohlsoft.ru/projects/Moondust/_laboratory/").catch(core.msgSendError);
 }
 
 function smbx2pgeUpdate(bot, message, args)
@@ -18,7 +18,7 @@ function smbx2pgeUpdate(bot, message, args)
 
 function repo(bot, message, args)
 {
-    message.channel.send("https://github.com/WohlSoft/PGE-Project").catch(core.msgSendError);
+    message.channel.send("https://github.com/WohlSoft/Moondust-Project").catch(core.msgSendError);
 }
 
 function markup(bot, message, args)
@@ -70,12 +70,12 @@ function registerCommands(foxyCore)
     core = foxyCore;
     core.addCMD(["testurl",  testUrl,          "Test of URL returning. Just return a WohlSoft site url!"]);
     core.addCMD(["lab",      lab,              "Returns PGE Laboratory URL"]);
-    core.addCMD(["s2p",      smbx2pgeUpdate,   "Returns URL to PGE update guide for SMBX 2"]);
-    core.addCMD(["repo",     repo,             "Returns URL to PGE repository on GitHub"]);
+//    core.addCMD(["s2p",      smbx2pgeUpdate,   "Returns URL to Moondust update guide for SMBX 2"]);
+    core.addCMD(["repo",     repo,             "Returns URL to Moondust repository on GitHub"]);
     core.addCMD(["markup",   markup,           "Returns URL for a Discord markdown guide"]);
     core.addCMD(["isurl",    isUrlCheck,       "Checks is given string an URL", [], true]);
 
-    core.addCMD(["docs",     lunaDocs,         "Open PGE-Wiki page\n__*Syntax:*__ docs <name of PGE-Wiki page>", [], true]);
+    core.addCMD(["docs",     lunaDocs,         "Open PGE-Wiki page\n__*Syntax:*__ docs <name of Moondust Wiki page>", [], true]);
     core.addCMD(["search",   lunaSearch,       "Find something in the PGE-Wiki\n__*Syntax:*__ search <search query>", [], true]);
     core.addCMD(["find",     findInGoogle,     "Find something in Google\n__*Syntax:*__ find <your question>", [], true]);
     core.addCMD(["findwiki", findInWikipedia,  "Find something in Wikipedia\n__*Syntax:*__ findwiki <your question>", [], true]);
