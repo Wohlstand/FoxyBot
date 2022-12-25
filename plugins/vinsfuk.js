@@ -33,34 +33,56 @@ let superBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     if(!doGrant(message))
         return;
 
-    let list = args.split("\n");
-    let testOut = ""
-
-    for(let i = 0; i < list.length; ++i)
-    {
-        let firstSpace = list[i].indexOf(" ");
-        let reason;
-        let id;
-        if(firstSpace === -1)
-            id = list[i];
-        else
+    message.guild.bans.fetch()
+        .then(function ()
         {
-            id = list[i].substring(0, firstSpace);
-            reason = list[i].substring(firstSpace + 1);
-        }
+            try
+            {
+                let list = args.split("\n");
+                let testOut = ""
 
-        testOut += "* Banned id=" + id + " -> " + reason + "\n";
-        message.guild.bans.create(id, {reason: reason})
-            .catch(core.msgSendError);
-    }
+                for(let i = 0; i < list.length; ++i)
+                {
+                    let firstSpace = list[i].indexOf(" ");
+                    let reason;
+                    let id;
+                    if(firstSpace === -1)
+                        id = list[i];
+                    else
+                    {
+                        id = list[i].substring(0, firstSpace);
+                        reason = list[i].substring(firstSpace + 1);
+                    }
 
-    testOut = "IDs has been banned: \n\n" + testOut;
+                    let wasBanned = message.guild.bans.resolve(id);
+                    if(wasBanned == null)
+                    {
+                        testOut += "* Banned id=" + id + " -> " + reason + "\n";
+                        message.guild.bans.create(id, {reason: reason})
+                            .then(function (banInfo)
+                            {
+                                console.log(`Banned user: ${banInfo.user?.tag ?? banInfo.tag ?? banInfo}`);
+                            })
+                            .catch(core.msgSendError);
+                    }
+                }
 
-    if(testOut.length >= 2000)
-        testOut = testOut.substring(0, 2000-4) + "...";
+                if(testOut === "")
+                    testOut = "All users from the sent list were already banned"
+                else
+                    testOut = "IDs has been banned: \n\n" + testOut;
 
-    message.channel.send("IDs has been banned: \n\n" + testOut)
-        .catch(core.msgSendError);
+                if(testOut.length >= 2000)
+                    testOut = testOut.substring(0, 2000-4) + "...";
+
+                message.channel.send(testOut).catch(core.msgSendError);
+            }
+            catch(e)
+            {
+                core.foxyLogInfo("Error happen! " + e.name + ":" + e.message);
+            }
+        })
+        .catch(core.foxyLogInfo);
 }
 
 // Example bot command
@@ -130,7 +152,7 @@ let superBanFromDB = function(/*Client*/ bot, /*Message*/ message, /*string*/ ar
                 }
                 catch(e)
                 {
-                    core.sendErrorMsg(bot, chan, e);
+                    core.foxyLogInfo("Error happen! " + e.name + ":" + e.message);
                 }
             });
     }
