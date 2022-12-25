@@ -43,8 +43,9 @@ function getRandFile(bot, message, fromURL, messageTitle="", messageColor=0xD77D
     getJSON(options,
     function(statusCode, result)
     {
-        try{
-            var randfox = eval(result);
+        try
+        {
+            let randfox = eval(result);
             message.channel.send(messageTitle,
                 {
                     embed:
@@ -227,10 +228,8 @@ function fart(bot, message, args)
     if(isMyBoss && (args.indexOf("viva-systemd") !== -1))
     {
         message.reply("I'll be back!", core.msgSendError);
-        bot.user.setStatus("idle")
-            .catch(core.foxyLogError);
-        bot.user.setActivity("Shuting down...")
-            .catch(core.foxyLogError);
+        bot.user.setStatus("idle");
+        bot.user.setActivity("Shuting down...");
         setTimeout(function()
         {
             bot.destroy();
