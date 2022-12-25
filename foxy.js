@@ -385,7 +385,7 @@ function getAuthorStr(message)
     try
     {
         return "[" +  (z.bot ? "bot" : "user") + "] "
-                + ( (ch.type === 'dm') ?
+                + ( (ch.type === 'dm' || message.member === null) ?
                            z.username
                         : (message.member.nickname == null ? z.username : message.member.nickname)
                   )
