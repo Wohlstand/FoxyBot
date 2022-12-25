@@ -363,7 +363,7 @@ function isWritableChannel(channel)
     let guild = BotPtr.guilds.resolve(channel.guild.id);
     let botMember = guild.members.resolve(BotPtr.user.id);
     let perms = channel.permissionsFor(botMember);
-    let hasWrite = perms.has("SEND_MESSAGES");
+    let hasWrite = perms.has(Discord.PermissionsBitField.Flags.SendMessages);
 
     if(hasWrite === true)
         return !inListFile("readonly_chans.txt", channel.id);
@@ -385,7 +385,7 @@ function isWritableChannelId(channelId)
     let guild = BotPtr.guilds.resolve(chan.guild.id);
     let botMember = guild.members.resolve(BotPtr.user.id);
     let perms = chan.permissionsFor(botMember);
-    let hasWrite = perms.has("SEND_MESSAGES");
+    let hasWrite = perms.has(Discord.PermissionsBitField.Flags.SendMessages);
 
     if(hasWrite === true)
         return !inListFile("readonly_chans.txt", chan.id);
