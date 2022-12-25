@@ -42,22 +42,23 @@ let   botCommands = require("./bot_commands");
 const foxyBotCli  = new Discord.Client({
     intents:
     [
-        "Guilds", // for guild related things
-        "GuildMembers", // for guild members related things
-        "GuildBans", // for manage guild bans
+        Discord.GatewayIntentBits.Guilds, // for guild related things
+        Discord.GatewayIntentBits.GuildMessages,
+        Discord.GatewayIntentBits.GuildMembers, // for guild members related things
+        Discord.GatewayIntentBits.GuildBans, // for manage guild bans
         //"GuildEmojisAndStickers", // for manage emojis and stickers
-        "GuildIntegrations", // for discord Integrations
-        //"GuildWebhooks", // for discord webhooks
+        Discord.GatewayIntentBits.GuildIntegrations, // for discord Integrations
+        Discord.GatewayIntentBits.GuildWebhooks, // for discord webhooks
         //"GuildInvites", // for guild invite managing
         //"GuildVoiceStates", // for voice related things
-        "GuildPresences", // for user presence things
-        "GuildMessages", // for guild messages things
-        "GuildMessageReactions", // for message reactions things
-        "GuildMessageTyping", // for message typing things
-        "DirectMessages", // for dm messages
-        "DirectMessageReactions", // for dm message reaction
-        "DirectMessageTyping", // for dm message typing
-        "MessageContent", // enable if you need message content things
+        Discord.GatewayIntentBits.GuildPresences, // for user presence things
+        Discord.GatewayIntentBits.GuildMessages, // for guild messages things
+        Discord.GatewayIntentBits.GuildMessageReactions, // for message reactions things
+        Discord.GatewayIntentBits.GuildMessageTyping, // for message typing things
+        Discord.GatewayIntentBits.DirectMessages, // for dm messages
+        Discord.GatewayIntentBits.DirectMessageReactions, // for dm message reaction
+        Discord.GatewayIntentBits.DirectMessageTyping, // for dm message typing
+        Discord.GatewayIntentBits.MessageContent, // enable if you need message content things
     ]
 });
 // WatchDog for SystemD
