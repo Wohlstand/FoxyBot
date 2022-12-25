@@ -334,6 +334,79 @@ let tagBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     }
 }
 
+function guildMemberAdd(/*Client*/ bot, /*GuildMember*/ guildMember)
+{
+    if(core.my_db === undefined || core.my_db === null)
+    {
+        core.foxyLogError("I can't access database server at all. Please fix me, I need a doctor!");
+        return; // Can't write database at all
+    }
+
+    let guildName = guildMember.guild.name;
+    let guildId = guildMember.guild.id;
+    let guildUserId = guildMember.user.id;
+
+    try
+    {
+        let myDb = core.my_db;
+        let autoBanQuery = '' +
+            'SELECT * FROM foxy_superban_list,foxy_superban_tags WHERE ' +
+            'userid=' + myDb.escape(guildUserId) +
+            'AND autoban_guild=' + myDb.escape(guildId) +
+            'AND foxy_superban_list.tag=foxy_superban_tags.tag;';
+
+        myDb.query(autoBanQuery,
+            function (error, results, fields)
+            {
+                try
+                {
+                    if(error)
+                    {
+                        core.foxyLogInfo("Error happen! " + error);
+                        return;
+                    }
+
+                    if(results.length > 0)
+                    {
+                        let res = results[0];
+                        core.foxyLogInfo("Caught a jerk to his ass! I going to ban them as fast as possible!");
+                        let guildName = guildMember.guild.name;
+                        let guildUserId = guildMember.user.id;
+
+                        let channel = bot.channels.resolve(res.autoban_logchan);
+
+                        guildMember.guild.bans.create(guildUserId, {reason: "FoxyBot: Banned automatically through a blacklist"})
+                        .then(function (banInfo)
+                        {
+                            if (channel)
+                            {
+                                let report = "I automatically banned the <@" + guildUserId + "> with tag **" + res.tag + "** as it was found in the blacklist.";
+                                channel.send(report).catch(core.msgSendError);
+                            }
+                            console.log(`Banned user: ${banInfo.user?.tag ?? banInfo.tag ?? banInfo} at ${guildName}`);
+                        })
+                        .catch(function(error)
+                        {
+                            channel.send("I can't ban user <@" + guildUserId + "> with tag **" + res.tag + "** because of error: " + error.message).catch(core.msgSendError);
+                            console.log("Failed to ban user <@" + guildUserId + "> for the reason: " + error.message);
+                        });
+                        return;
+                    }
+
+                    core.foxyLogInfo("Seems this user is not in a blacklist...");
+                }
+                catch(e)
+                {
+                    core.foxyLogInfo("Error happen! " + e.name + ":" + e.message);
+                }
+            });
+    }
+    catch(e)
+    {
+        core.foxyLogInfo("Error happen! " + e.name + ":" + e.message);
+    }
+}
+
 // Initialize plugin and here you can add custom Foxy's commands
 function registerCommands(/*bot_commands.js module*/ foxyCore)
 {
@@ -353,5 +426,7 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
 module.exports =
 {
     // Initialize plugin and here you can add custom Foxy's commands
-    registerCommands:   registerCommands
+    registerCommands:   registerCommands,
+    // Catch the newbie joining
+    guildMemberAdd:     guildMemberAdd
 };
