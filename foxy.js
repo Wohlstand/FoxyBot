@@ -37,7 +37,8 @@ https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&p
 */
 
 const filesystem  = require("fs");
-const { Client, GatewayIntentBits } = require("discord.js");
+const Discord = require("discord.js");
+const GatewayIntentBits = Discord.GatewayIntentBits;
 let   botCommands = require("./bot_commands");
 const foxyBotCli  = new Discord.Client(
 {
