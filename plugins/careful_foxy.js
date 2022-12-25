@@ -153,7 +153,7 @@ function messageIn(mybot, message, allowWrite)
     let wasAsked = false;
     let messageForMe = false;
     let messageForMeReact = false;
-    let mentions = message.mentions.users.array();
+    let mentions = message.mentions.users;
 
     // for(let i = 0; i < mentions.length; i++)
     // {
