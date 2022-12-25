@@ -4,6 +4,7 @@
 
 // Main module of FoxyBot
 let core = undefined;
+const Discord = require("discord.js");
 
 function doGrant(message)
 {
@@ -27,11 +28,12 @@ function doGrant(message)
     return true;
 }
 
-// Example bot command
 let superBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     if(!doGrant(message))
         return;
+
+    message.channel.sendTyping();
 
     message.guild.bans.fetch()
         .then(function ()
@@ -85,11 +87,18 @@ let superBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
         .catch(core.foxyLogInfo);
 }
 
-// Example bot command
 let superBanFromDB = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     if(!doGrant(message))
         return;
+
+    if(core.my_db === undefined || core.my_db === null)
+    {
+        message.channel.send("I can't access database server at all. Please fix me, I need a doctor!").catch(core.msgSendError);
+        return; // Can't write database at all
+    }
+
+    message.channel.sendTyping();
 
     try
     {
@@ -145,10 +154,173 @@ let superBanFromDB = function(/*Client*/ bot, /*Message*/ message, /*string*/ ar
                             }
                             catch(e)
                             {
-                                core.sendErrorMsg(bot, chan, e);
+                                core.sendErrorMsg(bot, message.channel, e);
                             }
                         })
                         .catch(core.foxyLogInfo);
+                }
+                catch(e)
+                {
+                    core.foxyLogInfo("Error happen! " + e.name + ":" + e.message);
+                }
+            });
+    }
+    catch(e)
+    {
+        core.foxyLogInfo("Error happen! " + e.name + ":" + e.message);
+    }
+}
+
+let tagBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    if(!doGrant(message))
+        return;
+
+    let idBegin;
+    let reasonBegin = -1;
+
+    idBegin = args.indexOf(" ");
+    if(idBegin !== -1)
+        reasonBegin = args.indexOf(" ", idBegin + 1);
+
+    if(idBegin === -1)
+    {
+        message.channel.send("Invalid format!\n" +
+            "Valid format:\n" +
+            "```\n" +
+            "/foxy tagban [tag] [id] [reason text]\n" +
+            "```\n" +
+            "All arguments were required.").catch(core.msgSendError);
+        return;
+    }
+
+    let tag = args.substring(0, idBegin);
+    let toKill = reasonBegin >= 0 ? args.substring(idBegin + 1, reasonBegin) : args.substring(idBegin + 1);
+    let reason = reasonBegin >= 0 ? args.substring(reasonBegin + 1) : "<Reason is not specified>";
+
+    message.channel.send("Test of command: ban by\n" +
+        "tag: " + tag + "\n" +
+        "id: " + toKill + "\n" +
+        "reason: " + reason).catch(core.msgSendError);
+
+    message.channel.sendTyping();
+
+    try
+    {
+        let myDb = core.my_db;
+
+        myDb.query('SELECT * FROM foxy_superban_list WHERE userid=' + myDb.escape(toKill) + ';',
+            function (error, results, fields)
+            {
+                try
+                {
+                    if(error)
+                    {
+                        core.foxyLogInfo("Error happen! " + error);
+                        return;
+                    }
+
+                    if(results.length > 0)
+                    {
+                        message.channel.send("I can't: User <@!" + toKill + "> is already in a blacklist by tag **" + results[0].tag + "** for a reason:\n" +
+                            "```\n" +
+                            results[0].reason + "\n" +
+                            "```\n").catch(core.msgSendError);
+                        return;
+                    }
+
+                    message.channel.send("Here we go: User <@!" + toKill + "> will be added into blacklist by tag **" + tag + "** and banned on multiple servers for a reason:\n" +
+                        "```\n" +
+                        reason + "\n" +
+                        "```\n").catch(core.msgSendError);
+
+                    let insertQuery =   "INSERT INTO foxy_superban_list (`userid`, `reason`, `tag`) " + "values (" + myDb.escape(toKill) + ", " + myDb.escape(reason) + ", " + myDb.escape(tag) + ");";
+                    myDb.query(insertQuery, function (error, results, fields)
+                    {
+                        if(error)
+                        {
+                            core.errorMyDb(error, results, fields);
+                            return;
+                        }
+
+                        myDb.query("SELECT * FROM foxybot.foxy_superban_tags WHERE tag=" + myDb.escape(tag) + ";",
+                            function (error, results, fields)
+                            {
+                                if(error)
+                                {
+                                    core.errorMyDb(error, results, fields);
+                                    return;
+                                }
+
+                                try
+                                {
+                                    let outText = "";
+
+                                    for(let i = 0; i < results.length; ++i)
+                                    {
+                                        let res = results[i];
+                                        let guild = bot.guilds.resolve(res.autoban_guild);
+                                        let channel = null;
+
+                                        if(guild == null)
+                                        {
+                                            outText += "-!! Guild " + res.autoban_guild + " seens inacessible or invalid (info: " + res.info + ")\n";
+                                            continue;
+                                        }
+
+                                        channel = bot.channels.resolve(res.autoban_logchan);
+
+                                        if(channel == null)
+                                            outText += "-!! Channel " + res.autoban_logchan  + " of guild " + guild.name + " seens inacessible or invalid (info: " + res.info + ")\n";
+                                        else if(channel.type !== Discord.ChannelType.GuildText)
+                                            outText += "-!! Channel " + channel.name  + " of guild " + guild.name + " is not a text channel (de-facto " + channel.type + ") (info: " + res.info + ")\n";
+                                        else
+                                        {
+                                            guild.bans.create(toKill, {reason: reason})
+                                                .then(function (banInfo)
+                                                {
+                                                    let report = "I banned the <@" + toKill + "> with tag **" + tag + "** for the next reason:\n" +
+                                                        "```\n" +
+                                                        reason +
+                                                        "```\n" +
+                                                        "**Moderator:** " + message.author.username + "#" + message.author.discriminator + "\n" +
+                                                        "**Where banned originally:** " + message.guild.name;
+                                                    channel.send(report).catch(core.msgSendError);
+                                                    console.log(`Banned user: ${banInfo.user?.tag ?? banInfo.tag ?? banInfo} at ${guild.name}`);
+                                                })
+                                                .catch(function(error)
+                                                {
+                                                    channel.send("I can't ban user <@" + toKill + "> with tag **" + tag + "** because of error: " + error.message).catch(core.msgSendError);
+                                                    console.log("Failed to ban user <@" + toKill + "> for the reason: " + error.message);
+                                                });
+
+                                            outText += "- Banned at " + guild.name + ", reported at channel **" + channel.name + "** (info: " + res.info + ")\n";
+                                        }
+                                    }
+
+                                    if(outText === "")
+                                        outText = "No guilds found by tag **" + tag + "** to ban";
+                                    else
+                                        outText = "User <@!" + toKill + "> will be banned in next guilds: \n\n" + outText;
+
+                                    if(outText.length >= 2000)
+                                        outText = outText.substring(0, 2000-4) + "...";
+
+                                    let channel = message.channel;
+                                    if(channel === undefined)
+                                        core.foxyLogInfo("Error happen! the channel is unavailable!");
+                                    else
+                                    {
+                                        message.channel.send(outText).catch(core.msgSendError);
+                                    }
+                                }
+                                catch (e)
+                                {
+                                    core.sendErrorMsg(bot, message.channel, e);
+                                }
+                            }
+                        );
+                    });
                 }
                 catch(e)
                 {
@@ -173,8 +345,9 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
     // synonims[3], {array of strings}
     // isUseful[4], {bool}
     // limitOnGuilds[5] {array of strings}
-    core.addCMD(["superban",      superBan,           "Ban multiple users at once"]);
-    core.addCMD(["superbanfromdb",      superBanFromDB, "Ban all users from the database list"]);
+    core.addCMD(["superban",            superBan,           "Ban multiple users at once"]);
+    core.addCMD(["superbanfromdb",      superBanFromDB,     "Ban all users from the database list"]);
+    core.addCMD(["tagban",              tagBan,             "Add user into database list, and ban them by list of servers by tag"]);
 }
 
 module.exports =

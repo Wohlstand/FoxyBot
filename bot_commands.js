@@ -171,7 +171,7 @@ function msgSendError(error, message)
 {
     if (error)
     {
-        console.log("Fail to send message: " + message);
+        console.log("Fail to send message: [" + message + "] because of: " + error.message);
         let ErrorText = "Can't send message because: " + error;
         foxyLogError(ErrorText);
         if(++msgFailedAttempts > 2)
