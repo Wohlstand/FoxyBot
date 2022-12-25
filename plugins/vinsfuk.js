@@ -46,6 +46,11 @@ let superBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
             .catch(core.msgSendError);
     }
 
+    testOut = "IDs has been banned: \n\n" + testOut;
+
+    if(testOut.length >= 2000)
+        testOut = testOut.substring(0, 2000-4) + "...";
+
     message.channel.send("IDs has been banned: \n\n" + testOut)
         .catch(core.msgSendError);
 }
