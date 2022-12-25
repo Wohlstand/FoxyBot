@@ -37,28 +37,28 @@ https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&p
 */
 
 const filesystem  = require("fs");
-const Discord     = require("discord.js");
+const { Client, GatewayIntentBits } = require("discord.js");
 let   botCommands = require("./bot_commands");
-const foxyBotCli  = new Discord.Client({
+const foxyBotCli  = new Client(
+{
     intents:
     [
-        Discord.GatewayIntentBits.Guilds, // for guild related things
-        Discord.GatewayIntentBits.GuildMessages,
-        Discord.GatewayIntentBits.GuildMembers, // for guild members related things
-        Discord.GatewayIntentBits.GuildBans, // for manage guild bans
+        GatewayIntentBits.Guilds, // for guild related things
+        GatewayIntentBits.GuildMembers, // for guild members related things
+        GatewayIntentBits.GuildBans, // for manage guild bans
+        GatewayIntentBits.GuildIntegrations, // for discord Integrations
         //"GuildEmojisAndStickers", // for manage emojis and stickers
-        Discord.GatewayIntentBits.GuildIntegrations, // for discord Integrations
-        Discord.GatewayIntentBits.GuildWebhooks, // for discord webhooks
+        GatewayIntentBits.GuildWebhooks, // for discord webhooks
+        GatewayIntentBits.GuildPresences, // for user presence things
         //"GuildInvites", // for guild invite managing
         //"GuildVoiceStates", // for voice related things
-        Discord.GatewayIntentBits.GuildPresences, // for user presence things
-        Discord.GatewayIntentBits.GuildMessages, // for guild messages things
-        Discord.GatewayIntentBits.GuildMessageReactions, // for message reactions things
-        Discord.GatewayIntentBits.GuildMessageTyping, // for message typing things
-        Discord.GatewayIntentBits.DirectMessages, // for dm messages
-        Discord.GatewayIntentBits.DirectMessageReactions, // for dm message reaction
-        Discord.GatewayIntentBits.DirectMessageTyping, // for dm message typing
-        Discord.GatewayIntentBits.MessageContent, // enable if you need message content things
+        GatewayIntentBits.GuildMessages, // for guild messages things
+        GatewayIntentBits.GuildMessageReactions, // for message reactions things
+        GatewayIntentBits.GuildMessageTyping, // for message typing things
+        GatewayIntentBits.DirectMessages, // for dm messages
+        GatewayIntentBits.DirectMessageReactions, // for dm message reaction
+        GatewayIntentBits.DirectMessageTyping, // for dm message typing
+        GatewayIntentBits.MessageContent, // enable if you need message content things
     ]
 });
 // WatchDog for SystemD
