@@ -39,7 +39,27 @@ https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&p
 const filesystem  = require("fs");
 const Discord     = require("discord.js");
 let   botCommands = require("./bot_commands");
-const foxyBotCli  = new Discord.Client();
+const foxyBotCli  = new Discord.Client({
+    intents:
+    [
+        "Guilds", // for guild related things
+        "GuildMembers", // for guild members related things
+        "GuildBans", // for manage guild bans
+        //"GuildEmojisAndStickers", // for manage emojis and stickers
+        "GuildIntegrations", // for discord Integrations
+        //"GuildWebhooks", // for discord webhooks
+        //"GuildInvites", // for guild invite managing
+        //"GuildVoiceStates", // for voice related things
+        "GuildPresences", // for user presence things
+        "GuildMessages", // for guild messages things
+        "GuildMessageReactions", // for message reactions things
+        "GuildMessageTyping", // for message typing things
+        "DirectMessages", // for dm messages
+        "DirectMessageReactions", // for dm message reaction
+        "DirectMessageTyping", // for dm message typing
+        "MessageContent", // enable if you need message content things
+    ]
+});
 // WatchDog for SystemD
 const notify      = require('sd-notify');
 
@@ -183,10 +203,8 @@ function pluginsReload(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 
 function closeBot()
 {
-    foxyBotCli.user.setStatus("dnd")
-        .catch(botCommands.foxyLogError);
-    foxyBotCli.user.setActivity("Shuting down...")
-        .catch(botCommands.foxyLogError);
+    foxyBotCli.user.setStatus("dnd");
+    foxyBotCli.user.setActivity("Shuting down...");
     setTimeout(function ()
     {
         botCommands.foxyLogInfo("Sent \"Away\" status!");
@@ -226,11 +244,9 @@ foxyBotCli.on("ready", () =>
     botUserId = foxyBotCli.user.id;
 
     botCommands.foxyLogInfo('set status...');
-    foxyBotCli.user.setStatus("online")
-        .catch(botCommands.foxyLogError);
+    foxyBotCli.user.setStatus("online");
 
-    foxyBotCli.user.setActivity(botPrefix + " cmd")
-        .catch(botCommands.foxyLogError);
+    foxyBotCli.user.setActivity(botPrefix + " cmd");
 
     botCommands.initRemindWatcher(foxyBotCli);
     if(!greetingSent)
@@ -420,7 +436,7 @@ foxyBotCli.on("messageUpdate", function(messageOld, messageNew)
     });
 });
 
-foxyBotCli.on("message", function(message)
+foxyBotCli.on("messageCreate", function(message)
 {
     if(message.author.id === botUserId)
         return;//Ignore messages sent by myself
