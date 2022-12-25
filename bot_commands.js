@@ -363,7 +363,7 @@ function isWritableChannel(channel)
     let guild = BotPtr.guilds.resolve(channel.guild.id);
     let botMember = guild.members.resolve(BotPtr.user.id);
     let perms = channel.permissionsFor(botMember);
-    let hasWrite = perms.has('SEND_MESSAGES');
+    let hasWrite = perms.has(Discord.SEND_MESSAGES);
 
     if(hasWrite === true)
         return !inListFile("readonly_chans.txt", channel.id);
@@ -374,16 +374,19 @@ function isWritableChannelId(channelId)
 {
     if(!BotPtr)
         return false;// Bot is not working!
+
     let chan = BotPtr.channels.resolve(channelId);
     if(!chan)
     {
         foxyLogError("isWritableChannelId: Can't find channel ID " + channelId);
         return false;
     }
+
     let guild = BotPtr.guilds.resolve(chan.guild.id);
     let botMember = guild.members.resolve(BotPtr.user.id);
     let perms = chan.permissionsFor(botMember);
-    let hasWrite = perms.has('SEND_MESSAGES');
+    let hasWrite = perms.has(Discord.SEND_MESSAGES);
+
     if(hasWrite === true)
         return !inListFile("readonly_chans.txt", chan.id);
     return false;
