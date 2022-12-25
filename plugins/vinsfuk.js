@@ -83,31 +83,50 @@ let superBanFromDB = function(/*Client*/ bot, /*Message*/ message, /*string*/ ar
                         return;
                     }
 
-                    let testOut = ""
-
-                    for(let i = 0; i < results.length; i++)
-                    {
-                        message.guild.bans.create(results[i].userid, {reason: results[i].reason})
-                            .then(function(banInfo)
+                    message.guild.bans.fetch()
+                        .then(function ()
+                        {
+                            try
                             {
-                                console.log(`Banned user: ${banInfo.user?.tag ?? banInfo.tag ?? banInfo}`);
-                            })
-                            .catch(core.msgSendError);
-                        testOut += "* Banned id=" + results[i].userid + " -> " + results[i].reason + "\n";
-                    }
+                                let testOut = ""
 
-                    testOut = "IDs has been banned: \n\n" + testOut;
+                                for(let i = 0; i < results.length; i++)
+                                {
+                                    let wasBanned = message.guild.bans.resolve(results[i].userid);
+                                    if(wasBanned == null)
+                                    {
+                                        message.guild.bans.create(results[i].userid, {reason: results[i].reason})
+                                            .then(function (banInfo)
+                                            {
+                                                console.log(`Banned user: ${banInfo.user?.tag ?? banInfo.tag ?? banInfo}`);
+                                            })
+                                            .catch(core.msgSendError);
+                                        testOut += "* Banned id=" + results[i].userid + " -> " + results[i].reason + "\n";
+                                    }
+                                }
 
-                    if(testOut.length >= 2000)
-                        testOut = testOut.substring(0, 2000-4) + "...";
+                                if(testOut === "")
+                                    testOut = "All users from the blacklist were already banned"
+                                else
+                                    testOut = "IDs has been banned: \n\n" + testOut;
 
-                    let channel = message.channel;
-                    if(channel === undefined)
-                        core.foxyLogInfo("Error happen! the channel is unavailable!");
-                    else
-                    {
-                        message.channel.send(testOut).catch(core.msgSendError);
-                    }
+                                if(testOut.length >= 2000)
+                                    testOut = testOut.substring(0, 2000-4) + "...";
+
+                                let channel = message.channel;
+                                if(channel === undefined)
+                                    core.foxyLogInfo("Error happen! the channel is unavailable!");
+                                else
+                                {
+                                    message.channel.send(testOut).catch(core.msgSendError);
+                                }
+                            }
+                            catch(e)
+                            {
+                                core.sendErrorMsg(bot, chan, e);
+                            }
+                        })
+                        .catch(core.foxyLogInfo);
                 }
                 catch(e)
                 {
