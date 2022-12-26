@@ -9,7 +9,16 @@ const Discord = require("discord.js");
 function doGrant(message)
 {
     let isMyBoss = (core.botConfig.myboss.indexOf(message.author.id) !== -1);
-    let isModerator = message.member.roles.cache.has(core.botConfig.modsRole);
+    let isModerator = false;
+
+    if(core.botConfig.modsRole !== undefined && core.botConfig.modsRole.length > 0)
+    {
+        let mods = core.botConfig.modsRole;
+        for(let i = 0; i < mods.length; ++i)
+            isModerator |= message.member.roles.cache.has(mods[i]);
+    }
+    else
+        isModerator = message.member.roles.cache.has(core.botConfig.modsRole);
 
     if(!isMyBoss && !isModerator)
     {
@@ -198,10 +207,14 @@ let tagBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     let toKill = reasonBegin >= 0 ? args.substring(idBegin + 1, reasonBegin) : args.substring(idBegin + 1);
     let reason = reasonBegin >= 0 ? args.substring(reasonBegin + 1) : "<Reason is not specified>";
 
-    message.channel.send("Test of command: ban by\n" +
-        "tag: " + tag + "\n" +
-        "id: " + toKill + "\n" +
-        "reason: " + reason).catch(core.msgSendError);
+    if(tag === "dryrun")
+    {
+        message.channel.send("Test of command: ban by\n" +
+            "tag: " + tag + "\n" +
+            "id: " + toKill + "\n" +
+            "reason: " + reason).catch(core.msgSendError);
+        return;
+    }
 
     message.channel.sendTyping();
 
