@@ -101,21 +101,23 @@ function mailChecker()
 
                                     if(isWritable)
                                     {
-                                        chan.send("__I got email reply from " + message.from[0].name + " for " +
-                                                    (msgRes.uid !== 0 ? (isNoPingUser(msgRes.uid) ? msgRes.uid : ("<@" + msgRes.uid + ">") ) : "someone")
-                                                    + "__:\n",
-                                            {
-                                                embed:
-                                                {
-                                                    color: 0xAF0000,
-                                                    fields: [{
-                                                        name : message.subject,
-                                                        value: outText
-                                                    }],
-                                                    footer: {
-                                                        text: "Note: to send email to me, begin every your message with 'Wohlstand:' (or 'Wohl:') (letter sign 📧 means email was sent)"
+                                        chan.send({
+                                            content: "__I got email reply from " + message.from[0].name + " for " +
+                                                (msgRes.uid !== 0 ? (isNoPingUser(msgRes.uid) ? msgRes.uid : ("<@" + msgRes.uid + ">") ) : "someone")
+                                                + "__:\n",
+                                                embeds:
+                                                [
+                                                    {
+                                                        color: 0xAF0000,
+                                                        fields: [{
+                                                            name : message.subject,
+                                                            value: outText
+                                                        }],
+                                                        footer: {
+                                                            text: "Note: to send email to me, begin every your message with 'Wohlstand:' (or 'Wohl:') (letter sign 📧 means email was sent)"
+                                                        }
                                                     }
-                                                }, split: true
+                                                ]
                                             }
                                         ).catch(core.msgSendError);
                                     }
@@ -199,4 +201,3 @@ module.exports =
     registerCommands:   registerCommands,
     unloadPlugin:       unloadPlugin
 };
-

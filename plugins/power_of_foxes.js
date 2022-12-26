@@ -43,19 +43,21 @@ function getRandFile(bot, message, fromURL, messageTitle="", messageColor=0xD77D
     getJSON(options,
     function(statusCode, result)
     {
-        try
-        {
+        try{
             let randfox = eval(result);
-            message.channel.send(messageTitle,
+            message.channel.send(
                 {
-                    embed:
-                    {
-                        image: {
-                            url: randfox.file
-                        },
-                        color: messageColor,
-                    }, split: true,
-                    reply : ""
+                    content: messageTitle,
+                    embeds:
+                    [
+                        {
+                            image: {
+                                url: randfox.file
+                            },
+                            color: messageColor,
+                        }
+                    ],
+                    reply: { messageReference: message.id }
                 }
             ).catch(core.msgSendError);
         }catch(e){

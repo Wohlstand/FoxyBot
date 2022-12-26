@@ -62,19 +62,22 @@ function translate(bot, message, args)
         } else {
             let msgText = "\n" + translation;
             let title = message.author.username + "#" + message.author.discriminator;
-            message.channel.send("",
+            message.channel.send(
             {
-                embed:{
-                    color: 0xffff66,
-                    fields: [{
-                        name : title,
-                        value: msgText
-                    }],
-                    footer: {
-                        text: "Powered by Yandex.Translate (https://translate.yandex.ru)"
-                    },
-                    url: "https://translate.yandex.ru"
-                }
+                embeds:
+                [
+                    {
+                        color: 0xffff66,
+                        fields: [{
+                            name : title,
+                            value: msgText
+                        }],
+                        footer: {
+                            text: "Powered by Yandex.Translate (https://translate.yandex.ru)"
+                        },
+                        url: "https://translate.yandex.ru"
+                    }
+                ]
             }).catch(core.msgSendError);
             //core.say(bot, message,  "__**[" + message.author.username + "#" + message.author.discriminator + "]**__: " + translation);
         }
