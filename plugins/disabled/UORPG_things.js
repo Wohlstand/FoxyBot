@@ -43,7 +43,8 @@ function getKeys(obj)
 function cleanRoles(bot, message, args, newRole)
 {
     message.guild.members.fetch(message.author)
-    .then(function(gotMember) {
+    .then(function(gotMember)
+    {
         let chaos = getChaos(message.guild);
         let order = getOrder(message.guild);
         let renegades = getRenegades(message.guild);
@@ -64,7 +65,8 @@ function joinOrder(bot, message, args)
     let order = getOrder(message.guild);
     cleanRoles(bot, message, args, order);
     let rus = bot.channels.resolve(Chan_RUS);
-    if(message.channel.id === rus.id)
+
+    if(rus && message.channel.id === rus.id)
         message.reply("Добро пожаловать в Альянс Порядка!", core.msgSendError);
     else
         message.reply("Welcome to Order!", core.msgSendError);
@@ -75,7 +77,8 @@ function joinChaos(bot, message, args)
     let chaos = getChaos(message.guild);
     cleanRoles(bot, message, args, chaos);
     let rus = bot.channels.resolve(Chan_RUS);
-    if(message.channel.id === rus.id)
+
+    if(rus && message.channel.id === rus.id)
         message.reply("Добро пожаловать в Альянс Хаоса!", core.msgSendError);
     else
         message.reply("Welcome to Chaos!", core.msgSendError);
@@ -86,7 +89,8 @@ function joinRenegades(bot, message, args)
     let renegades = getRenegades(message.guild);
     cleanRoles(bot, message, args, renegades);
     let rus = bot.channels.resolve(Chan_RUS);
-    if(message.channel.id === rus.id)
+
+    if(rus && message.channel.id === rus.id)
         message.reply("Добро пожаловать в общество Ренегатов!", core.msgSendError);
     else
         message.reply("Welcome to Renegades!", core.msgSendError);
@@ -173,4 +177,3 @@ module.exports =
     registerCommands:   registerCommands,
     guildMemberAdd:     guildMemberAdd
 };
-

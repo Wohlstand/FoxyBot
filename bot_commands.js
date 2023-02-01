@@ -3,6 +3,7 @@ const nodeMailer  = require('nodemailer');
 const escape      = require('escape-html');
 const mysql       = require('mysql');
 const Discord     = require("discord.js");
+const ChannelType = Discord.ChannelType;
 
 let foxyBotPackage  = require("./package.json");
 let responses       = require("./responses.json");
@@ -1125,6 +1126,7 @@ function commandAllowedOnServer(Cmd, gd_ext)
             if(gd_ext === gd)
                 found = true;
         });
+
         if(!found)
             return false;
     }
@@ -1135,10 +1137,11 @@ function listCmds(bot, message, args)
 {
     let commands = "**Available commands:**\n";
     let commandsCount = 0;
-    let isGuild = (message.channel.type === "text");
+    let isDM = (message.channel.type === ChannelType.DM);
+    let isGuild = (message.channel.type === ChannelType.GuildText);
     for(const cmdK of Cmds)
     {
-        if(!isGuild && (cmdK.guildsLimit.length > 0))
+        if(isDM && (cmdK.guildsLimit.length > 0))
             continue;
         if(isGuild && !commandAllowedOnServer(cmdK, message.guild.id))
             continue;
@@ -1176,17 +1179,20 @@ function listCmds(bot, message, args)
 
 function cmdHelp(bot, message, args)
 {
-    let isGuild = (message.channel.type === "text");
+    let isDM = (message.channel.type === ChannelType.DM);
+    let isGuild = (message.channel.type === ChannelType.GuildText);
+
     if(args.trim() === "")
     {
         listCmds(bot, message, args);
         return;
     }
+
     for(const cmdK of Cmds)
     {
         if(cmdK.name === args)
         {
-            if(!isGuild && (cmdK.guildsLimit.length > 0))
+            if(isDM && (cmdK.guildsLimit.length > 0))
                 continue;
             if(isGuild && !commandAllowedOnServer(cmdK, message.guild.id))
                 continue;
@@ -1204,6 +1210,7 @@ function cmdHelp(bot, message, args)
             return;
         }
     }
+
     message.reply("Sorry, I don't know this").catch(msgSendError);
 }
 
@@ -1324,17 +1331,21 @@ function callCommand(bot, message, command, args)
     if(inListFile("black_global.txt", message.author.id))
         return;
 
-    let isDM = (message.channel.type !== "text");
+    let isDM = (message.channel.type === ChannelType.DM);
+    let isGuild = (message.channel.type === ChannelType.GuildText);
     let found=false;
+
     for(const cmdK of Cmds)
     {
         if(cmdK.name === command)
         {
             if(isDM && (cmdK.guildsLimit.length > 0))
                 continue;
-            if(!isDM && !commandAllowedOnServer(cmdK, message.guild.id))
+            if(isGuild && !commandAllowedOnServer(cmdK, message.guild.id))
                 continue;
-            try{
+
+            try
+            {
                 found = true;
                 cmdK.call(bot, message, args);
             }
@@ -1342,9 +1353,11 @@ function callCommand(bot, message, command, args)
             {
                 sendErrorMsg(bot, message.channel, e);
             }
+
             break;
         }
     }
+
     if(!found)
     {
         message.reply("Sorry, I don't know this command! " +
