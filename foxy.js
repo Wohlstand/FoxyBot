@@ -370,10 +370,10 @@ foxyBotCli.on("presenceUpdate", (oldUser, newUser) =>
                       "She was a VERY good bot! :sob:").catch(botCommands.msgSendError);
         }
     break;
-    case "216243239391330305"://Bastion died
+    case "1026539575432204429"://Dance bot died
         if(newStatus === "offline")
         {
-            chan.send("Bastion is dead?! :hushed: What happen with it?").catch(botCommands.msgSendError);
+            chan.send("Alarm! Dance bot went offline!").catch(botCommands.msgSendError);
         }
     break;
     }
@@ -388,7 +388,7 @@ function getAuthorStr(message)
     try
     {
         return "[" +  (z.bot ? "bot" : "user") + "] "
-                + ( (ch.type === 'dm' || message.member === null) ?
+                + ( (ch.type === ChannelType.DM || message.member === null) ?
                            z.username
                         : (message.member.nickname == null ? z.username : message.member.nickname)
                   )

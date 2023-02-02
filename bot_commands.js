@@ -473,23 +473,31 @@ function say(bot, message, args)
     }
 
     let chan = message.channel;
-    let attachments = message.attachments.array();
+    let attachments = message.attachments;
     let authorname  = message.author.username;
 
-    if(attachments.length === 0)
+    if(attachments.size === 0)
     {
         chan.send(args).then(function(){}, msgSendError).catch(msgSendError);
     }
     else
-    for(let i=0; i < attachments.length; i++)
+    for(let i=0; i < attachments.size; i++)
     {
-        let attachm = attachments[i];
-        chan.send(args).catch(msgSendError).reject(msgSendError);
-        chan.sendFile(attachm.url, attachm.filename).then(function(){}, msgSendError).catch(msgSendError);
+        let attachm = attachments.at(i);
+        // chan.send(args).catch(msgSendError);
+        chan.send(
+        {
+            content: args,
+            files:
+            [{
+                attachment: attachm.url,
+                name: attachm.name
+            }]
+        }).catch(msgSendError);
     }
 
-    if(attachments.length === 0)
-        message.delete().then(function(){}, msgDeleteError).catch(msgDeleteError);
+    // if(attachments.size === 0)
+    message.delete().then(function(){}, msgDeleteError).catch(msgDeleteError);
 
     sayLogArr.push([authorname, args]);
     if(sayLogArr.length > 5)
@@ -506,23 +514,32 @@ function sayTTS(bot, message, args)
     }
 
     let chan = message.channel;
-    let attachments = message.attachments.array();
+    let attachments = message.attachments;
     let authorname  = message.author.username;
 
-    if(attachments.length === 0)
+    if(attachments.size === 0)
     {
-        chan.send(args, {"tts" : true}).then(function(){}, msgSendError).catch(msgSendError);
+        chan.send(args).then(function(){}, msgSendError).catch(msgSendError);
     }
     else
-    for(let i=0; i < attachments.length; i++)
-    {
-        let attachm = attachments[i];
-        chan.send(args, {"tts" : true}).then(function(){}, msgSendError).catch(msgSendError);
-        chan.sendFile(attachm.url, attachm.filename).then(function(){}, msgSendError).catch(msgSendError);
-    }
+        for(let i=0; i < attachments.size; i++)
+        {
+            let attachm = attachments.at(i);
+            // chan.send(args).catch(msgSendError);
+            chan.send(
+                {
+                    content: args,
+                    tts: true,
+                    files:
+                        [{
+                            attachment: attachm.url,
+                            name: attachm.name
+                        }]
+                }).catch(msgSendError);
+        }
 
-    if(attachments.length === 0)
-        message.delete().then(function(){}, msgDeleteError).catch(msgDeleteError);
+    // if(attachments.size === 0)
+    message.delete().then(function(){}, msgDeleteError).catch(msgDeleteError);
 
     sayLogArr.push([authorname, args]);
     if(sayLogArr.length > 5)

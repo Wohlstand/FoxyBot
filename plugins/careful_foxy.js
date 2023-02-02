@@ -4,8 +4,11 @@
 */
 
 let botCommands = undefined;
+const Discord = require("discord.js");
+const ChannelType = Discord.ChannelType;
 
-String.prototype.regexIndexOf = function(regex, startpos) {
+String.prototype.regexIndexOf = function(regex, startpos)
+{
     let indexOf = this.substring(startpos || 0).search(regex);
     return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
 };
@@ -212,7 +215,7 @@ function messageIn(mybot, message, allowWrite)
         }
     }
 
-    if(allowWrite && (wasAsked || message.channel.type === 'dm'))
+    if(allowWrite && (wasAsked || message.channel.type === ChannelType.DM))
     {
         if(message.author.id === "216688100032643072") // Horikawa Botane
         {
