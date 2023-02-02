@@ -1333,7 +1333,7 @@ function callCommand(bot, message, command, args)
 
     let isDM = (message.channel.type === ChannelType.DM);
     let isGuild = (message.channel.type === ChannelType.GuildText);
-    let found=false;
+    let found = false;
 
     for(const cmdK of Cmds)
     {
