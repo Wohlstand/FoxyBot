@@ -39,6 +39,8 @@ https://discordapp.com/oauth2/authorize?client_id=216943869424566273&scope=bot&p
 const filesystem  = require("fs");
 const Discord = require("discord.js");
 const GatewayIntentBits = Discord.GatewayIntentBits;
+const Partials = Discord.Partials;
+const ChannelType = Discord.ChannelType;
 let   botCommands = require("./bot_commands");
 const foxyBotCli  = new Discord.Client(
 {
@@ -60,7 +62,8 @@ const foxyBotCli  = new Discord.Client(
         GatewayIntentBits.DirectMessageReactions, // for dm message reaction
         GatewayIntentBits.DirectMessageTyping, // for dm message typing
         GatewayIntentBits.MessageContent, // enable if you need message content things
-    ]
+    ],
+    'partials': [Partials.Channel]
 });
 // WatchDog for SystemD
 const notify      = require('sd-notify');
@@ -390,7 +393,7 @@ function getAuthorStr(message)
                         : (message.member.nickname == null ? z.username : message.member.nickname)
                   )
                 + " <@" + z.username + "#" + z.discriminator + ", "
-                + ( (ch.type === 'dm') ? "PM" : (ch.name + '@' + gu.name) )
+                + ( (ch.type === ChannelType.DM) ? "PM" : (ch.name + '@' + gu.name) )
                 + ">";
     }
     catch(e)
@@ -464,9 +467,8 @@ foxyBotCli.on("messageCreate", function(message)
         try
         {
             if(botCommands.inListFile("black_global.txt", message.author.id))
-            {
                 return;
-            }
+
             message.channel.send("Hello, I'm **FoxyBot**!\n" +
                                         "   Type **" + botPrefix + " cmd** to learn my commands\n" +
                                         "   Type __**" + botPrefix + " help <command>**__ to read detail help for specific command.")
@@ -488,6 +490,7 @@ foxyBotCli.on("messageCreate", function(message)
             firstSpace = botCmd.indexOf('\n');
         let botCommand = "";
         let botArgs = "";
+
         if(firstSpace !== -1)
         {
             botCommand = botCmd.slice(0, firstSpace).trim();
@@ -497,6 +500,7 @@ foxyBotCli.on("messageCreate", function(message)
         }
         else
             botCommand = botCmd.trim();
+
         botCommands.callCommand(foxyBotCli, message, botCommand.toLowerCase(), botArgs);
     }
     else

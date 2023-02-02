@@ -358,7 +358,7 @@ function isWritableGuild(guild)
 
 function isWritableChannel(channel)
 {
-    if(channel.type === "dm")
+    if(channel.type === ChannelType.DM)
         return true;//DM is writable!
 
     let guild = BotPtr.guilds.resolve(channel.guild.id);
@@ -708,7 +708,7 @@ function sayDelayd(bot, message, args)
     }
 
     let some = args.slice(0, index).trim();
-    let guild_id = (message.channel.type === 'dm') ? 0 : message.channel.guild.id;
+    let guild_id = (message.channel.type === ChannelType.DM) ? 0 : message.channel.guild.id;
     let chan_id  = message.channel.id;
     let waitTime = my_db.escape(timeInt/1000);
     //foxyLogInfo("Remind: Wait " + (timeInt/1000) + " vs " +  waitTime + " seconds!");
@@ -754,7 +754,7 @@ function sayDelaydME(bot, message, args)
     }
 
     let some = "<@" + message.author.id + ">, " + args.slice(0, index).trim();
-    let guild_id    = (message.channel.type === 'dm') ? 0 : message.channel.guild.id;
+    let guild_id    = (message.channel.type === ChannelType.DM) ? 0 : message.channel.guild.id;
     let chan_id     = message.channel.id;
     let waitTime    = my_db.escape(timeInt/1000);
     let insertQuery =   "INSERT INTO foxy_reminds (dest_date, message, guild_id, channel_id) "+
