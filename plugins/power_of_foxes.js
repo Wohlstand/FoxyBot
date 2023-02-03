@@ -139,7 +139,7 @@ function facepalm(bot, message, args)
 
 function frog(bot, message, args)
 {
-    getRandFile(bot, message, "getRandPic.php?which=frogs", ":frog: | **I see fly!**", 0x8CCB5E);
+    getRandFile(bot, message, "getRandPic.php?which=frogs", ":frog: | **I see a fly!**", 0x8CCB5E);
 }
 
 
