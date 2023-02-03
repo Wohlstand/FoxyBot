@@ -4,7 +4,48 @@
 
 // Main module of FoxyBot
 let core = undefined;
+let bot = undefined;
 const Discord = require("discord.js");
+const banIcon = __dirname + "/../images/banned.png"
+
+function formReport(message, tag, toKill, reason)
+{
+    let whoBanned = null;
+    let toKillName = "<@!" + toKill + ">";
+    if(bot)
+    {
+        whoBanned = bot.users.resolve(toKill);
+        if(whoBanned)
+            toKillName = whoBanned.name + " <@!" + toKill +">";
+    }
+
+    let report =
+    {
+        embeds: [
+            {
+                title: "Super-ban report!",
+                description: "I banned the " + toKillName + " with tag **" + tag + "**",
+                thumbnail: {
+                    url: 'attachment://banned.png'
+                },
+                fields: [
+                    {inline: false, name: "Who banned:", value: toKillName},
+                    {inline: false, name: "Reason:", value: reason},
+                    {inline: false, name: "Moderator:", value: message.author.username + "#" + message.author.discriminator},
+                    {inline: false, name: "Where banned:", value: message.guild.name}
+                ],
+                color: 0xD77D31
+            }
+        ],
+        files: [{
+            attachment: banIcon,
+            name: "banned.png"
+        }]
+    };
+
+    return report;
+}
+
 
 function doGrant(message)
 {
@@ -289,22 +330,17 @@ let tagBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
                                             outText += "-!! Channel " + channel.name  + " of guild " + guild.name + " is not a text channel (de-facto " + channel.type + ") (info: " + res.info + ")\n";
                                         else
                                         {
+                                            let report = formReport(message, tag, toKill, reason);
                                             guild.bans.create(toKill, {reason: reason})
                                                 .then(function (banInfo)
                                                 {
-                                                    let report = "I banned the <@" + toKill + "> with tag **" + tag + "** for the next reason:\n" +
-                                                        "```\n" +
-                                                        reason +
-                                                        "```\n" +
-                                                        "**Moderator:** " + message.author.username + "#" + message.author.discriminator + "\n" +
-                                                        "**Where banned originally:** " + message.guild.name;
                                                     channel.send(report).catch(core.msgSendError);
                                                     console.log(`Banned user: ${banInfo.user?.tag ?? banInfo.tag ?? banInfo} at ${guild.name}`);
                                                 })
                                                 .catch(function(error)
                                                 {
-                                                    channel.send("I can't ban user <@" + toKill + "> with tag **" + tag + "** because of error: " + error.message).catch(core.msgSendError);
-                                                    console.log("Failed to ban user <@" + toKill + "> for the reason: " + error.message);
+                                                    channel.send("I can't ban user <@!" + toKill + "> with tag **" + tag + "** because of error: " + error.message).catch(core.msgSendError);
+                                                    console.log("Failed to ban user <@!" + toKill + "> for the reason: " + error.message);
                                                 });
 
                                             outText += "- Banned at " + guild.name + ", reported at channel **" + channel.name + "** (info: " + res.info + ")\n";
@@ -345,6 +381,14 @@ let tagBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     {
         core.foxyLogInfo("Error happen! " + e.name + ":" + e.message);
     }
+}
+
+let testBanReport = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    if(!doGrant(message))
+        return;
+
+    message.channel.send(formReport(message, "testtag", "1007770890190196848", "Test reason"));
 }
 
 function guildMemberAdd(/*Client*/ bot, /*GuildMember*/ guildMember)
@@ -420,6 +464,11 @@ function guildMemberAdd(/*Client*/ bot, /*GuildMember*/ guildMember)
     }
 }
 
+function setBot(/*Discord client module*/ foxyBot)
+{
+    bot = foxyBot;
+}
+
 // Initialize plugin and here you can add custom Foxy's commands
 function registerCommands(/*bot_commands.js module*/ foxyCore)
 {
@@ -434,10 +483,12 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
     core.addCMD(["superban",            superBan,           "Ban multiple users at once"]);
     core.addCMD(["superbanfromdb",      superBanFromDB,     "Ban all users from the database list"]);
     core.addCMD(["tagban",              tagBan,             "Add user into database list, and ban them by list of servers by tag"]);
+    core.addCMD(["testbanreport",       testBanReport,      "Prints an example of the ban report"]);
 }
 
 module.exports =
 {
+    setBot:             setBot,
     // Initialize plugin and here you can add custom Foxy's commands
     registerCommands:   registerCommands,
     // Catch the newbie joining
