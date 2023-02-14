@@ -49,14 +49,23 @@ function formReport(message, tag, toKill, reason)
 
 function doGrant(message)
 {
+    if(!core)
+    {
+        message.channel.send("Doesn't work, yet!").catch(core.msgSendError);
+        return;
+    }
+
     let isMyBoss = (core.botConfig.myboss.indexOf(message.author.id) !== -1);
     let isModerator = false;
 
-    if(core.botConfig.modsRole !== undefined && core.botConfig.modsRole.length > 0)
+    if(core.botConfig.modsRoles !== undefined && core.botConfig.modsRoles.length > 0)
     {
-        let mods = core.botConfig.modsRole;
+        let mods = core.botConfig.modsRoles;
         for(let i = 0; i < mods.length; ++i)
-            isModerator |= message.member.roles.cache.has(mods[i]);
+        {
+            let rol = mods[i];
+            isModerator |= message.member.roles.cache.has(rol);
+        }
     }
     else
         isModerator = message.member.roles.cache.has(core.botConfig.modsRole);
