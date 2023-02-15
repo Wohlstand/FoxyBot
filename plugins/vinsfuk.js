@@ -8,7 +8,7 @@ let bot = undefined;
 const Discord = require("discord.js");
 const banIcon = __dirname + "/../images/banned.png"
 
-function formReport(message, tag, toKill, reason)
+function formReport(message, tag, toKill, reason, unban= false)
 {
     let whoBanned = null;
     let toKillName = "<@!" + toKill + ">";
@@ -24,15 +24,15 @@ function formReport(message, tag, toKill, reason)
         embeds: [
             {
                 title: "Super-ban report!",
-                description: "I banned the " + toKillName + " with tag **" + tag + "**",
+                description: "I " + (unban ? "unbanned" : "banned") + " the " + toKillName + " with tag **" + tag + "**",
                 thumbnail: {
                     url: 'attachment://banned.png'
                 },
                 fields: [
-                    {inline: false, name: "Who banned:", value: toKillName},
+                    {inline: false, name: "Who " + (unban ? "unbanned" : "banned") + ":", value: toKillName},
                     {inline: false, name: "Reason:", value: reason},
                     {inline: false, name: "Moderator:", value: message.author.username + "#" + message.author.discriminator},
-                    {inline: false, name: "Where banned:", value: message.guild.name}
+                    {inline: false, name: "Where " + (unban ? "unbanned" : "banned") + ":", value: message.guild.name}
                 ],
                 color: 0xD77D31
             }
@@ -392,6 +392,132 @@ let tagBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
     }
 }
 
+let tagUnBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
+{
+    if(!doGrant(message))
+        return;
+
+    let idBegin;
+    let reasonBegin = -1;
+
+    idBegin = args.indexOf(" ");
+    if(idBegin !== -1)
+        reasonBegin = args.indexOf(" ", idBegin + 1);
+
+    if(idBegin === -1)
+    {
+        message.channel.send("Invalid format!\n" +
+            "Valid format:\n" +
+            "```\n" +
+            "/foxy tagunban [tag] [id] [reason text]\n" +
+            "```\n" +
+            "All arguments were required.").catch(core.msgSendError);
+        return;
+    }
+
+    let tag = args.substring(0, idBegin);
+    let toKill = reasonBegin >= 0 ? args.substring(idBegin + 1, reasonBegin) : args.substring(idBegin + 1);
+    let reason = reasonBegin >= 0 ? args.substring(reasonBegin + 1) : "<Reason is not specified>";
+
+    if(tag === "dryrun")
+    {
+        message.channel.send("Test of command: ban by\n" +
+            "tag: " + tag + "\n" +
+            "id: " + toKill + "\n" +
+            "reason: " + reason).catch(core.msgSendError);
+        return;
+    }
+
+    message.channel.sendTyping();
+
+    try
+    {
+        let myDb = core.my_db;
+
+        myDb.query("SELECT * FROM foxybot.foxy_superban_tags WHERE tag=" + myDb.escape(tag) + ";",
+            function (error, results, fields)
+            {
+                if(error)
+                {
+                    core.errorMyDb(error, results, fields);
+                    return;
+                }
+
+                try
+                {
+                    let outText = "";
+
+                    for(let i = 0; i < results.length; ++i)
+                    {
+                        let res = results[i];
+                        let guild = bot.guilds.resolve(res.autoban_guild);
+                        let channel = null;
+
+                        if(guild == null)
+                        {
+                            outText += "-!! Guild " + res.autoban_guild + " seens inacessible or invalid (info: " + res.info + ")\n";
+                            continue;
+                        }
+
+                        channel = bot.channels.resolve(res.autoban_logchan);
+
+                        if(channel == null)
+                            outText += "-!! Channel " + res.autoban_logchan  + " of guild " + guild.name + " seens inacessible or invalid (info: " + res.info + ")\n";
+                        else if(channel.type !== Discord.ChannelType.GuildText)
+                            outText += "-!! Channel " + channel.name  + " of guild " + guild.name + " is not a text channel (de-facto " + channel.type + ") (info: " + res.info + ")\n";
+                        else
+                        {
+                            let report = formReport(message, tag, toKill, reason, true);
+                            guild.bans.remove(toKill, reason)
+                                .then(function (banInfo)
+                                {
+                                    channel.send(report).catch(core.msgSendError);
+                                    console.log(`Unbanned user: ${banInfo.user?.tag ?? banInfo.tag ?? banInfo} at ${guild.name}`);
+                                })
+                                .catch(function(error)
+                                {
+                                    channel.send("I can't unban user <@!" + toKill + "> with tag **" + tag + "** because of error: " + error.message).catch(core.msgSendError);
+                                    console.log("Failed to unban user <@!" + toKill + "> for the reason: " + error.message);
+                                });
+
+                            outText += "- Unbanned at " + guild.name + ", reported at channel **" + channel.name + "** (info: " + res.info + ")\n";
+                        }
+                    }
+
+                    if(outText === "")
+                        outText = "No guilds found by tag **" + tag + "** to ban";
+                    else
+                        outText = "User <@!" + toKill + "> will be unbanned in next guilds: \n\n" + outText;
+
+                    if(outText.length >= 2000)
+                        outText = outText.substring(0, 2000-4) + "...";
+
+                    let channel = message.channel;
+                    if(channel === undefined)
+                        core.foxyLogInfo("Error happen! the channel is unavailable!");
+                    else
+                        message.channel.send(outText).catch(core.msgSendError);
+
+                    let removeQuery =   "DELETE FROM foxy_superban_list WHERE `userid`=" + myDb.escape(toKill) + " AND `tag`=" + myDb.escape(tag) + ";";
+                    myDb.query(removeQuery, function (error, results, fields)
+                    {
+                        if(error)
+                            core.errorMyDb(error, results, fields);
+                    });
+                }
+                catch (e)
+                {
+                    core.sendErrorMsg(bot, message.channel, e);
+                }
+            }
+        );
+    }
+    catch(e)
+    {
+        core.foxyLogInfo("Error happen! " + e.name + ":" + e.message);
+    }
+}
+
 let testBanReport = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 {
     if(!doGrant(message))
@@ -492,6 +618,7 @@ function registerCommands(/*bot_commands.js module*/ foxyCore)
     core.addCMD(["superban",            superBan,           "Ban multiple users at once"]);
     core.addCMD(["superbanfromdb",      superBanFromDB,     "Ban all users from the database list"]);
     core.addCMD(["tagban",              tagBan,             "Add user into database list, and ban them by list of servers by tag"]);
+    core.addCMD(["tagunban",            tagUnBan,           "Remove user from the database list, and unban them by list of servers by tag"]);
     core.addCMD(["testbanreport",       testBanReport,      "Prints an example of the ban report"]);
 }
 
