@@ -34,7 +34,7 @@ function formReport(message, tag, toKill, reason, unban= false)
                     {inline: false, name: "Moderator:", value: message.author.username + "#" + message.author.discriminator},
                     {inline: false, name: "Where " + (unban ? "unbanned" : "banned") + ":", value: message.guild.name}
                 ],
-                color: 0xD77D31
+                color: unban ? 0x00FF00 : 0xD77D31
             }
         ],
         files: [{
