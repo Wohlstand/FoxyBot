@@ -10,22 +10,25 @@ let core = undefined;
 function choose(bot, message, args)
 {
     let vars = args.split(/,|[ \n]or[ \n]/g);
+
     if((vars.length === 1) && (vars[0].trim() === ""))
     {
         message.reply("you sent me nothing! I can't choose! :confused:").catch(core.msgSendError);
         return;
     }
+
     message.channel.send(vars[core.getRandomInt(0, vars.length-1)].trim()).catch(core.msgSendError);
 }
 
 function myRand(bot, message, args)
 {
-    message.channel.send(core.getRandomInt(0, 100)).catch(core.msgSendError);
+    message.channel.send(core.getRandomInt(0, 100).toString()).catch(core.msgSendError);
 }
 
 function myRandF(bot, message, args)
 {
-    message.channel.send(Math.random()).catch(core.msgSendError);
+    let ret = "Your result: " + Math.random().toString();
+    message.channel.send(ret).catch(core.msgSendError);
 }
 
 function youtube(bot, message, args)
@@ -170,4 +173,3 @@ module.exports =
     // Initialize plugin and here you can add custom Foxy's commands
     registerCommands:   registerCommands
 };
-
