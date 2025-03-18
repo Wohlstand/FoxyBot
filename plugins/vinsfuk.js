@@ -327,16 +327,16 @@ let tagBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 
                                         if(guild == null)
                                         {
-                                            outText += "-!! Guild " + res.autoban_guild + " seens inacessible or invalid (info: " + res.info + ")\n";
+                                            outText += "- :bangbang: Guild " + res.autoban_guild + " seems inacessible or invalid (info: " + res.info + ")\n";
                                             continue;
                                         }
 
                                         channel = bot.channels.resolve(res.autoban_logchan);
 
                                         if(channel == null)
-                                            outText += "-!! Channel " + res.autoban_logchan  + " of guild " + guild.name + " seens inacessible or invalid (info: " + res.info + ")\n";
+                                            outText += "- :bangbang: Channel " + res.autoban_logchan  + " of guild " + guild.name + " seens inacessible or invalid (info: " + res.info + ")\n";
                                         else if(channel.type !== Discord.ChannelType.GuildText)
-                                            outText += "-!! Channel " + channel.name  + " of guild " + guild.name + " is not a text channel (de-facto " + channel.type + ") (info: " + res.info + ")\n";
+                                            outText += "- :bangbang: Channel " + channel.name  + " of guild " + guild.name + " is not a text channel (de-facto " + channel.type + ") (info: " + res.info + ")\n";
                                         else
                                         {
                                             let report = formReport(message, tag, toKill, reason);
@@ -352,7 +352,7 @@ let tagBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
                                                     console.log("Failed to ban user <@!" + toKill + "> for the reason: " + error.message);
                                                 });
 
-                                            outText += "- Banned at " + guild.name + ", reported at channel **" + channel.name + "** (info: " + res.info + ")\n";
+                                            outText += "- :octagonal_sign: Banned at " + guild.name + ", reported at channel **" + channel.name + "** (info: " + res.info + ")\n";
                                         }
                                     }
 
@@ -455,16 +455,16 @@ let tagUnBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
 
                         if(guild == null)
                         {
-                            outText += "-!! Guild " + res.autoban_guild + " seens inacessible or invalid (info: " + res.info + ")\n";
+                            outText += "- :bangbang: Guild " + res.autoban_guild + " seens inacessible or invalid (info: " + res.info + ")\n";
                             continue;
                         }
 
                         channel = bot.channels.resolve(res.autoban_logchan);
 
                         if(channel == null)
-                            outText += "-!! Channel " + res.autoban_logchan  + " of guild " + guild.name + " seens inacessible or invalid (info: " + res.info + ")\n";
+                            outText += "- :bangbang: Channel " + res.autoban_logchan  + " of guild " + guild.name + " seens inacessible or invalid (info: " + res.info + ")\n";
                         else if(channel.type !== Discord.ChannelType.GuildText)
-                            outText += "-!! Channel " + channel.name  + " of guild " + guild.name + " is not a text channel (de-facto " + channel.type + ") (info: " + res.info + ")\n";
+                            outText += "- :bangbang: Channel " + channel.name  + " of guild " + guild.name + " is not a text channel (de-facto " + channel.type + ") (info: " + res.info + ")\n";
                         else
                         {
                             let report = formReport(message, tag, toKill, reason, true);
@@ -480,7 +480,7 @@ let tagUnBan = function(/*Client*/ bot, /*Message*/ message, /*string*/ args)
                                     console.log("Failed to unban user <@!" + toKill + "> for the reason: " + error.message);
                                 });
 
-                            outText += "- Unbanned at " + guild.name + ", reported at channel **" + channel.name + "** (info: " + res.info + ")\n";
+                            outText += "- :white_check_mark: Unbanned at " + guild.name + ", reported at channel **" + channel.name + "** (info: " + res.info + ")\n";
                         }
                     }
 
