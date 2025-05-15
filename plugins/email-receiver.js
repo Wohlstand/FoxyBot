@@ -8,6 +8,7 @@ let core = undefined;
 let util = require("util");
 let schedule = require('node-schedule');
 let htmlToText = require('html-to-text');
+const { Buffer } = require('node:buffer');
 
 // Email client
 const popLib = require('node-poplib-gowhich');
@@ -101,25 +102,49 @@ function mailChecker()
 
                                     if(isWritable)
                                     {
-                                        chan.send({
-                                            content: "__I got email reply from " + message.from[0].name + " for " +
-                                                (msgRes.uid !== 0 ? (isNoPingUser(msgRes.uid) ? msgRes.uid : ("<@" + msgRes.uid + ">") ) : "someone")
-                                                + "__:\n",
-                                                embeds:
-                                                [
-                                                    {
-                                                        color: 0xAF0000,
-                                                        fields: [{
-                                                            name : message.subject,
-                                                            value: outText
-                                                        }],
-                                                        footer: {
-                                                            text: "Note: to send email to me, begin every your message with 'Wohlstand:' (or 'Wohl:') (letter sign 📧 means email was sent)"
-                                                        }
+                                        let toSend =
+                                        {
+                                        content: "__I got email reply from " + message.from[0].name + " for " +
+                                            (msgRes.uid !== 0 ? (isNoPingUser(msgRes.uid) ? msgRes.uid : ("<@" + msgRes.uid + ">") ) : "someone")
+                                            + "__:\n",
+                                        embeds:
+                                            [
+                                                {
+                                                    color: 0xAF0000,
+                                                    fields: [{
+                                                        name : message.subject,
+                                                        value: outText
+                                                    }],
+                                                    footer: {
+                                                        text: "Note: to send email to me, begin every your message with 'Wohlstand:' (or 'Wohl:') (letter sign 📧 means email was sent)"
                                                     }
-                                                ]
-                                            }
-                                        ).catch(core.msgSendError);
+                                                }
+                                            ]
+                                        };
+
+                                        if(message.attachments.length > 0)
+                                        {
+                                            toSend.files = [];
+                                            message.attachments.forEach(function (file)
+                                            {
+                                                let buf = Buffer.alloc(file.length, file.content, file.transferEncoding);
+                                                // let tempFile = temp.openSync();
+                                                // fs.writeSync(tempFile.fd, buf);
+                                                // fs.closeSync(tempFile.fd);
+                                                // console.log("Making temp file at: " + tempFile.path);
+                                                // fileAdd.attachment = tempFile.path;
+
+                                                let fileAdd =
+                                                {
+                                                    attachment: buf,
+                                                    name: file.fileName
+                                                }
+
+                                                toSend.files.push(fileAdd);
+                                            });
+                                        }
+
+                                        chan.send(toSend).catch(core.msgSendError);
                                     }
                                     else
                                     {
