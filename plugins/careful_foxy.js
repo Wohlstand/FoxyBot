@@ -74,28 +74,28 @@ function hasReg(msg, word)
 //     return false;
 // }
 
-// let keyPrefix = [
-//     "wohl",
-//     "whol",
-//     "wolh",
-//     "wohlstand",
-//     "wholstand",
-//     "wolhstand"
-// ];
+let keyPrefix = [
+    "wohl",
+    "whol",
+    "wolh",
+    "wohlstand",
+    "wholstand",
+    "wolhstand"
+];
 
-// function lookUpForKeyPrefix(msgLowTrimmed)
-// {
-//     var forMe = false;
-//
-//     for(var i = 0; i < keyPrefix.length; i++)
-//     {
-//         if((msgLowTrimmed.indexOf(keyPrefix[i] + ":") === 0) ||
-//            (msgLowTrimmed.indexOf(keyPrefix[i] + ",") === 0))
-//             forMe = true;
-//     }
-//
-//     return forMe;
-// }
+function lookUpForKeyPrefix(msgLowTrimmed)
+{
+    let forMe = false;
+
+    for(let i = 0; i < keyPrefix.length; i++)
+    {
+        if((msgLowTrimmed.indexOf(keyPrefix[i] + ":") === 0) ||
+           (msgLowTrimmed.indexOf(keyPrefix[i] + ",") === 0))
+            forMe = true;
+    }
+
+    return forMe;
+}
 
 // [ \-_+=\\/!@#$%^&*():;'".,?|`~]
 
@@ -138,14 +138,14 @@ function hasReg(msg, word)
 
 function messageIn(mybot, message, allowWrite)
 {
-    let msgTrimmed      = message.content.trim();
+    // let msgTrimmed      = message.content.trim();
     let msgLow          = message.content.toLowerCase();
     let msgLowTrimmed   = msgLow.trim();
 
     let urlMask         = /(https?:\/\/wohlsoft.ru\/?[A-Za-z%0-9().\-_\/&?=]*)/g;
 
     // Remove any wohlsoft URLs from the text
-    msgTrimmed          = msgTrimmed.replace(urlMask, "[url]");
+    // msgTrimmed          = msgTrimmed.replace(urlMask, "[url]");
     msgLow              = msgLow.replace(urlMask, "[url]");
     msgLowTrimmed       = msgLowTrimmed.replace(urlMask, "[url]");
 
@@ -156,7 +156,7 @@ function messageIn(mybot, message, allowWrite)
     let wasAsked = false;
     let messageForMe = false;
     let messageForMeReact = false;
-    let mentions = message.mentions.users;
+    // let mentions = message.mentions.users;
 
     // for(let i = 0; i < mentions.length; i++)
     // {
@@ -169,11 +169,11 @@ function messageIn(mybot, message, allowWrite)
     // if(lookUpForKeyMentions(msgLowTrimmed)) //Shadow email
     //     messageForMe = true;
     //
-    // if(lookUpForKeyPrefix(msgLowTrimmed))   //Transparent email
-    // {
-    //     messageForMe = true;
-    //     messageForMeReact = true;
-    // }
+    if(lookUpForKeyPrefix(msgLowTrimmed))   //Transparent email
+    {
+        messageForMe = true;
+        messageForMeReact = true;
+    }
 
 //        var whoWannaPing = [69055500540456960/*Spinda*/];
 //        if( (whoWannaPing.indexOf(message.author.id) != -1)
@@ -285,54 +285,54 @@ function messageIn(mybot, message, allowWrite)
     }
     else
     {
-        // if(messageForMe && message.guild)
-        // {
-        //     // Check if Me is on this guild
-        //     message.guild.members.fetch("182039820879659008").then(function (gotMember)
-        //     {
-        //         // Check if Me can see this channel
-        //         if(message.channel.permissionsFor(gotMember).has('VIEW_CHANNEL'))
-        //         {
-        //             console.log("Sending email...");
-        //             botCommands.sendEmail(message, message.content, false);
-        //             if(messageForMeReact)
-        //             {
-        //                 message.react("📧").then(function (q)
-        //                 {
-        //                     console.log("Reaction was set");
-        //                 });//Mark message as reported
-        //             }
-        //         }
-        //         else
-        //         {
-        //             console.log("Got a keyword mention from inaccessible channel");
-        //         }
-        //     }).catch(function(err)
-        //     {
-        //         console.log("Got a keyword mention from inaccessible guild");
-        //     });
-        // }
-
-        if(allowWrite)
+        if(messageForMe && message.guild)
         {
-            if(botCommands.botConfig.defaultChannel.includes(message.channel.id)) // "beep-boop", "fun" 218194030662647809
+            // Check if Me is on this guild
+            message.guild.members.fetch("182039820879659008").then(function (gotMember)
             {
-                if(message.author.id === "216688100032643072")//Horikawa Botane
+                // Check if Me can see this channel
+                if(message.channel.permissionsFor(gotMember).has('VIEW_CHANNEL'))
                 {
-                    if(msgLowTrimmed.indexOf("is it porn?") !== -1)
+                    console.log("Sending email...");
+                    botCommands.sendEmail(message, message.content, false);
+                    if(messageForMeReact)
                     {
-                        setTimeout(function(){message.channel.send("No, <@216688100032643072>!").catch(botCommands.msgSendError);}, 1000);
-                    }
-                    else
-                    if(msgLowTrimmed.indexOf("i don't believe you") !== -1)
-                    {
-                        setTimeout(function(){message.channel.send("Let's play with Bastion!").catch(botCommands.msgSendError);}, 1000);
-                        setTimeout(function(){message.channel.send("Bastion Bastion Bastion Bastion!!!!").catch(botCommands.msgSendError);}, 2000);
-                        setTimeout(function(){message.channel.send("bastion bastion bastion bastion bastion").catch(botCommands.msgSendError);}, 3500);
+                        message.react("📧").then(function (q)
+                        {
+                            console.log("Reaction was set");
+                        });//Mark message as reported
                     }
                 }
-            }
+                else
+                {
+                    console.log("Got a keyword mention from inaccessible channel");
+                }
+            }).catch(function(err)
+            {
+                console.log("Got a keyword mention from inaccessible guild");
+            });
         }
+
+        // if(allowWrite) // Logic for a dead bot
+        // {
+        //     if(botCommands.botConfig.defaultChannel.includes(message.channel.id)) // "beep-boop", "fun" 218194030662647809
+        //     {
+        //         if(message.author.id === "216688100032643072")//Horikawa Botane
+        //         {
+        //             if(msgLowTrimmed.indexOf("is it porn?") !== -1)
+        //             {
+        //                 setTimeout(function(){message.channel.send("No, <@216688100032643072>!").catch(botCommands.msgSendError);}, 1000);
+        //             }
+        //             else
+        //             if(msgLowTrimmed.indexOf("i don't believe you") !== -1)
+        //             {
+        //                 setTimeout(function(){message.channel.send("Let's play with Bastion!").catch(botCommands.msgSendError);}, 1000);
+        //                 setTimeout(function(){message.channel.send("Bastion Bastion Bastion Bastion!!!!").catch(botCommands.msgSendError);}, 2000);
+        //                 setTimeout(function(){message.channel.send("bastion bastion bastion bastion bastion").catch(botCommands.msgSendError);}, 3500);
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
 
