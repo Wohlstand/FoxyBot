@@ -238,7 +238,7 @@ process.on('SIGHUP', function()
 
 let greetingSent = false;
 
-foxyBotCli.on("ready", () =>
+foxyBotCli.on("clientReady", () =>
 {
     notify.ready();
     const watchdogInterval = 2800;

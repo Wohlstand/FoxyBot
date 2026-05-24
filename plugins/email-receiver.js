@@ -7,7 +7,7 @@ let core = undefined;
 
 let util = require("util");
 let schedule = require('node-schedule');
-let htmlToText = require('html-to-text');
+let { htmlToText }  = require('html-to-text');
 const { Buffer } = require('node:buffer');
 
 // Email client
@@ -91,7 +91,7 @@ function mailChecker()
                                     console.log(message.subject);
                                     console.log("Message from: " + util.inspect(message.from));
                                     console.log("Message body:\n===============\n\n" + util.inspect(message) + "\n\n========================\n");
-                                    let msgText = (typeof(message.text) !== "undefined" ? message.text : htmlToText.fromString(message.html));
+                                    let msgText = (typeof(message.text) !== "undefined" ? message.text : htmlToText(message.html));
                                     let msgRes = {text: msgText, uid: 0, gid: 0, cid: 0};
                                     parseMessage(msgRes);
                                     msgText = msgText.replace(/^>.*\n?/mg, '');
