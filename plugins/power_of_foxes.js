@@ -259,11 +259,14 @@ function fart(bot, message, args)
 
     if(isMyBoss && (args.indexOf("pullmaster") !== -1))
     {
+        message.channel.sendTyping().catch(core.msgSendError);
+
         exec('git', ["pull", "origin", "master"], {cwd: "."}, function(err, data)
         {
             if(err == null)
             {
                 message.reply("git pull origin master\n```\n" + data.toString() + "\n```\n");
+                message.channel.sendTyping().catch(core.msgSendError);
                 exec('npm', ["install"], {cwd: "."}, function(err, data)
                 {
                     if(err)
