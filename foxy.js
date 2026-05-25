@@ -273,6 +273,14 @@ foxyBotCli.on('reconnecting', () =>
     botCommands.foxyLogInfo('Connection lost, trying to reconnect...');
 });
 
+foxyBotCli.on('debug', (info) =>
+{
+    if(info.startsWith("[WS => Shard 0] Heartbeat acknowledged"))
+        return; // Don't print heartbeat messages
+
+    botCommands.foxyLogInfo('DEBUG: ' + info);
+});
+
 foxyBotCli.on("guildMemberAdd", (newUser) =>
 {
     //Fetch new-became user
